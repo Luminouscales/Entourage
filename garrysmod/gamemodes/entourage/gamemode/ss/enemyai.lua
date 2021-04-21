@@ -67,11 +67,12 @@ function KnockerAI()
 	end
 end
 
+
 -- Calculates damage based on resistances
 
 function SnowtlionMinerDMG()
 	if pltype2 == "Slash" then
-		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 - enemies_table[ turntargetsave ].DFX * 0.005 )
+		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 + slash_dfx - enemies_table[ turntargetsave ].DFX * 0.0075 )
 	elseif pltype2 == "Pierce" then
 		wpndmg3 = ( wpndmg3 - ( enemies_table[ turntargetsave ].DEF - enemies_table[ turntargetsave ].DEF * wp_pierce ) ) * 2.5
 	else
@@ -82,7 +83,7 @@ end
 
 function UniversalDMG() -- TEMPLATE
 	if pltype2 == "Slash" then
-		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 - enemies_table[ turntargetsave ].DFX * 0.005 ) -- slash deals more against flex defence
+		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 + slash_dfx - enemies_table[ turntargetsave ].DFX * 0.005 ) -- slash deals more against flex defence
 	elseif pltype2 == "Pierce" then
 		wpndmg3 = ( wpndmg3 - ( enemies_table[ turntargetsave ].DEF - enemies_table[ turntargetsave ].DEF * wp_pierce ) ) -- pierce is unaffected by DFX
 	else
@@ -93,7 +94,7 @@ end
 
 function SkinnerDMG()
 	if pltype2 == "Slash" then
-		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 - enemies_table[ turntargetsave ].DFX * 0.005 )
+		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 + slash_dfx - enemies_table[ turntargetsave ].DFX * 0.005 )
 	elseif pltype2 == "Pierce" then
 		wpndmg3 = ( wpndmg3 - ( enemies_table[ turntargetsave ].DEF - enemies_table[ turntargetsave ].DEF * wp_pierce ) ) * 0.75
 	else
