@@ -29,6 +29,7 @@ function SnowtlionScout()
         necessity:SetNWString( "animstart", "attack1" )
         
 		lives = lives + 1
+        print( lives )
 end
 
 function SnowtlionSkinner()
@@ -52,6 +53,7 @@ function SnowtlionSkinner()
         necessity:SetNWFloat( "scaleNW", 0.9 )
 		
 		lives = lives + 1
+        print( lives )
 end
 
 function SnowtlionMiner()
@@ -75,6 +77,7 @@ function SnowtlionMiner()
         necessity:SetNWFloat( "scaleNW", 1.15 )
 		
 		lives = lives + 1
+        print( lives )
 end
 
 function EncounterAntlion() -- Function for spawning antlions.
