@@ -58,6 +58,11 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 		-- If a player dealt damage TO NPC
 		if dmg:GetAttacker():IsPlayer() and target:IsPlayer() == false and target:IsNPC() then
 			entourage_AddUP( dmg:GetDamage() / target:GetMaxHealth() * 30, 25 )
+			if dmg:GetDamage() >= target:Health() and target:Health() > 0 then
+				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
+				deaths = deaths + 1
+				print( deaths )
+			end
 		end
 	end
 end)
@@ -138,12 +143,7 @@ net.Receive( "getmycordsyoufuckingcunt", function( len, ply ) -- reset cords set
 	ply:SetHealth( hpNW )
 end)
 
-function advance1()
-	if turntarget:Health() <= 0 then
-		PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
-		deaths = deaths + 1
-	end
-end
+
 
 
 net.Receive( "getmycordsyoufuckingcunt", function( len, ply ) -- get reset cords
@@ -158,20 +158,42 @@ end)
 -- 
 
 net.Receive( "player_makeattack", function( len, ply ) -- player input
-	turntarget = net.ReadEntity()
-	turntargetsave = turntarget:GetName()
+	turntargets = net.ReadTable()
 	wpndmg1 = net.ReadDouble()
 	wpndmg2 = net.ReadDouble()
 	pltype2 = net.ReadString()
 	allplayers = net.ReadTable()
 	wpn = net.ReadString()
+    slash_dmg = net.ReadInt( 32 ) * 0.05 
+    slash_dfx = net.ReadInt( 32 ) * 0.03
+    slash_acc = net.ReadInt( 32 ) * 0.05 
 	player = ply
+	vis_int = 0
+
+	-- basic attack multi-target damage management and calculation
 	timer.Simple( 0.5, function()
-		RunString( items_table[ wpn ].func )
+		local i = 0
+		for k, v in pairs( turntargets ) do
+			i = i + 1
+		end
+		for k, v in pairs( turntargets ) do 
+				vis_int = vis_int + 0.25
+				timer.Simple( vis_int, function()
+					if IsValid(v) and v:Health() > 0 then
+						turntarget = v
+						turntargetsave = v:GetName()
+						dmg_modifier = dmg_modifier / i
+
+						RunString( items_table[ wpn ].func )
+						dmg_modifier = 1
+					end
+				end)
+		end
 	end)
 	
 	timer.Simple( 2, function() 
 		enemy_makeattack()
+		dmg_modifier = 1
 	end)
 end)
 
