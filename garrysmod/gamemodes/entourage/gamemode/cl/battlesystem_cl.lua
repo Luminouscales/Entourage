@@ -1,6 +1,5 @@
 exp_real = 0
 just_leveledup = false
-local integer = -1
 local up_int = 0
 
 net.Receive( "up_hudshow", function()
@@ -24,6 +23,30 @@ net.Receive( "up_hudshow", function()
     end)
 end)
 
+-- Music function
+function test()
+    sound.PlayFile( "sound/cer2.mp3", "noblock noplay mono", function( a, b, c )
+        a:EnableLooping( true )
+        a:SetVolume( 2 )
+        a:Play()
+        channel = a
+        -- garbage collection? who the fuck coded this?
+    end)
+end
+
+function entourage_FadeOut( chan )
+    local a = SysTime()
+    local c = chan:GetFileName().."fadeout"
+    local d = chan:GetVolume()
+    hook.Add( "Think", c, function()
+        local b = Lerp( ( SysTime() - a ) / 3, d, 0 )
+        chan:SetVolume( b )
+        if b == 0 then
+            hook.Remove( "Think", c )
+        end
+    end)
+end
+
 net.Receive( "enemysend", function()
 	enemy1 = net.ReadEntity()
 	enemy2 = net.ReadEntity()
@@ -40,7 +63,7 @@ net.Receive( "encounter_intro", function()
 	timer.Simple( 1, function() -- visual
 		EncounterNormalText1()
         -- This has to be fixed once I add weapons with only 2 damage types.
-        if weaponlist[ playerstats["currentweapon"] ].dmgtype == "Multiple" then
+        if weaponlist[ playerstats_a["currentweapon"] ].dmgtype == "Multiple" then
             pltype = table.Random( {"Slash", "Blunt", "Pierce"} )
             DefineDMGA()
         end
@@ -53,7 +76,7 @@ net.Receive( "encounter_intro", function()
 	net.Start("getmycordsyoufuckingcunt")
 		net.WriteVector( LocalPlayer():GetPos() ) 
 		net.WriteAngle( LocalPlayer():GetAngles() )
-		net.WriteDouble( playerstats["HP1"] )
+		net.WriteDouble( playerstats_a["HP1"] )
 	net.SendToServer()
 
 	timer.Simple( 4, function()
@@ -68,7 +91,7 @@ end)
 net.Receive( "net_enemy_senddata", function()
     local lvl_int = net.ReadInt( 32 )
     local exp_int = net.ReadInt( 32 )
-    exp_real = exp_real + math.Clamp( math.Round( exp_int + ( exp_int * ( math.Clamp( lvl_int - playerstats["LVL3"], -15, 15 ) ) / 3 ), 0 ), 0, 100000 )
+    exp_real = exp_real + math.Clamp( math.Round( exp_int + ( exp_int * ( math.Clamp( lvl_int - playerstats_a["LVL3"], -15, 15 ) ) / 3 ), 0 ), 0, 100000 )
 end)
 
 -- This is the frame for results after battle.
@@ -97,11 +120,11 @@ function ResultsFrame()
 		    resultsframe_exp:SetPos( 10, 35 )
 		    resultsframe_exp:InsertColorChange( 255, 255, 255, 255 )
             resultsframe_exp:AppendText( "Experience Gained: ".. tostring( exp_real ) .."\n" )
-            resultsframe_exp:AppendText( "Current level: ".. playerstats["LVL3"] .." - ".. playerstats["LVL1"] .."/".. playerstats["LVL2"] .." experience\n" )
+            resultsframe_exp:AppendText( "Current level: ".. playerstats_a["LVL3"] .." - ".. playerstats_a["LVL1"] .."/".. playerstats_a["LVL2"] .." experience\n" )
             if just_leveledup == true then
                 resultsframe_exp:InsertColorChange( 235, 255, 40, 255 )
-                resultsframe_exp:AppendText( "You just leveled up! You are now level ".. playerstats["LVL3"] .."\n")
-                resultsframe_exp:AppendText( "You now have ".. playerstats["LVL_POINTS"] .." upgrade points." )
+                resultsframe_exp:AppendText( "You just leveled up! You are now level ".. playerstats_a["LVL3"] .."\n")
+                resultsframe_exp:AppendText( "You now have ".. playerstats_a["LVL_POINTS"] .." upgrade points." )
             end
             function resultsframe_exp:PerformLayout()
                 self:SetFontInternal( "equipment_plname2" )
@@ -110,13 +133,13 @@ function ResultsFrame()
 end
 --------------------------------------
 function CheckEXP()
-    playerstats["LVL1"] = playerstats["LVL1"] + exp_real
-    if playerstats["LVL1"] >= playerstats["LVL2"] then
+    playerstats_a["LVL1"] = playerstats_a["LVL1"] + exp_real
+    if playerstats_a["LVL1"] >= playerstats_a["LVL2"] then
         just_leveledup = true
-        playerstats["LVL1"] = 0
-        playerstats["LVL3"] = playerstats["LVL3"] + 1
-        playerstats["LVL2"] = playerstats["LVL2"] * playerstats["LVL3"]
-        playerstats["LVL_POINTS"] = playerstats["LVL_POINTS"] + 2
+        playerstats_a["LVL1"] = 0
+        playerstats_a["LVL3"] = playerstats_a["LVL3"] + 1
+        playerstats_a["LVL2"] = playerstats_a["LVL2"] * playerstats_a["LVL3"]
+        playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] + 2
         CheckEXP()
     end
 end
@@ -207,27 +230,35 @@ function BattleHud()
 	end)
 end
 
+function uhhVariablesTest()
+    net.WriteInt( plskills["s_slasher"].Level, 32)
+    net.WriteInt( plskills["s_slicer"].Level, 32)
+    net.WriteInt( plskills["s_dicer"].Level, 32)
+end
+
 function BasicAttackPlayer()
 	net.Start( "player_makeattack" )
-		net.WriteEntity( pickertarget )
+		net.WriteTable( cl_s_targets_tbl )
 		net.WriteDouble( plattack1  )
 		net.WriteDouble( plattack2 )
 		net.WriteString( pltype )
 		net.WriteTable( player.GetAll() )
-		net.WriteString( playerstats["currentweapon"] )
+		net.WriteString( playerstats_a["currentweapon"] )
+        uhhVariablesTest()
 	net.SendToServer()
 end -- after enemy turns, do function below
 
 function SkillPlayer()
 	net.Start( "player_makeskill" )
-		net.WriteEntity( pickertarget )
+        net.WriteTable( cl_s_targets_tbl )
 		net.WriteDouble( plattack1 )
 		net.WriteDouble( plattack2 )
 		net.WriteString( pltype )
 		net.WriteTable( player.GetAll() )
-		net.WriteString( playerstats["currentweapon"] )
+		net.WriteString( playerstats_a["currentweapon"] )
         net.WriteString( skill_id )
         net.WriteInt( skill_lvl, 32 )
+        uhhVariablesTest()
 	net.SendToServer()
 end -- after enemy turns, do function below
 
@@ -267,18 +298,23 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             clickframe:ShowCloseButton( false )
             clickframe:SetWorldClicker( true )
         clickframe.Paint = function( self, w, h )
-            surface.SetDrawColor( 0, 0, 0, 0)
-            surface.DrawRect( 0, 0, w, h )
+            -- surface.SetDrawColor( 0, 0, 0, 0)
+            -- surface.DrawRect( 0, 0, w, h )
         end
+        -- basic attacks don't support 10 targetting yet
         function clickframe:OnMousePressed( keycode )
-            if keycode == 107 then 
+            if keycode == 107 then
                 local rtrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
                     if rtrace.Entity:Health() > 0 then
-                        pickertarget = rtrace.Entity
-                        BasicAttackPlayer()
-                        clickframe:Close()
-                        bhud_frame:Hide()
-                        bhud_frame2:Hide()
+                        cl_s_int = cl_s_int + 1
+                        cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
+
+                        if cl_s_int == cl_s_targets then
+                            BasicAttackPlayer()
+                            clickframe:Close()
+                            bhud_frame:Hide()
+                            bhud_frame2:Hide()
+                        end
                     end
             elseif keycode == 108 then
                 clickframe:Close()
@@ -298,15 +334,48 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         end
         function clickframe_skill:OnMousePressed( keycode )
             if keycode == 107 then 
-                local rtrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
-                    if rtrace.Entity:Health() > 0 then
-                        pickertarget = rtrace.Entity
-                        SkillPlayer()
-
-                        clickframe_skill:Close()
-                        bhud_frame:Hide()
-                        bhud_frame2:Hide()
+                -- if skill is set to target ALL enemies
+                if cl_s_targets == 10 then 
+                    local int = 0
+                    if IsValid( enemy1 ) then
+                        int = int + 1
+                        cl_s_targets_tbl[ int ] = enemy1
                     end
+                    if IsValid( enemy2 ) then 
+                        int = int + 1
+                        cl_s_targets_tbl[ int ] = enemy2
+                    end
+                    if IsValid( enemy3 ) then
+                        int = int + 1
+                        cl_s_targets_tbl[ int ] = enemy3
+                    end
+                    SkillPlayer()
+                    clickframe_skill:Close()
+                    bhud_frame:Hide()
+                    bhud_frame2:Hide()
+                -- if skill is set to target all players; must be reworked for multiplayer
+                elseif cl_s_targets == 11 then
+                    cl_s_targets_tbl[ 1 ] = LocalPlayer()
+                    SkillPlayer()
+                    clickframe_skill:Close()
+                    bhud_frame:Hide()
+                    bhud_frame2:Hide()
+                -- otherwise do it normally
+                else
+                    local rtrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                        if rtrace.Entity:Health() > 0 then
+                            cl_s_int = cl_s_int + 1
+                            cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
+                            
+                            -- Run and end once all targets are set
+                            if cl_s_int == cl_s_targets then
+                                SkillPlayer()
+                                clickframe_skill:Close()
+                                bhud_frame:Hide()
+                                bhud_frame2:Hide()
+                            end
+                        end
+                end
             elseif keycode == 108 then
                 clickframe_skill:Close()
             end
@@ -376,13 +445,13 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_pierce:Hide()
             bhud_blunt:Hide()
             -- This function can be optimized but this needs to be ran three times or else multi-type weapons will not function correctly.
-            if isnumber( weaponlist[ playerstats["currentweapon"] ].DMG1 ) then
+            if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG1 ) then
                 bhud_slash:Show()
             end
-            if isnumber( weaponlist[ playerstats["currentweapon"] ].DMG3 ) then
+            if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG3 ) then
                 bhud_pierce:Show()
             end
-            if isnumber( weaponlist[ playerstats["currentweapon"] ].DMG4 ) then
+            if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG4 ) then
                 bhud_blunt:Show()
             end
         end
@@ -397,9 +466,10 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_slash:SetSize( 253, 110 )
             bhud_slash:SetImage( "hud/slash1.png" )
         bhud_slash.DoClick = function()
-            plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG1
-            plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG2
+            plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
+            plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
             pltype = "Slash"
+            clickframe_Init()
             clickframe:Show()
         end
         bhud_pierce = vgui.Create( "DImageButton", bhud_frame2 )
@@ -407,9 +477,10 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_pierce:SetSize( 253, 110 )
             bhud_pierce:SetImage( "hud/pierce1.png" )
         bhud_pierce.DoClick = function()
-            plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG3
-            plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG3
+            plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
+            plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
             pltype = "Pierce"
+            clickframe_Init()
             clickframe:Show()
         end
         bhud_blunt = vgui.Create( "DImageButton", bhud_frame2 )
@@ -417,9 +488,10 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_blunt:SetSize( 253, 110 )
             bhud_blunt:SetImage( "hud/blunt1.png" )
         bhud_blunt.DoClick = function()
-            plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG4
-            plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG5
+            plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
+            plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
             pltype = "Blunt"
+            clickframe_Init()
             clickframe:Show()
         end
         bhud_brace = vgui.Create( "DImageButton", bhud_frame )
@@ -448,6 +520,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_skills_button:SetText( "Skills" )
             bhud_skills_button.DoClick = function()
                 bhud_skills_frame:ToggleVisible()
+                skills_frame_init()
             end
             -- Actual skills frame
             bhud_skills_frame = vgui.Create( "DFrame", bhud_frame )
@@ -460,31 +533,43 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                     draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 90, 85, 85 ), false, true, false, true )
                 end
                 -- This function creates available skills.
-                for k, v in pairs( plskills ) do
-                    -- If skill has at least one point or is from a trinket
-                    if v.equipped == 1 or v.equipped == -1 then
-                        integer = integer + 1
-                        skillbutton = vgui.Create( "DImageButton", bhud_skills_frame )
-                            skillbutton:SetSize( 25, 25 )
-                            skillbutton:SetPos( 10 + integer * 35, bhud_skills_frame:GetTall()/2 - skillbutton:GetTall()/2 )
-                            skillbutton:SetImage( "skills/entourage_".. k .."_small.png" )
-                            skillbutton.DoClick = function()
-                                if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
-                                    skill_id = k
-                                    skill_lvl = v.Level
-                                    DefineDMG()
-                                    clickframe_skill:Show()
-                                else
-                                    PlaceholderFunction()
-                                end
+                function skills_frame_init()
+                    local integer = -1
+                    -- clean buttons if they are already initialized. check if theyre the skil button or shit breaks :)
+                    if bhud_skills_frame:HasChildren() then
+                        for k, v in pairs( bhud_skills_frame:GetChildren() ) do
+                            if v:GetName() == "DImageButton" then 
+                                v:Remove()
                             end
-                            function skillbutton:Think()
-                                if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
-                                    self:SetColor( Color( 255, 255, 255, 255 ) )
-                                else
-                                    self:SetColor( Color( 255, 255, 255, 100 ) )
+                        end
+                    end
+                    for k, v in pairs( plskills ) do
+                        -- If skill has at least one point or is from a trinket
+                        if v.equipped == 1 or v.equipped == -1 then
+                            integer = integer + 1
+                            skillbutton = vgui.Create( "DImageButton", bhud_skills_frame )
+                                skillbutton:SetSize( 25, 25 )
+                                skillbutton:SetPos( 10 + integer * 35, bhud_skills_frame:GetTall()/2 - skillbutton:GetTall()/2 )
+                                skillbutton:SetImage( "skills/entourage_".. k .."_small.png" )
+                                skillbutton.DoClick = function()
+                                    if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
+                                        skill_id = k
+                                        skill_lvl = v.Level
+                                        DefineDMG()
+                                        clickframeskill_Init()
+                                        clickframe_skill:Show()
+                                    else
+                                        PlaceholderFunction()
+                                    end
                                 end
-                            end
+                                function skillbutton:Think()
+                                    if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
+                                        self:SetColor( Color( 255, 255, 255, 255 ) )
+                                    else
+                                        self:SetColor( Color( 255, 255, 255, 100 ) )
+                                    end
+                                end
+                        end
                     end
                 end
             bhud_skills_frame:Hide()
@@ -585,34 +670,48 @@ function entdesc_details()
 end
 
 function DefineDMG()
-    local a = weaponlist[ playerstats["currentweapon"] ].dmgtype
+    local a = weaponlist[ playerstats_a["currentweapon"] ].dmgtype
+    -- local b = plskills[ "s_slasher" ]
     if a == "Slash" then
-        plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG1
-        plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG2
+        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
+        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
         pltype = "Slash"
     elseif a == "Blunt" then
-        plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG4
-        plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG5
+        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
+        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
         pltype = "Blunt"
     elseif a == "Pierce" then
-        plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG3
-        plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG3
+        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
+        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
         pltype = "Pierce"
     end
 end
 -- Defining stuff if battle is started and you have a multi-type weapon
 function DefineDMGA()
     if pltype == "Slash" then
-        plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG1
-        plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG2
+        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
+        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
         pltype = "Slash"
     elseif pltype == "Blunt" then
-        plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG4
-        plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG5
+        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
+        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
         pltype = "Blunt"
     elseif pltype == "Pierce" then
-        plattack1 = weaponlist[ playerstats["currentweapon"] ].DMG3
-        plattack2 = weaponlist[ playerstats["currentweapon"] ].DMG3
+        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
+        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
         pltype = "Pierce"
     end
+end
+
+-- skill clickframe management
+function clickframeskill_Init()
+    cl_s_int = 0
+    cl_s_targets = skillsbase[ skill_id ].targets
+    cl_s_targets_tbl = {}
+end
+
+function clickframe_Init()
+    cl_s_int = 0
+    cl_s_targets =  weaponlist[ playerstats_a["currentweapon"] ].targets
+    cl_s_targets_tbl = {}
 end
