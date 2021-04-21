@@ -1,0 +1,26 @@
+{
+	"s_precstrike": {
+		"Name": "Precision Strike",
+		"Description": "Deal damage to one target equal to bonus slash weapon strength with bonus accuracy. Gain Focus for 3 turns.",
+		"tier": 1,
+		"min": 1,
+		"max": 10,
+		"cost": 10
+	},
+	"s_defmano": {
+		"Name": "Defensive Manoeuvre",
+		"Description": "Deal damage to one target, gain defensive stats for one turn.",
+		"tier": 1,
+		"min": 1,
+		"max": 10,
+		"cost": 15
+	},
+	"s_firstaid": {
+		"Name": "First Aid",
+		"Description": "Heal target for a value plus a % of its max HP. Grants MGT for 3 turns.",
+		"tier": 1,
+		"min": 1,
+		"max": 10,
+		"cost": 20
+	}
+}

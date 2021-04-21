@@ -1,0 +1,21 @@
+"Entourage"
+{
+	"base"	 	"sandbox"
+	"title" 	"Entourage"
+	"maps" 		"^entourage_"
+	"menusystem" "1"
+	"workshopid" ""
+	
+	"settings"
+	{
+		1
+		{
+			"name" "rpgmod_gameid"
+			"text" "Playthrough ID"
+			"help" "The ID that is used to differentiate different playthroughs from one another. Important. Set one that's unique."
+			"type" "Text"
+			"default" "1"
+		
+		}
+
+}

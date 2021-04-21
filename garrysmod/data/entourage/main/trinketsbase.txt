@@ -1,0 +1,56 @@
+{
+	"1": {
+		"Item": "EmptySlot3"
+	},
+	"2": {
+		"Item": "EmptySlot3"
+	},
+	"3": {
+		"Item": "EmptySlot3"
+	},
+	"4": {
+		"Item": "EmptySlot3"
+	},
+	"5": {
+		"Item": "EmptySlot3"
+	},
+	"6": {
+		"Item": "EmptySlot3"
+	},
+	"7": {
+		"Item": "EmptySlot3"
+	},
+	"8": {
+		"Item": "EmptySlot3"
+	},
+	"9": {
+		"Item": "EmptySlot3"
+	},
+	"10": {
+		"Item": "EmptySlot3"
+	},
+	"11": {
+		"Item": "EmptySlot3"
+	},
+	"12": {
+		"Item": "EmptySlot3"
+	},
+	"13": {
+		"Item": "EmptySlot3"
+	},
+	"14": {
+		"Item": "EmptySlot3"
+	},
+	"15": {
+		"Item": "EmptySlot3"
+	},
+	"16": {
+		"Item": "EmptySlot3"
+	},
+	"17": {
+		"Item": "EmptySlot3"
+	},
+	"18": {
+		"Item": "EmptySlot3"
+	}
+}

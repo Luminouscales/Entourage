@@ -1,0 +1,50 @@
+{
+	"Snowtlion Scout": {
+		"Name": "Snowtlion Scout",
+		"Description": "Average unit of the snow insect forces. Strong in numbers.",
+		"DMG1": 9,
+		"DMG2": 15,
+		"DMGT": "Slash",
+		"DEF": 5,
+		"DFX": 0,
+		"DDG": 20,
+		"MISS": 15,
+		"AI": "FighterAI()",
+		"AI2": "UniversalDMG()",
+		"LVL": 2,
+		"EXP": 15
+	},
+	"Snowtlion Skinner": {
+		"Name": "Snowtlion Skinner",
+		"Description": "Its sharp talons pierce armour with a predator’s instinct. Frail.",
+		"DMG1": 6,
+		"DMG2": 8,
+		"DMGT": "Pierce",
+		"DMGP": 100,
+		"DMGC": 25,
+		"DEF": 0,
+		"DFX": 15,
+		"DDG": 40,
+		"MISS": -10,
+		"AI": "SniperAI()",
+		"AI2": "SkinnerDMG()",
+		"LVL": 4,
+		"EXP": 40
+	},
+	"Snowtlion Miner": {
+		"Name": "Snowtlion Miner",
+		"Description": "Its heavy and durable limbs carve tunnels in the mountain and concuss your brains.",
+		"DMG1": 20,
+		"DMG2": 30,
+		"DMGT": "Blunt",
+		"DMGS": 25,
+		"DEF": 10,
+		"DFX": 0,
+		"DDG": -10,
+		"MISS": 50,
+		"AI": "KnockerAI()",
+		"AI2": "SnowtlionMinerDMG()",
+		"LVL": 6,
+		"EXP": 55
+	}
+}

@@ -1,0 +1,56 @@
+{
+	"1": {
+		"Item": "OldCrowbar"
+	},
+	"2": {
+		"Item": "EmptySlot"
+	},
+	"3": {
+		"Item": "EmptySlot"
+	},
+	"4": {
+		"Item": "EmptySlot"
+	},
+	"5": {
+		"Item": "EmptySlot"
+	},
+	"6": {
+		"Item": "EmptySlot"
+	},
+	"7": {
+		"Item": "EmptySlot"
+	},
+	"8": {
+		"Item": "EmptySlot"
+	},
+	"9": {
+		"Item": "EmptySlot"
+	},
+	"10": {
+		"Item": "EmptySlot"
+	},
+	"11": {
+		"Item": "EmptySlot"
+	},
+	"12": {
+		"Item": "EmptySlot"
+	},
+	"13": {
+		"Item": "EmptySlot"
+	},
+	"14": {
+		"Item": "EmptySlot"
+	},
+	"15": {
+		"Item": "EmptySlot"
+	},
+	"16": {
+		"Item": "EmptySlot"
+	},
+	"17": {
+		"Item": "EmptySlot"
+	},
+	"18": {
+		"Item": "EmptySlot"
+	}
+}

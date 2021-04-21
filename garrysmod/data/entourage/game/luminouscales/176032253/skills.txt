@@ -1,0 +1,14 @@
+{
+	"s_precstrike": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_firstaid": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_defmano": {
+		"Level": 1.0,
+		"equipped": 1.0
+	}
+}
