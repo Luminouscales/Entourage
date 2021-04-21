@@ -3,7 +3,7 @@
 		"Item": "OldCrowbar"
 	},
 	"2": {
-		"Item": "RopeSpear"
+		"Item": "EmptySlot"
 	},
 	"3": {
 		"Item": "EmptySlot"
