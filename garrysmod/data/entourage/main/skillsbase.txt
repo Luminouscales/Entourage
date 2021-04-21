@@ -5,7 +5,8 @@
 		"tier": 1,
 		"min": 1,
 		"max": 10,
-		"cost": 10
+		"cost": 10,
+		"targets": 1
 	},
 	"s_defmano": {
 		"Name": "Defensive Manoeuvre",
@@ -13,7 +14,8 @@
 		"tier": 1,
 		"min": 1,
 		"max": 10,
-		"cost": 15
+		"cost": 15,
+		"targets": 1
 	},
 	"s_firstaid": {
 		"Name": "First Aid",
@@ -21,6 +23,56 @@
 		"tier": 1,
 		"min": 1,
 		"max": 10,
-		"cost": 20
+		"cost": 15,
+		"targets": 1
+	},
+	"s_slasher": {
+		"Name": "Slasher",
+		"Description": "Levi, my beloved.",
+		"tier": 1,
+		"min": 1,
+		"max": 20,
+		"cost": -1
+	},
+	"s_slicer": {
+		"Name": "Slicer",
+		"tier": 1,
+		"min": 1,
+		"max": 20,
+		"cost": -1
+	},
+	"s_dicer": {
+		"Name": "Dicer",
+		"tier": 1,
+		"min": 1,
+		"max": 20,
+		"cost": -1
+	},
+	"s_broadswing": {
+		"Name": "Broad Swing",
+		"Description": "Slash all targets for a part of your damage and accuracy.",
+		"tier": 1,
+		"min": 1,
+		"max": 10,
+		"cost": 10,
+		"targets": 10
+	},
+	"s_fragmentation": {
+		"Name": "Fragmentation",
+		"Description": "Slash two targets for a part of your damage.",
+		"tier": 1,
+		"min": 1,
+		"max": 10,
+		"cost": 20,
+		"targets": 2
+	},
+	"s_medicsupplies": {
+		"Name": "Medical Supplies",
+		"Description": "Heal party - healing decreases for amount healed.",
+		"tier": 1,
+		"min": 1,
+		"max": 10,
+		"cost": 25,
+		"targets": 11
 	}
 }
