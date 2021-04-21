@@ -1,16 +1,21 @@
 util.AddNetworkString( "player_makeskill" )
 
 net.Receive( "player_makeskill", function( len, ply )
-	turntarget = net.ReadEntity()
-	turntargetsave = turntarget:GetName()
+	turntargets = net.ReadTable()
 	wpndmg1 = net.ReadDouble()
 	wpndmg2 = net.ReadDouble()
-	pltype2 = net.ReadString()
+	pltype = net.ReadString()
 	allplayers = net.ReadTable()
 	wpn = net.ReadString()
     skill_id = net.ReadString()
     skill_lvl = net.ReadInt( 32 )
+
+    slash_dmg = net.ReadInt( 32 ) * 0.05 
+    slash_dfx = net.ReadInt( 32 ) * 0.03
+    slash_acc = net.ReadInt( 32 ) * 0.05 
+
 	player = ply
+    vis_int = 0
 
     RunString( skill_id .."()" )
 
@@ -18,6 +23,31 @@ net.Receive( "player_makeskill", function( len, ply )
         enemy_makeattack()
     end)
 end)
+
+-- Utility
+-- Function for dealing skill damage. Does not support damage decrease by number of targets.
+function s_Retract()
+    local i = 0
+    for k, v in pairs( turntargets ) do
+        i = i + 1
+    end
+    for k, v in pairs( turntargets ) do 
+        vis_int = vis_int + 0.25
+        timer.Simple( vis_int, function()
+            if IsValid(v) and v:Health() > 0 then
+                turntarget = v
+                turntargetsave = v:GetName()
+                up_open = false
+
+                RunString( items_table[ wpn ].func )
+
+            end
+        end)
+    end
+    dmg_modifier = 1
+    acc_modifier = 1
+end
+
 
 -- SLASH
 function s_precstrike()
@@ -31,7 +61,7 @@ function s_precstrike()
     local bonus1 = lvl * 0.1
     local bonus2 = lvl * 0.05
 
-    if items_table[ wpn ].func == "Slash" or "Multiple" then
+    if pltype == "Slash" or "Multiple" then
         dmg_modifier = 1 + bonus1
         acc_modifier = 1.1 + bonus2
     else
@@ -39,10 +69,7 @@ function s_precstrike()
         acc_modifier = 0.90 + bonus2
     end
     -- Deal damage and stuffs, leave it to the weapon functions.
-    timer.Simple( 0.5, function()
-        up_open = false
-        RunString( items_table[ wpn ].func )
-    end)
+    s_Retract()
 
     -- Cooldown
     player:SetNWBool( "s_precstrike_oncd", true )
@@ -83,12 +110,7 @@ function s_defmano()
         acc_modifier = 0.75
     end
 
-    timer.Simple( 0.5, function()
-        up_open = false
-        RunString( items_table[ wpn ].func )
-        dmg_modifier = 1
-        acc_modifier = 1
-    end)
+    s_Retract()
 
     player:SetNWBool( "s_defmano_oncd", true )
 
@@ -119,17 +141,14 @@ end
 function s_firstaid()
     -- Defensive Manoeuvre
 
-    entourage_AddUP( -20, 25 )
+    entourage_AddUP( -15, 25 )
 
     local lvl = skill_lvl
     local bonus1 = lvl * 0.05 -- raw
     local bonus2 = lvl * 0.05 -- scaling
 
-    local target = turntarget
+    local target = turntargets[1]
 
-    -- Heal effect; main
-    -- 20 + 10 * plskills_a["s_firstaid"].Level
-    -- 3 + 3 * plskills_a["s_firstaid"].Level
     timer.Simple( 0.5, function()
         local heal = math.Round( 20 + 10 * lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * lvl ) ), 0 )
         target:SetHealth( math.Clamp( target:Health() + heal, 0, target:GetMaxHealth() ) )
@@ -153,6 +172,106 @@ function s_firstaid()
                 target:SetNWInt( "mgtNW", target:GetNWInt( "mgtNW" ) - lvl )
                 hookv1:SetNWBool( "s_firstaid_oncd", false )
                 hook.Remove( "EntityTakeDamage", pl_id .."firstaidhook" )
+            end
+        end
+    end)
+end
+
+function s_broadswing()
+    -- Broad Swing
+
+    entourage_AddUP( -10, 25 )
+
+    local lvl = skill_lvl
+    local bonus1 = lvl * 0.05
+
+    if pltype == "Slash" then
+        dmg_modifier = 0.40 + bonus1
+        acc_modifier = 0.9
+    else
+        dmg_modifier = 0.1 + bonus1
+        acc_modifier = 0.6
+    end
+
+    s_Retract()
+
+    player:SetNWBool( "s_broadswing_oncd", true )
+
+    local pl_id = player:AccountID()
+    local cd = 0
+    local hookv1 = player
+    hook.Add( "EntityTakeDamage", pl_id .."broadswinghook", function( target )
+        if target == Levitus then
+            cd = cd + 1
+            if cd >= 2 then
+                hookv1:SetNWBool( "s_broadswing_oncd", false )
+                hook.Remove( "EntityTakeDamage", pl_id .."broadswinghook" )
+            end
+        end
+    end)
+end
+
+function s_fragmentation()
+    -- Fragmentation
+
+    entourage_AddUP( -20, 25 )
+
+    local lvl = skill_lvl
+    local bonus1 = lvl * 0.05
+
+    if pltype == "Slash" then
+        dmg_modifier = 0.6 + bonus1
+        acc_modifier = 0.85
+    else
+        dmg_modifier = 0.3 + bonus1
+        acc_modifier = 0.55
+    end
+
+    s_Retract()
+
+    player:SetNWBool( "s_fragmentation_oncd", true )
+
+    local pl_id = player:AccountID()
+    local cd = 0
+    local hookv1 = player
+    hook.Add( "EntityTakeDamage", pl_id .."fragmentationhook", function( target )
+        if target == Levitus then
+            cd = cd + 1
+            if cd >= 4 then
+                hookv1:SetNWBool( "s_fragmentation_oncd", false )
+                hook.Remove( "EntityTakeDamage", pl_id .."fragmentationhook" )
+            end
+        end
+    end)
+end
+
+function s_medicsupplies()
+    -- Medical Supplies
+
+    entourage_AddUP( -20, 25 )
+
+    local lvl = skill_lvl
+
+    local target = turntargets[1]
+
+    timer.Simple( 0.5, function()
+        local heal = math.Round( 40 + 10 * lvl, 0 )
+        target:SetHealth( math.Clamp( target:Health() + heal, 0, target:GetMaxHealth() ) )
+        PrintMessage( HUD_PRINTTALK, target:GetName() .." was healed for ".. heal .." HP!" )
+    end)
+
+    player:SetNWBool( "s_medicsupplies_oncd", true )
+
+
+    local pl_id = player:AccountID()
+    local cd = 0
+    local hookv1 = player
+    hook.Add( "EntityTakeDamage", pl_id .."firstaidhook", function( target )
+        if target == Levitus then
+            cd = cd + 1
+            if cd >= 3 then
+                hookv1:SetNWBool( "s_medicsupplies_oncd", false )
+                hook.Remove( "EntityTakeDamage", pl_id .."medicsupplieshook" )
             end
         end
     end)
