@@ -27,7 +27,7 @@
 	"arov_pagi2": 0,
 	"arov_ddg": 0,
 	"LVL_POINTS": 0,
-	"SLASH_POINTS": 0,
+	"SLASH_POINTS": 20,
 	"BLUNT_POINTS": 0,
 	"PIERCE_POINTS": 0
 }
