@@ -16,7 +16,8 @@
 		"PDEF": "0",
 		"PSDL": 0,
 		"PAGI": 0,
-		"func": "OldCrowbar()"
+		"func": "OldCrowbar()",
+		"targets": 1
 	},
 	"RustyKnife": {
 		"Name": "Rusty Knife",
@@ -31,7 +32,8 @@
 		"PDEF": "0",
 		"PSDL": 0,
 		"PAGI": 2,
-		"func": "RustyKnife()"
+		"func": "RustyKnife()",
+		"targets": 1
 	},
 	"WoodenClub": {
 		"Name": "Wooden Club",
@@ -47,7 +49,8 @@
 		"PDEF": "0",
 		"PSDL": 0,
 		"PAGI": 0,
-		"func": "WoodenClub()"
+		"func": "WoodenClub()",
+		"targets": 1
 	},
 	"EmptySlot": {
 		"Name": "Fists",
@@ -63,7 +66,8 @@
 		"PDEF": "-5",
 		"PSDL": 0,
 		"PAGI": 2,
-		"func": "Fists()"
+		"func": "Fists()",
+		"targets": 1
 	},
 	"RopeSpear": {
 		"Name": "Rope Spear",
@@ -82,7 +86,8 @@
 		"PDEF": "1",
 		"PSDL": 0,
 		"PAGI": -1,
-		"func": "RopeSpear()"
+		"func": "RopeSpear()",
+		"targets": 1
 	},
 	"ClothArmour": {
 		"Name": "Cloth Armour",
@@ -164,7 +169,8 @@
 		"PDEF": "0",
 		"PSDL": 0,
 		"PAGI": 50,
-		"func": "KillerSword()"
+		"func": "KillerSword()",
+		"targets": 1
 	}
 		
 }
