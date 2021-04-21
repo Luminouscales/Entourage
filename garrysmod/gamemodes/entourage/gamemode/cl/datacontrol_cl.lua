@@ -16,9 +16,11 @@ function PlayerstatsSave()
     local plskills3 = util.TableToJSON( plskills, true )
     file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskills3 )
 
+    -- THIS HAS TO BE OPTIMIZED. in the future
 	net.Start( "savetable" )
 		net.WriteTable( playerstats )
 	net.SendToServer()
+    -------------------------------------------
 	LocalPlayer():SetNWInt( "playerdef", playerstats[ "DEF" ] )
 	LocalPlayer():SetNWInt( "playerdfx", playerstats[ "DFX" ] )
 	LocalPlayer():SetNWFloat( "playerdef2", playerstats[ "DEF" ] )
