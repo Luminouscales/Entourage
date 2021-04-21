@@ -35,12 +35,11 @@ function Fists()
 end
 
 function OldCrowbar()
-	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * acc_modifier then 
-		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW" ) * 0.25 + player:GetNWInt( "agiNW" ) * 0.25 + player:GetNWInt( "dfeNW" ) * 0.25 ) * dmg_modifier 
+	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * ( acc_modifier + slash_acc ) then 
+		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW" ) * 0.25 + player:GetNWInt( "agiNW" ) * 0.25 + player:GetNWInt( "dfeNW" ) * 0.25 ) * dmg_modifier + slash_dmg
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
 		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
-		advance1()
 	else
 		PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 	end
@@ -61,7 +60,6 @@ function RustyKnife()
 		turntarget:TakeDamage( wpndmg3, player )
 		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Pierce damage to ".. turntargetsave .."!" )
 		critmp = 1
-		advance1()
 	else
 		PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 	end
@@ -90,12 +88,12 @@ end
 
 function RopeSpear() -- use pltype2 to derive proper attack from damage type
 	if pltype2 == "Slash" then
-		if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * acc_modifier then 
-			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt("mgtNW") * 0.20 ) * dmg_modifier
+		if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * ( acc_modifier + slash_acc ) then 
+			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt("mgtNW") * 0.20 ) * dmg_modifier + slash_dmg
 			RunString( enemies_table[ turntargetsave ].AI2 )
 			turntarget:TakeDamage( wpndmg3, player )
 			PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
-			advance1()
+
 		else
 			PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 		end
@@ -113,7 +111,7 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 			turntarget:TakeDamage( wpndmg3, player )
 			PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Pierce damage to ".. turntargetsave .."!" )
 			critmp = 1
-			advance1()
+
 		else
 			PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 		end
@@ -140,12 +138,11 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 end
 
 function KillerSword()
-	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * acc_modifier then 
-		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW") * 0.25 + player:GetNWInt( "agiNW") * 0.25 + player:GetNWInt( "dfeNW") * 0.25 ) * dmg_modifier
+	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * ( acc_modifier + slash_acc ) then 
+		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW") * 0.25 + player:GetNWInt( "agiNW") * 0.25 + player:GetNWInt( "dfeNW") * 0.25 ) * dmg_modifier + slash_dmg
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
 		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
-		advance1()
 	else
 		PrintMessage( HUD_PRINTTALK, "I never miss... I DON'T MISS! GET BACK HERE." )
 	end
