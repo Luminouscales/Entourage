@@ -7,6 +7,8 @@ include( "ss/enemyai.lua" )
 include( "ss/battlesystem.lua" )
 include( "ss/encountertypes.lua" )
 include( "ss/skillfunctions.lua" )
+include( "ss/tablicas.lua" )
+include( "ss/ai/guardian.lua")
 
 AddCSLuaFile( "cl/datacontrol_cl.lua" )
 
@@ -33,13 +35,8 @@ util.AddNetworkString( "playersave" )
 
 RunConsoleCommand( "ai_ignoreplayers", "1" )
 RunConsoleCommand( "ai_serverragdolls", "1" )
-RunConsoleCommand( "ai_disabled", "0" )
+RunConsoleCommand( "ai_disabled", "1" ) -- needs to be true to run animations properly. otherwise shit fucks up like it tends to
 
-enemies_table1 = file.Read( "entourage/main/enemies.txt", "DATA" )
-enemies_table = util.JSONToTable( enemies_table1 )
-
-items_table1 = file.Read( "entourage/main/items.txt", "DATA" )
-items_table = util.JSONToTable( items_table1 )
 
 function PlaceholderFunctionSS()
 	print( "Debug serverside message. Report this to the developer." )
@@ -81,7 +78,7 @@ end)
 
 hook.Add( "PlayerInitialSpawn", "startvar", function() 
 
-	encounter_rate = math.random( 150, 150 )
+	encounter_rate = math.random( 250, 250 )
 	encounter_rate2 = 0
 
 	net.Start( "encounter_var" )
@@ -100,5 +97,24 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 
 	-- Manages player team's Utility Points. Convenience.
 	Levitus:SetNWInt( "team_UP", 0 )
-	
+
+	timer.Simple( 10, function()
+		cam_override = ents.Create( "info_target" )
+		cam_override:SetPos( Vector( -333, 84.5, -815 ) )
+		cam_override:SetAngles( Angle( 30, -36, 0 ) )
+		cam_override:Spawn()
+	end)
+
+	battle_enemies = {}
+
+end)
+
+hook.Add( "InitPostEntity", "sex", function()
+	timer.Simple( 2, function()
+	-- cum
+	-- cam_override = ents.Create( "info_target" )
+	-- 	cam_override:SetPos( Vector( -333, 84.5, -815 ) )
+	-- 	cam_override:SetAngles( Angle( 30, -36, 0 ) )
+	-- cam_override:Spawn()
+	end)
 end)

@@ -59,6 +59,8 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 		if dmg:GetAttacker():IsPlayer() and target:IsPlayer() == false and target:IsNPC() then
 			entourage_AddUP( dmg:GetDamage() / target:GetMaxHealth() * 30, 25 )
 			if dmg:GetDamage() >= target:Health() and target:Health() > 0 then
+				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
+				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				print( deaths )
@@ -75,57 +77,81 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 end)
 --------------------------------------------------------------------------------------
 
-function EncounterReset2() -- Setup for detection system. This is where the battle system starts.
+-- This function is used in EVERY battle encounter and so shares functions.
+-- However, every function must specify beforeclaw what colours to use. (this is the "doom" variable)
+function EncounterInit()
+
+	-- Start-up variables
+	encounter_rate2 = 0 
+	lives = 0
+	deaths = 0
+	turn = 1
+	ss_inbattle = true
+	-------------------
+
+	-- Manage player visuals
+	Entity(1):AddFlags( 128 )
+	Entity(1):SetVelocity( Entity(1):GetVelocity()*-1 )
+	Entity(1):ScreenFade( 16, Color( doom.r, doom.g, doom.b, 100), 0.05, 0.05 )
+
+	-- fade in
+	timer.Simple( 1, function()
+		Entity(1):ScreenFade( 2, doom, 1.5, 0.6 )
+	end)
+	-- fade out
+	timer.Simple( 3, function()
+		Entity(1):ScreenFade( 1, doom, 1.5, 0.6 )
+		Entity(1):SetPos( Vector( -80, 116, -982 ) )
+		Entity(1):SetEyeAngles( Angle( 0, -90, 0 ))
+		
+		-- change viewpoint
+		cam_override = ents.Create( "info_target" )
+		cam_override:SetPos( Vector( -333, 84.5, -815 ) )
+		cam_override:SetAngles( Angle( 30, -36, 0 ) )
+		Entity(1):SetViewEntity( cam_override )
+
+		PrintMessage( HUD_PRINTTALK, "_____________________" )
+		PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
+	end)
+
+	net.Start( "encounter_intro" ) -- Send the go-ahead to the clients
+		net.WriteInt( stakes, 32 ) -- 1 for generic 2 for boss
+	net.Broadcast()
+
+	hook.Remove( "Tick", "encounter_hook" )
+
+	hook.Add( "OnNPCKilled", "enemy_senddata", function( npc )
+		local timer_delay = 0 -- change if necessary
+		timer.Simple( timer_delay, function() -- im pretty sure this is necessary to prevent shit from fucking up
+			net.Start( "net_enemy_senddata" )
+				net.WriteInt( enemies_table[ npc:GetName() ].LVL, 32 )
+				net.WriteInt( enemies_table[ npc:GetName() ].EXP, 32 )
+			net.Broadcast()
+		end)
+	end)
+end
+-------------------------------------------------------------------------------------------------------------------------------
+
+-- Reset encounter
+function EncounterReset2()
 	hook.Add( "Tick", "encounter_hook", function()
 		if tostring( Entity(1):GetVelocity() ) > tostring( Vector(0, 0, 0) ) then
 			encounter_rate2 = encounter_rate2 + 1
 		end
 	
 		if encounter_rate2 >= encounter_rate then -- ENCOUNTER!
-			-- reset
-			encounter_rate2 = 0 
-			lives = 0
-			deaths = 0
-			turn = 1
-			ss_inbattle = true
+			doom = color_white
+			stakes = 1
+			-- this is where everything ubiquitous happens
+			EncounterInit()
 			-----------------------
-			Entity(1):AddFlags( 128 )
-			Entity(1):SetVelocity( Entity(1):GetVelocity()*-1 )
-			Entity(1):ScreenFade( 16, Color(255, 255, 255, 100), 0.05, 0.05 )
-			timer.Simple( 1, function()
-				Entity(1):ScreenFade( 2, color_white, 1.5, 0.6 )
-			end)
 	
 			timer.Simple( 3, function()
 				EncounterAntlion()  
-	
-				Entity(1):ScreenFade( 1, color_white, 1.5, 0.6 )
-	
 				cam_override = ents.Create( "info_target" )
 					cam_override:SetPos( Vector( -333, 84.5, -815 ) )
 					cam_override:SetAngles( Angle( 30, -36, 0 ) )
-				Entity(1):SetViewEntity( cam_override )
-				
-				Entity(1):SetPos( Vector( -80, 116, -982 ) )
-				Entity(1):SetEyeAngles( Angle( 0, -90, 0 ))
-
-				PrintMessage( HUD_PRINTTALK, "_____________________" )
-				PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
-			end)
-
-			net.Start( "encounter_intro" ) -- Send the go-ahead to the clients
-			net.Broadcast()
-
-			hook.Remove( "Tick", "encounter_hook" )
-
-			hook.Add( "OnNPCKilled", "enemy_senddata", function( npc )
-				timer_delay = 0 -- change if necessary
-				timer.Simple( timer_delay, function() -- im pretty sure this is necessary to prevent shit from fucking up
-					net.Start( "net_enemy_senddata" )
-						net.WriteInt( enemies_table[ npc:GetName() ].LVL, 32 )
-						net.WriteInt( enemies_table[ npc:GetName() ].EXP, 32 )
-					net.Broadcast()
-				end)
+				--Entity(1):SetViewEntity( cam_override )
 			end)
 		end
 	end)
@@ -142,20 +168,6 @@ net.Receive( "getmycordsyoufuckingcunt", function( len, ply ) -- reset cords set
 	ply:SetNWAngle( "anglenw", angleNW)
 	ply:SetHealth( hpNW )
 end)
-
-
-
-
-net.Receive( "getmycordsyoufuckingcunt", function( len, ply ) -- get reset cords
-	posNW = net.ReadVector()
-	angleNW = net.ReadAngle()
-	hpNW = net.ReadDouble()
-	ply:SetNWVector( "vectornw", posNW )
-	ply:SetNWAngle( "anglenw", angleNW)
-	ply:SetHealth( hpNW ) -- also sets health because convenient?
-end)
-
--- 
 
 net.Receive( "player_makeattack", function( len, ply ) -- player input
 	turntargets = net.ReadTable()
@@ -192,7 +204,7 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 	end)
 	
 	timer.Simple( 2, function() 
-		enemy_makeattack()
+		EnemyAttack()
 		dmg_modifier = 1
 	end)
 end)
@@ -211,10 +223,100 @@ net.Receive( "player_brace", function( len, ply )
 		end
 	end)
 	timer.Simple( 2, function() 
-		enemy_makeattack()
+		EnemyAttack()
 	end)
 	PrintMessage( HUD_PRINTTALK, player:GetName() .." are bracing themselves for the attack..." )
 end)
+
+function EnemyAttack()
+	if table.IsEmpty( battle_enemies ) then
+		PrintMessage( HUD_PRINTTALK, "_____________________" )
+		PrintMessage( HUD_PRINTTALK, "Battle over." )
+		Entity(1):RemoveFlags( 128 )
+		timer.Simple(2, function()
+			for k, v in ipairs( ents.GetAll() ) do -- clean ragdolls
+				if v:IsRagdoll() then
+					v:Remove()
+				end
+			end
+			net.Start( "encounter_outro" ) -- goodbye!
+			net.Broadcast()
+			Entity(1):SetViewEntity( Entity(1) )
+			Entity(1):ScreenFade( 2, color_white, 1.5, 0.6 )
+			lives = 0
+			deaths = 0
+			ss_inbattle = false
+			EncounterReset()
+			EncounterReset2() -- reset encounter mechanic
+
+			timer.Simple(2, function() -- put people back in their places
+				for i, v in ipairs( allplayers ) do
+					v:ScreenFade( 1, color_white, 1.5, 0.6 )
+					v:SetPos( v:GetNWVector( "vectornw" ) )
+					v:SetAngles( v:GetNWAngle( "anglenw" ) )
+				end
+			end)
+		end)
+	elseif actions > 0 and next( battle_enemies, previous_enemya ) == nil then
+		current_enemy = battle_enemies[1]
+		previous_enemy = current_enemy
+		previous_enemya = 1
+		EnemyAttack1()
+	elseif actions > 0 then 
+		current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
+		previous_enemy = current_enemy
+		previous_enemya = previous_enemya + 1
+		EnemyAttack1()
+	else
+		print("1")
+		playerturn()
+	end
+end
+
+function EnemyAttack1()
+	actions = actions - 1
+	if IsValid(current_enemy) and current_enemy:Health() > 0 then -- if alive
+		if current_enemy:GetNWInt( "stunturns" ) == 0 then -- if not stunned
+			fighter = current_enemy
+			if isstring( enemies_table[current_enemy:GetName()].override ) then -- if enemy has an unusual function (for example, bosses)
+				RunString( enemies_table[current_enemy:GetName()].override )
+				-- Afterwards leave it to the function above.
+			else
+				RunString( enemies_table[ current_enemy:GetName() ].AI )
+				current_enemy:UseNoBehavior()
+				current_enemy:ResetSequenceInfo()	
+				current_enemy:SetNPCState( NPC_STATE_SCRIPT )
+				current_enemy:ResetSequence( "ragdoll" ) -- Reset the animation
+				current_enemy:ResetSequence( current_enemy:GetNWString( "animstart" ) )
+				if isstring( enemies_table[current_enemy:GetName()].sound_att ) then
+					current_enemy:EmitSound( enemies_table[current_enemy:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
+				end
+				timer.Simple( current_enemy:GetNWFloat( "animend" ), function()
+					-- Set custom end anim if applicable
+					if isstring( current_enemy:GetNWString( "animend_a" ) )  then
+						current_enemy:ResetSequenceInfo()
+						current_enemy:ResetSequence( "ragdoll" )
+						current_enemy:ResetSequence( current_enemy:GetNWString( "animend_a" ) )
+						timer.Simple( current_enemy:GetNWFloat( "animend_b" ), function()
+							current_enemy:ResetSequence( table.Random( enemies_table[ current_enemy:GetName() ].idletbl ) )
+						end)
+					else
+						current_enemy:ResetSequence( table.Random( enemies_table[ current_enemy:GetName() ].idletbl ) )
+					end
+				end)
+				timer.Simple(2, function()
+					EnemyAttack()
+				end)
+			end
+		else -- stunned lol
+			PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." was stunned and could not attack!" )
+			current_enemy:SetNWInt( "stunturns", current_enemy:GetNWInt( "stunturns" ) - 1 )
+			EnemyAttack()
+		end
+	else
+		EnemyAttack()
+	end
+end
 
 function enemy_makeattack() -- First enemy attack turn
 	if IsValid(enemy1) and enemy1:Health() > 0 then -- if alive
@@ -226,6 +328,9 @@ function enemy_makeattack() -- First enemy attack turn
 			enemy1:SetNPCState( NPC_STATE_SCRIPT )
 			enemy1:ResetSequence( "ragdoll" ) -- Reset the animation
 			enemy1:ResetSequence( enemy1:GetNWString( "animstart" ) )
+			if isstring( enemies_table[enemy1:GetName()].sound_att ) then
+				enemy1:EmitSound( enemies_table[enemy1:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
+			end
 			timer.Simple( enemy1:GetNWFloat( "animend" ), function()
 				-- Set custom end anim if applicable
 				if isstring( enemy1:GetNWString( "animend_a" ) )  then
@@ -233,10 +338,10 @@ function enemy_makeattack() -- First enemy attack turn
 					enemy1:ResetSequence( "ragdoll" )
 					enemy1:ResetSequence( enemy1:GetNWString( "animend_a" ) )
 					timer.Simple( enemy1:GetNWFloat( "animend_b" ), function()
-						enemy1:SetNPCState( NPC_STATE_IDLE )
+						enemy1:ResetSequence( table.Random( enemies_table[ enemy1:GetName() ].idletbl ) )
 					end)
 				else
-					enemy1:SetNPCState( NPC_STATE_IDLE )
+					enemy1:ResetSequence( table.Random( enemies_table[ enemy1:GetName() ].idletbl ) )
 				end
 			end)
 			timer.Simple(2, function()
@@ -262,16 +367,19 @@ function EnemyMakeAttack2() -- Second enemy attack turn
 			enemy2:SetNPCState( NPC_STATE_SCRIPT )
 			enemy2:ResetSequence( "ragdoll" ) -- Reset the animation
 			enemy2:ResetSequence( enemy2:GetNWString( "animstart" ) )
+			if isstring( enemies_table[enemy2:GetName()].sound_att ) then
+				enemy2:EmitSound( enemies_table[enemy2:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
+			end
 			timer.Simple( enemy2:GetNWFloat( "animend" ), function()
 				if isstring( enemy2:GetNWString( "animend_a" ) )  then
 					enemy2:ResetSequenceInfo()
 					enemy2:ResetSequence( "ragdoll" )
 					enemy2:ResetSequence( enemy2:GetNWString( "animend_a" ) )
 					timer.Simple( enemy2:GetNWFloat( "animend_b" ), function()
-						enemy2:SetNPCState( NPC_STATE_IDLE )
+						enemy2:ResetSequence( table.Random( enemies_table[ enemy2:GetName() ].idletbl ) )
 					end)
 				else
-					enemy2:SetNPCState( NPC_STATE_IDLE )
+					enemy2:ResetSequence( table.Random( enemies_table[ enemy2:GetName() ].idletbl ) )
 				end
 			end)
 			timer.Simple(2, function()
@@ -294,6 +402,12 @@ function playerturn() -- let the player attack
 	PrintMessage( HUD_PRINTTALK, "_____________________" )
 	PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
 	Levitus:TakeDamage( 1 ) -- turnholder. I shall present what I am capable of. The chains are great, but my fortitude is beyond anything. Now suffer!
+	actions = #battle_enemies
+	previous_enemya = 0
+
+	for k, v in ipairs( battle_enemies ) do
+		v:SetNWInt( "tbl_deaths", k )
+	end
 end
 
 function EnemyMakeAttack3() -- Third enemy attack turn, also activates player turns
@@ -336,16 +450,19 @@ function EnemyMakeAttack3() -- Third enemy attack turn, also activates player tu
 			enemy3:SetNPCState( NPC_STATE_SCRIPT )
 			enemy3:ResetSequence( "ragdoll" ) -- Reset the animation
 			enemy3:ResetSequence( enemy3:GetNWString( "animstart" ) )
+			if isstring( enemies_table[enemy3:GetName()].sound_att ) then
+				enemy3:EmitSound( enemies_table[enemy3:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
+			end
 			timer.Simple( enemy3:GetNWString( "animend" ), function()
 				if isstring( enemy3:GetNWString( "animend_a" ) )  then
 					enemy3:ResetSequenceInfo()
 					enemy3:ResetSequence( "ragdoll" )
 					enemy3:ResetSequence( enemy3:GetNWString( "animend_a" ) )
 					timer.Simple( enemy3:GetNWFloat( "animend_b" ), function()
-						enemy3:SetNPCState( NPC_STATE_IDLE )
+						enemy3:ResetSequence( table.Random( enemies_table[ enemy3:GetName() ].idletbl ) )
 					end)
 				else
-					enemy3:SetNPCState( NPC_STATE_IDLE )
+					enemy3:ResetSequence( table.Random( enemies_table[ enemy3:GetName() ].idletbl ) )
 				end
 			end)
 			timer.Simple(1, function() -- let the player attack
