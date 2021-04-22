@@ -1,56 +1,56 @@
-{
-	"1": {
+[
+	{
 		"Item": "ClothArmour"
 	},
-	"2": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"3": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"4": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"5": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"6": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"7": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"8": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"9": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"10": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"11": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"12": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"13": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"14": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"15": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"16": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"17": {
+	{
 		"Item": "EmptySlot2"
 	},
-	"18": {
+	{
 		"Item": "EmptySlot2"
 	}
-}
+]

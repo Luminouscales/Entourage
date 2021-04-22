@@ -1,7 +1,7 @@
 {
 	"s_precstrike": {
-		"Level": 0.0,
-		"equipped": 0.0
+		"Level": 2.0,
+		"equipped": 1.0
 	},
 	"s_firstaid": {
 		"Level": 0.0,
@@ -32,7 +32,7 @@
 		"equipped": 0.0
 	},
 	"s_medicsupplies": {
-		"Level": 10.0,
-		"equipped": 1.0
+		"Level": 0.0,
+		"equipped": 0.0
 	}
 }
