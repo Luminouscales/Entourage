@@ -48,19 +48,29 @@ function entourage_FadeOut( chan )
 end
 
 net.Receive( "enemysend", function()
+    print( "1" )
 	enemy1 = net.ReadEntity()
+    print( enemy1 )
 	enemy2 = net.ReadEntity()
+    print( enemy2 )
 	enemy3 = net.ReadEntity()
+    print( enemy3 )
 end)
 
 net.Receive( "encounter_intro", function()
 
+    local difficulty = net.ReadInt( 32 )
+
 	surface.PlaySound( "shink.wav" )
 	surface.PlaySound( "shink.wav" )
-	-- surface.PlaySound( "shink.wav" )
-	-- surface.PlaySound( "shink.wav" )
 
 	timer.Simple( 1, function() -- visual
+        if difficulty == 1 then
+            difficulty_text = "Encounter!"
+        else 
+            difficulty_text = "Boss Encounter!"
+        end
+
 		EncounterNormalText1()
         -- This has to be fixed once I add weapons with only 2 damage types.
         if weaponlist[ playerstats_a["currentweapon"] ].dmgtype == "Multiple" then
@@ -184,7 +194,7 @@ function BattleHud()
                 ---------------------------------
 
                 -- UP Circle, base
-                surface.SetDrawColor( 70, 160, 80, 200)
+                surface.SetDrawColor( 70, 160, 80, 200 )
                 draw.NoTexture()
                 draw.Circle( 150, ScrH() - 150, 100, 200, -360 )
 
