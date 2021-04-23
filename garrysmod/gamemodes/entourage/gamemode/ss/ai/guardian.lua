@@ -1,6 +1,6 @@
 -- This is the script for Frostlion Guardian's battle.
 
-function guardianTest()
+function GuardianAI()
     enemy1:UseNoBehavior()
     enemy1:SetNPCState( NPC_STATE_SCRIPT )
     enemy1:ResetSequenceInfo()
