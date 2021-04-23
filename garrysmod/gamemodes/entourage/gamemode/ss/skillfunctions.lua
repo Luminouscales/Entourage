@@ -74,9 +74,11 @@ function s_precstrike()
     -- Cooldown
     player:SetNWBool( "s_precstrike_oncd", true )
 
+    -- pl_stats_tbl[ player:UserID() ].DEF =  pl_stats_tbl[ player:UserID() ].DEF + pl_stats_tbl[ player:UserID() ].VIT + pl_stats_tbl[ player:UserID() ].SDL
+
     -- Other effects.
     -- Add Focus for 3 turns.
-    player:SetNWInt( "fcsNW", player:GetNWInt( "fcsNW" ) + 1 + lvl)
+    pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS + 1 + lvl
     -- Remove focus after 3 turns.
     local pl_id = player:AccountID()
     local cd = 0
@@ -86,7 +88,7 @@ function s_precstrike()
         if target == Levitus then
             cd = cd + 1
             if cd >= 3 then
-                hookv1:SetNWInt( "fcsNW", hookv1:GetNWInt( "fcsNW" ) - 1 - hookv2 )
+                pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS - 1 - hookv2
                 hookv1:SetNWBool( "s_precstrike_oncd", false )
                 hook.Remove( "EntityTakeDamage", pl_id .."precstrikehook" )
             end
@@ -116,10 +118,10 @@ function s_defmano()
 
     -- Other effects.
 
-    local calc1 = 2 + player:GetNWInt( "defNW" ) / 10 + 3 * lvl
-    local calc2 = 5 + player:GetNWInt( "dfxNW" ) / 10 + 2 * lvl
-    player:SetNWInt( "defNW", player:GetNWInt( "defNW" ) + calc1 )
-    player:SetNWInt( "dfxNW", player:GetNWInt( "dfxNW" ) + calc2 )
+    local calc1 = 2 + pl_stats_tbl[ player:UserID() ].DEF / 10 + 3 * lvl
+    local calc2 = 5 + pl_stats_tbl[ player:UserID() ].DFX / 10 + 2 * lvl
+    pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF + calc1
+    pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX + calc2
 
     local pl_id = player:AccountID()
     local cd = 0
@@ -129,8 +131,8 @@ function s_defmano()
         if target == Levitus then
             cd = cd + 1
             if cd >= 3 then
-                player:SetNWInt( "defNW", player:GetNWInt( "defNW" ) - calc1 )
-                player:SetNWInt( "dfxNW", player:GetNWInt( "dfxNW" ) - calc2 )
+                pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - calc1
+                pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - calc2
                 hookv1:SetNWBool( "s_defmano_oncd", false )
                 hook.Remove( "EntityTakeDamage", pl_id .."defmanohook" )
             end
@@ -159,7 +161,7 @@ function s_firstaid()
 
     -- Other effects.
 
-    target:SetNWInt( "mgtNW", target:GetNWInt( "mgtNW" ) + lvl )
+    pl_stats_tbl[ player:UserID() ].MGT = pl_stats_tbl[ player:UserID() ].MGT + lvl
 
     local pl_id = player:AccountID()
     local cd = 0
@@ -169,7 +171,7 @@ function s_firstaid()
         if target == Levitus then
             cd = cd + 1
             if cd >= 3 then
-                target:SetNWInt( "mgtNW", target:GetNWInt( "mgtNW" ) - lvl )
+                pl_stats_tbl[ player:UserID() ].MGT = pl_stats_tbl[ player:UserID() ].MGT - lvl
                 hookv1:SetNWBool( "s_firstaid_oncd", false )
                 hook.Remove( "EntityTakeDamage", pl_id .."firstaidhook" )
             end
@@ -275,4 +277,59 @@ function s_medicsupplies()
             end
         end
     end)
+end
+
+
+-- Enemy-only functions
+
+function SlashAttack()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.random( 0.9, 1.1 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.005 )
+    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
+
+    c_miss = 0
+    c_type = DMG_SLASH
+    c_type2 = "Slash"
+
+    CalcAttack()
+end
+
+function BluntAttack()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.random( 0.75, 1.25 )
+    attackdmg = ( math.random( enemies_table[ current_enemy:GetName() ].DMG1, enemies_table[ current_enemy:GetName() ].DMG2 ) - attacktarget:GetNWInt( "defNW" ) * 0.9 ) * ( 1 - attacktarget:GetNWInt( "dfxNW" ) * 0.015 )
+    --attackdmg = math.Round( math.Clamp( , 0, 9999 ), 0 )
+end
+
+-- Frostlion Guardian skill
+function WideStagger()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.random( 0.8, 1.2 )
+    attackdmg = ( attackdmg - attacktarget:GetNWInt( "defNW" ) * 0.9 ) * ( 1 - attacktarget:GetNWInt( "dfxNW" ) * 0.015 )
+    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
+
+    c_type = "Blunt"
+    c_miss = 20
+    CalcAttack()
+end
+
+function CalcAttack()
+    if math.random( 1, 100 ) > pl_stats_tbl[ attacktarget_id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS + c_miss then
+        calc_info = DamageInfo()
+        calc_info:SetAttacker( current_enemy )
+        calc_info:SetDamageType( c_type )
+        calc_info:SetDamage( attackdmg )
+
+        if c_type2 == "Pierce" then
+            DoCrit2a()
+        end
+
+        attacktarget:TakeDamageInfo( calc_info )
+        PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. attackdmg .." ".. c_type2 .." damage to ".. attacktarget:GetName() )
+
+        if c_type2 == "Blunt" then
+            DoStun()
+        end
+
+    else
+        PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. current_enemy:GetName() .."'s attack!" )
+    end
 end

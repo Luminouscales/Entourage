@@ -213,12 +213,12 @@ net.Receive( "player_brace", function( len, ply )
 	allplayers = net.ReadTable()
 	player = ply
 	local braceidentifier = "bracerhook_".. ply:AccountID()
-	ply:SetNWInt( "defNW", ply:GetNWInt( "defNW" ) + 3 + ply:GetNWInt( "lvlNW" ) )
-	ply:SetNWInt( "dfxNW", ply:GetNWInt( "dfxNW" ) + 20 )
+	pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF + 3 + pl_stats_tbl[ player:UserID() ].LVL3
+	pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX + 20
 	hook.Add( "EntityTakeDamage", braceidentifier, function( target, dmginfo )
 		if target == Levitus then
-			ply:SetNWInt( "defNW", ply:GetNWInt( "defNW" ) - 3 - ply:GetNWInt( "lvlNW" ) )
-			ply:SetNWInt( "dfxNW", ply:GetNWInt( "dfxNW" ) - 20  )
+			pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - 3 - pl_stats_tbl[ player:UserID() ].LVL3
+			pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - 20
 			hook.Remove( "EntityTakeDamage", braceidentifier )
 		end
 	end)
@@ -268,7 +268,6 @@ function EnemyAttack()
 		previous_enemya = previous_enemya + 1
 		EnemyAttack1()
 	else
-		print("1")
 		playerturn()
 	end
 end
@@ -277,121 +276,15 @@ function EnemyAttack1()
 	actions = actions - 1
 	if IsValid(current_enemy) and current_enemy:Health() > 0 then -- if alive
 		if current_enemy:GetNWInt( "stunturns" ) == 0 then -- if not stunned
-			fighter = current_enemy
-			if isstring( enemies_table[current_enemy:GetName()].override ) then -- if enemy has an unusual function (for example, bosses)
-				RunString( enemies_table[current_enemy:GetName()].override )
-				-- Afterwards leave it to the function above.
-			else
-				RunString( enemies_table[ current_enemy:GetName() ].AI )
-				current_enemy:UseNoBehavior()
-				current_enemy:ResetSequenceInfo()	
-				current_enemy:SetNPCState( NPC_STATE_SCRIPT )
-				current_enemy:ResetSequence( "ragdoll" ) -- Reset the animation
-				current_enemy:ResetSequence( current_enemy:GetNWString( "animstart" ) )
-				if isstring( enemies_table[current_enemy:GetName()].sound_att ) then
-					current_enemy:EmitSound( enemies_table[current_enemy:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
-				end
-				timer.Simple( current_enemy:GetNWFloat( "animend" ), function()
-					-- Set custom end anim if applicable
-					if isstring( current_enemy:GetNWString( "animend_a" ) )  then
-						current_enemy:ResetSequenceInfo()
-						current_enemy:ResetSequence( "ragdoll" )
-						current_enemy:ResetSequence( current_enemy:GetNWString( "animend_a" ) )
-						timer.Simple( current_enemy:GetNWFloat( "animend_b" ), function()
-							current_enemy:ResetSequence( table.Random( enemies_table[ current_enemy:GetName() ].idletbl ) )
-						end)
-					else
-						current_enemy:ResetSequence( table.Random( enemies_table[ current_enemy:GetName() ].idletbl ) )
-					end
-				end)
-				timer.Simple(2, function()
-					EnemyAttack()
-				end)
-			end
+			RunString( enemies_table[ current_enemy:GetName() ].AI )
 		else -- stunned lol
 			PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." was stunned and could not attack!" )
 			current_enemy:SetNWInt( "stunturns", current_enemy:GetNWInt( "stunturns" ) - 1 )
+			current_enemy:SetNWInt( "stunturns_a", current_enemy:GetNWInt( "stunturns_a" ) - 1 )
 			EnemyAttack()
 		end
-	else
+	else -- peter was here
 		EnemyAttack()
-	end
-end
-
-function enemy_makeattack() -- First enemy attack turn
-	if IsValid(enemy1) and enemy1:Health() > 0 then -- if alive
-		if enemy1:GetNWInt( "stunturns" ) == 0 then -- if not stunned
-			fighter = enemy1
-			RunString( enemies_table[ enemy1:GetName() ].AI )
-			enemy1:UseNoBehavior()
-			enemy1:ResetSequenceInfo()	
-			enemy1:SetNPCState( NPC_STATE_SCRIPT )
-			enemy1:ResetSequence( "ragdoll" ) -- Reset the animation
-			enemy1:ResetSequence( enemy1:GetNWString( "animstart" ) )
-			if isstring( enemies_table[enemy1:GetName()].sound_att ) then
-				enemy1:EmitSound( enemies_table[enemy1:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
-			end
-			timer.Simple( enemy1:GetNWFloat( "animend" ), function()
-				-- Set custom end anim if applicable
-				if isstring( enemy1:GetNWString( "animend_a" ) )  then
-					enemy1:ResetSequenceInfo()
-					enemy1:ResetSequence( "ragdoll" )
-					enemy1:ResetSequence( enemy1:GetNWString( "animend_a" ) )
-					timer.Simple( enemy1:GetNWFloat( "animend_b" ), function()
-						enemy1:ResetSequence( table.Random( enemies_table[ enemy1:GetName() ].idletbl ) )
-					end)
-				else
-					enemy1:ResetSequence( table.Random( enemies_table[ enemy1:GetName() ].idletbl ) )
-				end
-			end)
-			timer.Simple(2, function()
-				EnemyMakeAttack2()
-			end)
-		else -- stunned lol
-			PrintMessage( HUD_PRINTTALK, enemy1:GetName() .." was stunned and could not attack!" )
-			enemy1:SetNWInt( "stunturns", enemy1:GetNWInt( "stunturns" ) - 1 )
-			EnemyMakeAttack2()
-		end
-	else
-		EnemyMakeAttack2()
-	end
-end
-
-function EnemyMakeAttack2() -- Second enemy attack turn
-	if IsValid( enemy2 ) and enemy2:Health() > 0 then
-		if enemy2:GetNWInt( "stunturns" ) == 0 then
-			fighter = enemy2
-			RunString( enemies_table[ enemy2:GetName() ].AI )
-			enemy2:UseNoBehavior()
-			enemy2:ResetSequenceInfo()	
-			enemy2:SetNPCState( NPC_STATE_SCRIPT )
-			enemy2:ResetSequence( "ragdoll" ) -- Reset the animation
-			enemy2:ResetSequence( enemy2:GetNWString( "animstart" ) )
-			if isstring( enemies_table[enemy2:GetName()].sound_att ) then
-				enemy2:EmitSound( enemies_table[enemy2:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
-			end
-			timer.Simple( enemy2:GetNWFloat( "animend" ), function()
-				if isstring( enemy2:GetNWString( "animend_a" ) )  then
-					enemy2:ResetSequenceInfo()
-					enemy2:ResetSequence( "ragdoll" )
-					enemy2:ResetSequence( enemy2:GetNWString( "animend_a" ) )
-					timer.Simple( enemy2:GetNWFloat( "animend_b" ), function()
-						enemy2:ResetSequence( table.Random( enemies_table[ enemy2:GetName() ].idletbl ) )
-					end)
-				else
-					enemy2:ResetSequence( table.Random( enemies_table[ enemy2:GetName() ].idletbl ) )
-				end
-			end)
-			timer.Simple(2, function()
-				EnemyMakeAttack3()
-			end)
-		else
-			PrintMessage( HUD_PRINTTALK, enemy2 .." was stunned and could not attack!" )
-			enemy2:SetNWInt( "stunturns", enemy2:GetNWInt( "stunturns" ) - 1 )
-			EnemyMakeAttack3()
-		end
-	else
-		EnemyMakeAttack3()
 	end
 end
 
@@ -407,78 +300,6 @@ function playerturn() -- let the player attack
 
 	for k, v in ipairs( battle_enemies ) do
 		v:SetNWInt( "tbl_deaths", k )
-	end
-end
-
-function EnemyMakeAttack3() -- Third enemy attack turn, also activates player turns
-	if deaths == lives then -- end battle if all are dead
-		PrintMessage( HUD_PRINTTALK, "_____________________" )
-		PrintMessage( HUD_PRINTTALK, "Battle over." )
-		Entity(1):RemoveFlags( 128 )
-		timer.Simple(2, function()
-			for k, v in ipairs( ents.GetAll() ) do -- clean ragdolls
-				if v:IsRagdoll() then
-					v:Remove()
-				end
-			end
-			net.Start( "encounter_outro" ) -- goodbye!
-			net.Broadcast()
-			Entity(1):SetViewEntity( Entity(1) )
-			Entity(1):ScreenFade( 2, color_white, 1.5, 0.6 )
-			lives = 0
-			deaths = 0
-			ss_inbattle = false
-			EncounterReset()
-			EncounterReset2() -- reset encounter mechanic
-
-			timer.Simple(2, function() -- put people back in their places
-				for i, v in ipairs( allplayers ) do
-					v:ScreenFade( 1, color_white, 1.5, 0.6 )
-					v:SetPos( v:GetNWVector( "vectornw" ) )
-					v:SetAngles( v:GetNWAngle( "anglenw" ) )
-				end
-			end)
-		end)
-	
-	elseif IsValid(enemy3) and enemy3:Health() > 0 then -- it's alive!
-		if enemy3:GetNWInt( "stunturns" ) == 0 then
-			fighter = enemy3
-			aistring = enemies_table[ enemy3:GetName() ].AI
-			RunString( aistring )
-			enemy3:UseNoBehavior()
-			enemy3:ResetSequenceInfo()	
-			enemy3:SetNPCState( NPC_STATE_SCRIPT )
-			enemy3:ResetSequence( "ragdoll" ) -- Reset the animation
-			enemy3:ResetSequence( enemy3:GetNWString( "animstart" ) )
-			if isstring( enemies_table[enemy3:GetName()].sound_att ) then
-				enemy3:EmitSound( enemies_table[enemy3:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
-			end
-			timer.Simple( enemy3:GetNWString( "animend" ), function()
-				if isstring( enemy3:GetNWString( "animend_a" ) )  then
-					enemy3:ResetSequenceInfo()
-					enemy3:ResetSequence( "ragdoll" )
-					enemy3:ResetSequence( enemy3:GetNWString( "animend_a" ) )
-					timer.Simple( enemy3:GetNWFloat( "animend_b" ), function()
-						enemy3:ResetSequence( table.Random( enemies_table[ enemy3:GetName() ].idletbl ) )
-					end)
-				else
-					enemy3:ResetSequence( table.Random( enemies_table[ enemy3:GetName() ].idletbl ) )
-				end
-			end)
-			timer.Simple(1, function() -- let the player attack
-				playerturn()
-			end)
-		else
-			PrintMessage( HUD_PRINTTALK, enemy3 .." was stunned and could not attack!" )
-			enemy3:SetNWInt( "stunturns", enemy3:GetNWInt( "stunturns" ) - 1 )
-			timer.Simple(0.5, function()
-				playerturn()
-			end)
-		end	
-	else
-		timer.Simple(0.5, function()
-			playerturn()
-		end)
 	end
 end
 

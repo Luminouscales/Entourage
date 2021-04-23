@@ -35,8 +35,8 @@ function Fists()
 end
 
 function OldCrowbar()
-	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * ( acc_modifier + slash_acc ) then 
-		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW" ) * 0.25 + player:GetNWInt( "agiNW" ) * 0.25 + player:GetNWInt( "dfeNW" ) * 0.25 ) * dmg_modifier + slash_dmg
+	if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) then 
+		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) +  pl_stats_tbl[ player:UserID() ].MGT * 0.25 + pl_stats_tbl[ player:UserID() ].AGI * 0.25 + pl_stats_tbl[ player:UserID() ].VIT * 0.25 ) * dmg_modifier + slash_dmg
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
 		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
@@ -48,7 +48,7 @@ end
 function RustyKnife()
 	wp_pierce = 0.25 + player:GetNWInt( "fcsNW" ) * 0.02
 
-	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * acc_modifier then 
+	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * acc_modifier then
 		if math.random( 1, 100 ) <= 5 + player:GetNWInt( "fcsNW" ) * 3 then
 			critmp = 2.5
 			DoCrit()

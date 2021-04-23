@@ -7,19 +7,43 @@ function DoCrit2()
 		end
 	end)
 end
+
+function DoCrit2a()
+	if critbonus_a == nil then
+		critbonus_a = 0
+	end
+	if math.random( 1, 100 ) <= enemies_table[ current_enemy:GetName() ].DMGC + critbonus_a then
+		calc_info:SetDamage( calc_info:GetDamage() * 2.5 )
+	end
+end
+
+function DoStun()
+	if enemies_table[ current_enemy:GetName() ].DMGS ~= nil then
+		local stunbonus_a = enemies_table[ current_enemy:GetName() ].DMGS
+	else
+		stunbonus_a = 0
+	end
+	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus_a - pl_stats_tbl[ attacktarget_id ].DFE * 2 - pl_stats_tbl[ attacktarget_id ].DFX * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 40 then 
+		attacktarget:SetNWInt( "stunturns", attacktarget:GetNWInt( "stunturns" ) + 1 )
+		attacktarget:SetNWInt( "stunturns_a", attacktarget:GetNWInt( "stunturns" ) + 1 )
+		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." is stunned for ".. attacktarget:GetNWInt( "stunturns" ) .." turn(s)..." )
+		DoCrit2()
+	end
+end
 ---------------------------------------------------------------
 
 function FighterAI()  
 	-- The most basic AI. Simply rolls a random player, then attacks them. Uses slash.
 	-- No skills, no blocking, just attacking.
 	attacktarget = table.Random( allplayers )
-	attackdmg = math.Round( math.Clamp( ( math.random( enemies_table[ fighter:GetName() ].DMG1, enemies_table[ fighter:GetName() ].DMG2 ) - attacktarget:GetNWInt( "defNW" ) ) * ( 1 - attacktarget:GetNWInt( "dfxNW" ) * 0.005 ), 0, 9999 ), 0 )
+	attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG - pl_stats_tbl[ attacktarget:UserID() ].DEF ) * ( 1 - pl_stats_tbl[ attacktarget:UserID() ].DFX * 0.005 )
+	attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 	
-	if math.random( 1, 100 ) >= attacktarget:GetNWInt( "trueddgNW" ) + enemies_table[ fighter:GetName() ].MISS then
-		attacktarget:TakeDamage( attackdmg, fighter )
-		PrintMessage( HUD_PRINTTALK, fighter:GetName() .." dealt ".. attackdmg .." ".. enemies_table[ fighter:GetName() ].DMGT .." damage to ".. attacktarget:GetName() )
+	if math.random( 1, 100 ) > pl_stats_tbl[ id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS then
+		attacktarget:TakeDamage( attackdmg, current_enemy )
+		PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. attackdmg .." ".. enemies_table[ current_enemy:GetName() ].DMGT .." damage to ".. attacktarget:GetName() )
 	else
-		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. fighter:GetName() .."'s attack!" )
+		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. current_enemy:GetName() .."'s attack!" )
 	end
 end
 
@@ -29,20 +53,21 @@ function SniperAI()
 
 	attacktarget = table.Random( allplayers ) -- This will have to be ported to multiplayer. Someday.
 	
-	if math.random( 1, 100 ) >= attacktarget:GetNWInt( "trueddgNW" ) + enemies_table[ fighter:GetName() ].MISS then
+	if math.random( 1, 100 ) > pl_stats_tbl[ id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS then
 
-		if math.random( 1, 100 ) <= enemies_table[ fighter:GetName() ].DMGC then
+		if math.random( 1, 100 ) <= enemies_table[ current_enemy:GetName() ].DMGC then
 			critmp = 2.5
-			PrintMessage( HUD_PRINTTALK, fighter:GetName() .." dealt critical damage!" )
+			PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt critical damage!" )
 			DoCrit2()
 		end
 
-		attackdmg = math.Round( math.Clamp( ( ( math.random( enemies_table[ fighter:GetName() ].DMG1, enemies_table[ fighter:GetName() ].DMG2 ) - ( attacktarget:GetNWInt( "defNW" ) * 0.25 ) ) * critmp ), 0, 9999 ), 0 )
-			attacktarget:TakeDamage( attackdmg, fighter )
-		PrintMessage( HUD_PRINTTALK, fighter:GetName() .." dealt ".. attackdmg .." ".. enemies_table[ fighter:GetName() ].DMGT .." damage to ".. attacktarget:GetName() )
+		attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG ) - ( pl_stats_tbl[ id ].DEF * enemies_table[ current_enemy:GetName() ].DMGP ) * critmp
+		attackdmg = math.Round( math.Clamp( attackdmg, 0, 9999 ), 0 )
+			attacktarget:TakeDamage( attackdmg, current_enemy )
+		PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. attackdmg .." ".. enemies_table[ current_enemy:GetName() ].DMGT .." damage to ".. attacktarget:GetName() )
 		critmp = 1
 	else
-		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. fighter:GetName() .."'s attack!" )
+		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. current_enemy:GetName() .."'s attack!" )
 	end
 
 end
@@ -51,19 +76,18 @@ function KnockerAI()
 	-- Blunt damage; priority: lowest health
 	-- Tries to stun the player.
 	attacktarget = table.Random( allplayers )
-	attackdmg = math.Round( math.Clamp( ( math.random( enemies_table[ fighter:GetName() ].DMG1, enemies_table[ fighter:GetName() ].DMG2 ) - attacktarget:GetNWInt( "defNW" ) * 0.75 ) * ( 1 - attacktarget:GetNWInt( "dfxNW" ) * 0.02 ), 0, 9999 ), 0 )
+	attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG - pl_stats_tbl[ id ].DEF * 0.8 ) * ( 1 - pl_stats_tbl[ id ].DFX * 0.02 )
+	attackdmg = math.Round( math.Clamp( attackdmg, 0, 9999 ), 0 )
 	
-	if math.random( 1, 100 ) >= attacktarget:GetNWInt( "trueddgNW" ) + enemies_table[ fighter:GetName() ].MISS then
-		attacktarget:TakeDamage( attackdmg, fighter )
-		PrintMessage( HUD_PRINTTALK, fighter:GetName() .." dealt ".. attackdmg .." ".. enemies_table[ fighter:GetName() ].DMGT .." damage to ".. attacktarget:GetName() )
+	if math.random( 1, 100 ) > pl_stats_tbl[ id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS then
+		attacktarget:TakeDamage( attackdmg, current_enemy )
+		PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. attackdmg .." ".. enemies_table[ current_enemy:GetName() ].DMGT .." damage to ".. attacktarget:GetName() )
 
-		if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + enemies_table[ fighter:GetName() ].DMGS - attacktarget:GetNWInt( "dfeNW" ) * 2 - attacktarget:GetNWInt( "dfxNW" ) * 0.5 then 
-			attacktarget:SetNWInt( "stunturns", attacktarget:GetNWInt( "stunturns" ) + 1 )
-			PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." is stunned for ".. attacktarget:GetNWInt( "stunturns" ) .." turn(s)..." )
-			DoCrit2()
+		if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + enemies_table[ current_enemy:GetName() ].DMGS - attacktarget:GetNWInt( "dfeNW" ) * 2 - attacktarget:GetNWInt( "dfxNW" ) * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 30 then 
+			DoStun()
 		end
 	else
-		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. fighter:GetName() .."'s attack!" )
+		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. current_enemy:GetName() .."'s attack!" )
 	end
 end
 
