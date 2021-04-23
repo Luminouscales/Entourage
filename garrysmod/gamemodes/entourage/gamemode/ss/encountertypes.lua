@@ -2,9 +2,9 @@ zone1_3 = {
     "SnowtlionScout()",
     "SnowtlionScout()",
     "SnowtlionScout()",
-    "SnowtlionSkinner()",
-    "SnowtlionSkinner()",
-    "SnowtlionMiner()"
+    -- "SnowtlionSkinner()",
+    -- "SnowtlionSkinner()",
+    -- "SnowtlionMiner()"
 }
 
 
