@@ -59,6 +59,8 @@ end)
 
 net.Receive( "encounter_intro", function()
 
+    SendStats()
+
     local difficulty = net.ReadInt( 32 )
 
 	surface.PlaySound( "shink.wav" )

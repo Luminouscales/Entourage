@@ -17,13 +17,17 @@ function PlayerstatsSave()
     file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskills3 )
 
     -- THIS HAS TO BE OPTIMIZED. in the future
-	net.Start( "savetable" )
-		net.WriteTable( playerstats )
-	net.SendToServer()
+    -- SendStats()
     -------------------------------------------
 	LocalPlayer():SetNWInt( "playerdef", playerstats[ "DEF" ] )
 	LocalPlayer():SetNWInt( "playerdfx", playerstats[ "DFX" ] )
 	LocalPlayer():SetNWFloat( "playerdef2", playerstats[ "DEF" ] )
+end
+
+function SendStats()
+	net.Start( "savetable" )
+		net.WriteTable( playerstats_a )
+	net.SendToServer()
 end
 
 -- Tables rework
@@ -32,8 +36,8 @@ function DoTBLFirstInit()
         ["LVL1"] = 0.0,
         ["arov_pagi"] = 0.0,
         ["FCS"] = 0.0,
-        ["VIT"] = 2.0,
-        ["MGT"] = 1,
+        ["VIT"] = 0,
+        ["MGT"] = 0,
         ["FA"] = 0.0,
         ["arov_dfx"] = 0.0,
         ["DDG"] = 15,
@@ -43,10 +47,9 @@ function DoTBLFirstInit()
         ["HP1"] = 100.0,
         ["IA"] = 0.0,
         ["TA"] = 0.0,
-        ["AGI"] = 1.0,
+        ["AGI"] = 0,
         ["currentarmour"] = "ClothArmour",
         ["SDL"] = 0.0,
-        ["BAC"] = 5.0,
         ["LVL2"] = 100.0,
         ["LVL3"] = 1.0,
         ["WA"] = 0.0,
@@ -389,25 +392,6 @@ end
 hook.Add( "InitPostEntity", "datacontrolinit", function()
    
     gameid = GetConVar( "rpgmod_gameid" ):GetString()
-
-	
-	-- statsbase2 = file.Read( "entourage/main/statsbase.txt", "DATA" )
-	--     statsbase = util.JSONToTable( statsbase2 )
-	-- weaponsbase2 = file.Read( "entourage/main/weaponsbase.txt", "DATA" )
-	-- 	weaponsbase = util.JSONToTable( weaponsbase2 )
-	-- armoursbase2 = file.Read( "entourage/main/armoursbase.txt", "DATA" )
-	-- 	armoursbase = util.JSONToTable( armoursbase2 )
-	-- trinketsbase2 = file.Read( "entourage/main/trinketsbase.txt", "DATA" )
-	-- 	trinketsbase = util.JSONToTable( trinketsbase2 )
-    -- skillsbase2 = file.Read( "entourage/main/skillsbase.txt", "DATA" )
-    -- --     skillsbase = util.JSONToTable( skillsbase2 )
-    -- plskillsbase2 = file.Read( "entourage/main/plskillsbase.txt", "DATA" )
-    --     plskillsbase = util.JSONToTable( plskillsbase2 )
-
-    -- Defines all weapons.
-    -- weaponlist2 = file.Read( "entourage/main/items.txt", "DATA" )
-    --     weaponlist = util.JSONToTable( weaponlist2 )
-
     playerid = LocalPlayer():AccountID()
     
     --------------------------------------------------------------------------------------------------
