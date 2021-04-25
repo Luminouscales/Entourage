@@ -7,6 +7,8 @@ local skill_table = {
 }
 
 function FrostlionMinerAI()
+    attacktarget = table.Random( allplayers )
+    attacktarget_id = attacktarget:UserID()
     -- First, perform attack sequence
     current_enemy:UseNoBehavior()
     current_enemy:ResetSequenceInfo()	
@@ -20,6 +22,7 @@ function FrostlionMinerAI()
         current_enemy:ResetSequenceInfo()
         current_enemy:ResetSequence( "ragdoll" )
         current_enemy:ResetSequence( "charge_end" )
+        
         BluntAttack()
         timer.Simple( 1.3, function()
             current_enemy:ResetSequence( table.Random( antlion_idle ) )
