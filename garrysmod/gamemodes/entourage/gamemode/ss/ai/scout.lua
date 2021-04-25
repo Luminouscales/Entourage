@@ -7,6 +7,8 @@ local skill_table = {
 }
 
 function FrostlionScoutAI()
+    attacktarget = table.Random( allplayers )
+    attacktarget_id = attacktarget:UserID()
     -- First, perform attack sequence
     current_enemy:UseNoBehavior()
     current_enemy:ResetSequenceInfo()	
@@ -15,8 +17,6 @@ function FrostlionScoutAI()
     current_enemy:ResetSequence( "attack1" )
 
     timer.Simple( 0.5, function()
-        attacktarget = table.Random( allplayers )
-        attacktarget_id = attacktarget:UserID()
         SlashAttack()
     end)
 
