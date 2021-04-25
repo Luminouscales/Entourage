@@ -2,9 +2,9 @@ zone1_3 = {
     "SnowtlionScout()",
     "SnowtlionScout()",
     "SnowtlionScout()",
-    -- "SnowtlionSkinner()",
-    -- "SnowtlionSkinner()",
-    -- "SnowtlionMiner()"
+    "SnowtlionSkinner()",
+    "SnowtlionSkinner()",
+    "SnowtlionMiner()"
 }
 
 
@@ -154,7 +154,7 @@ function FrostlionGuardian()
         guardian:SetName( "Frostlion Guardian" ) 
         guardian:SetNWString( "nameNW", "Frostlion Guardian" ) 
         guardian:Spawn()
-        local health = 1000
+        local health = 400
         guardian:SetMaxHealth( health )
         guardian:SetHealth( health )
         guardian:SetNWString( "nwhudname", "Frostlion Guardian" )
