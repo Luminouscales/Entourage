@@ -6,6 +6,7 @@ util.AddNetworkString( "encounter_outro" )
 util.AddNetworkString( "getmycordsyoufuckingcunt" )
 util.AddNetworkString( "enemysend" )
 util.AddNetworkString( "player_brace" )
+util.AddNetworkString( "player_wait" )
 util.AddNetworkString( "player_removestunturns" )
 util.AddNetworkString( "player_biststunned" )
 util.AddNetworkString( "descmodel_cl1" )
@@ -57,7 +58,7 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 	if ss_inbattle then 
 		-- If a player dealt damage TO NPC
 		if dmg:GetAttacker():IsPlayer() and target:IsPlayer() == false and target:IsNPC() then
-			entourage_AddUP( dmg:GetDamage() / target:GetMaxHealth() * 30, 25 )
+			entourage_AddUP( math.Clamp( dmg:GetDamage() / target:GetMaxHealth() * 30, 1, 25 ), 25 )
 			if dmg:GetDamage() >= target:Health() and target:Health() > 0 then
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
@@ -228,6 +229,12 @@ net.Receive( "player_brace", function( len, ply )
 	PrintMessage( HUD_PRINTTALK, player:GetName() .." are bracing themselves for the attack..." )
 end)
 
+net.Receive( "player_wait", function( len, ply )
+	allplayers = net.ReadTable()
+	player = ply
+	EnemyAttack()
+end)
+
 function EnemyAttack()
 	if table.IsEmpty( battle_enemies ) then
 		PrintMessage( HUD_PRINTTALK, "_____________________" )
@@ -298,6 +305,8 @@ function playerturn() -- let the player attack
 	actions = #battle_enemies
 	previous_enemya = 0
 
+	entourage_AddUP( 5, 25 )
+
 	for k, v in ipairs( battle_enemies ) do
 		v:SetNWInt( "tbl_deaths", k )
 	end
@@ -314,6 +323,6 @@ net.Receive( "player_removestunturns", function( len, ply )
 	ply:SetNWInt( "stunturns", ply:GetNWInt( "stunturns" ) - 1 )
 	PrintMessage( HUD_PRINTTALK, ply:GetName() .." was stunned and could not attack!" )
 	timer.Simple( 2, function() 
-		enemy_makeattack()
+		EnemyAttack()
 	end)
 end)
