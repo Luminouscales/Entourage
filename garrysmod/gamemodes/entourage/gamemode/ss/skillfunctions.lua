@@ -20,7 +20,7 @@ net.Receive( "player_makeskill", function( len, ply )
     RunString( skill_id .."()" )
 
     timer.Simple( 2, function()
-        enemy_makeattack()
+        EnemyAttack()
     end)
 end)
 
@@ -48,6 +48,50 @@ function s_Retract()
     acc_modifier = 1
 end
 
+function DoCrit2a()
+	if critbonus_a == nil then
+		critbonus_a = 0
+	end
+	if math.random( 1, 100 ) <= enemies_table[ current_enemy:GetName() ].DMGC + critbonus_a then
+		calc_info:SetDamage( calc_info:GetDamage() * 2.5 )
+        DoCrit2()
+		PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt critical damage!" )
+	end
+end
+
+function DoStun()
+	if enemies_table[ current_enemy:GetName() ].DMGS ~= nil then
+		stunbonus_a = enemies_table[ current_enemy:GetName() ].DMGS
+	else
+		stunbonus_a = 0
+	end
+    if stunbonus == nil then
+		stunbonus = 0
+    end
+	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus + stunbonus_a - pl_stats_tbl[ attacktarget_id ].VIT * 2 - pl_stats_tbl[ attacktarget_id ].DFX * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 40 then 
+		attacktarget:SetNWInt( "stunturns", attacktarget:GetNWInt( "stunturns" ) + 1 )
+		attacktarget:SetNWInt( "stunturns_a", attacktarget:GetNWInt( "stunturns" ) + 1 )
+        if attacktarget:GetNWInt( "stunturns" ) > 1 then
+            problem_gramatyczny = " turns..."
+        else
+            problem_gramatyczny = " turn..."
+        end
+		PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." is stunned for ".. attacktarget:GetNWInt( "stunturns" ) ..problem_gramatyczny )
+		DoCrit2()
+        stunbonus_a = 0
+        stunbonus = 0
+	end
+end
+
+-- This is for running stuff related to enemy crits. and stuns.
+function DoCrit2()
+	-- Taking crits decreases UP by 10. Also runs on stuns.
+	timer.Simple( 0.2, function()
+		if attackdmg > 0 then
+			entourage_AddUP( -10, 25 )
+		end
+	end)
+end
 
 -- SLASH
 function s_precstrike()
@@ -283,7 +327,7 @@ end
 -- Enemy-only functions
 
 function SlashAttack()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.random( 0.9, 1.1 )
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.9, 1.1 )
     attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.005 )
     attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
@@ -294,20 +338,50 @@ function SlashAttack()
     CalcAttack()
 end
 
-function BluntAttack()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.random( 0.75, 1.25 )
-    attackdmg = ( math.random( enemies_table[ current_enemy:GetName() ].DMG1, enemies_table[ current_enemy:GetName() ].DMG2 ) - attacktarget:GetNWInt( "defNW" ) * 0.9 ) * ( 1 - attacktarget:GetNWInt( "dfxNW" ) * 0.015 )
-    --attackdmg = math.Round( math.Clamp( , 0, 9999 ), 0 )
-end
 
--- Frostlion Guardian skill
-function WideStagger()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.random( 0.8, 1.2 )
-    attackdmg = ( attackdmg - attacktarget:GetNWInt( "defNW" ) * 0.9 ) * ( 1 - attacktarget:GetNWInt( "dfxNW" ) * 0.015 )
+function PierceAttack()
+    attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG ) - ( pl_stats_tbl[ attacktarget_id ].DEF * enemies_table[ current_enemy:GetName() ].DMGP )
     attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
-    c_type = "Blunt"
-    c_miss = 20
+    c_miss = 0
+    c_type = DMG_SNIPER
+    c_type2 = "Pierce"
+
+    CalcAttack()
+end
+
+function BluntAttack()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.75, 1.25 )
+    attackdmg = ( attackdmg - ( pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015  )
+    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
+
+    c_miss = 0
+    c_type = DMG_CLUB
+    c_type2 = "Blunt"
+
+    CalcAttack()
+end
+
+function Bash()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.8, 1.2 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
+
+    c_type = DMG_CLUB
+    c_type2 = "Blunt"
+    c_miss = 15
+    CalcAttack()
+end
+
+function WideStagger()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.5, 0.7 )
+    attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
+
+    c_type = DMG_CLUB
+    c_type2 = "Blunt"
+    c_miss = 5
+    stunbonus = 20
     CalcAttack()
 end
 
@@ -323,7 +397,7 @@ function CalcAttack()
         end
 
         attacktarget:TakeDamageInfo( calc_info )
-        PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. attackdmg .." ".. c_type2 .." damage to ".. attacktarget:GetName() )
+        PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. math.Round( calc_info:GetDamage(), 0 ) .." ".. c_type2 .." damage to ".. attacktarget:GetName() )
 
         if c_type2 == "Blunt" then
             DoStun()
