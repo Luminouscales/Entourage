@@ -510,13 +510,24 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_brace:SetPos( ScrW()-100, ScrH()-100 )
             bhud_brace:SetSize( 40, 50 )
             bhud_brace:SetImage( "hud/f.png" )
-        bhud_brace.DoClick = function()
-            net.Start( "player_brace" )
-                net.WriteTable( player.GetAll() )
-            net.SendToServer()
-            bhud_frame:Hide()
-            bhud_frame2:Hide()
-        end
+            bhud_brace.DoClick = function()
+                net.Start( "player_brace" )
+                    net.WriteTable( player.GetAll() )
+                net.SendToServer()
+                bhud_frame:Hide()
+                bhud_frame2:Hide()
+            end
+        bhud_wait = vgui.Create( "DImageButton", bhud_frame )
+            bhud_wait:SetPos( ScrW()-180, ScrH()-100 )
+            bhud_wait:SetSize( 70, 50 )
+            bhud_wait:SetImage( "hud/entourage_defiance.png" )
+            bhud_wait.DoClick = function()
+                net.Start( "player_wait" )
+                    net.WriteTable( player.GetAll() )
+                net.SendToServer()
+                bhud_frame:Hide()
+                bhud_frame2:Hide()
+            end
         ------------------------------------------------------------------
         -- Skills battle frame
 
