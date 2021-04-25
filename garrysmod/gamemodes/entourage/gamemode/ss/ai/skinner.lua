@@ -7,6 +7,8 @@ local skill_table = {
 }
 
 function FrostlionSkinnerAI()
+    attacktarget = table.Random( allplayers )
+    attacktarget_id = attacktarget:UserID()
     -- First, perform attack sequence
     current_enemy:UseNoBehavior()
     current_enemy:ResetSequenceInfo()	
