@@ -33,3 +33,14 @@ function SkinnerDMG()
 	end
 	wpndmg3 = math.Round( math.Clamp( wpndmg3, 1, 999 ), 0 )
 end
+
+function DefaultDMG() -- Default. actually not it's guardian's AI2 LUL
+	if pltype2 == "Slash" then
+		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF ) * ( 1 + slash_dfx - enemies_table[ turntargetsave ].DFX * 0.01 )
+	elseif pltype2 == "Pierce" then
+		wpndmg3 = ( wpndmg3 - ( enemies_table[ turntargetsave ].DEF - enemies_table[ turntargetsave ].DEF * wp_pierce ) )
+	else
+		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF * 0.75 ) * ( 1 - enemies_table[ turntargetsave ].DFX * 0.01 )
+	end
+	wpndmg3 = math.Round( math.Clamp( wpndmg3, 1, 999 ), 0 )
+end
