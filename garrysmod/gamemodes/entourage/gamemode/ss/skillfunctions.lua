@@ -5,6 +5,7 @@ net.Receive( "player_makeskill", function( len, ply )
 	wpndmg1 = net.ReadDouble()
 	wpndmg2 = net.ReadDouble()
 	pltype = net.ReadString()
+    c_type2 = pltype
 	allplayers = net.ReadTable()
 	wpn = net.ReadString()
     skill_id = net.ReadString()
@@ -118,8 +119,6 @@ function s_precstrike()
     -- Cooldown
     player:SetNWBool( "s_precstrike_oncd", true )
 
-    -- pl_stats_tbl[ player:UserID() ].DEF =  pl_stats_tbl[ player:UserID() ].DEF + pl_stats_tbl[ player:UserID() ].VIT + pl_stats_tbl[ player:UserID() ].SDL
-
     -- Other effects.
     -- Add Focus for 3 turns.
     pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS + 1 + lvl
@@ -138,6 +137,7 @@ function s_precstrike()
             end
         end
     end)
+    SendSkillNote( "Precision Strike" )
 end
 
 function s_defmano()
@@ -369,18 +369,19 @@ function Bash()
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 15
+    c_miss = 25
+    stunbonus = -10
     CalcAttack()
 end
 
 function WideStagger()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.5, 0.7 )
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.4, 0.65 )
     attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
     attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 5
+    c_miss = 15
     stunbonus = 20
     CalcAttack()
 end
