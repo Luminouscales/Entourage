@@ -13,6 +13,7 @@ util.AddNetworkString( "descmodel_cl1" )
 util.AddNetworkString( "descmodel_cl2" )
 util.AddNetworkString( "net_enemy_senddata" )
 util.AddNetworkString( "up_hudshow" )
+util.AddNetworkString( "sendskillnote" )
 
 -- set variables
 lives = 0
@@ -57,9 +58,17 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 	-- Make sure it doesn't somehow run when outside of battle.
 	if ss_inbattle then 
 		-- If a player dealt damage TO NPC
-		if dmg:GetAttacker():IsPlayer() and target:IsPlayer() == false and target:IsNPC() then
+		if dmg:GetAttacker():IsPlayer() and target:IsNPC() then
 			entourage_AddUP( math.Clamp( dmg:GetDamage() / target:GetMaxHealth() * 30, 1, 25 ), 25 )
-			if dmg:GetDamage() >= target:Health() and target:Health() > 0 then
+			-- This function manages damage resistance for enemies like the Guardian. It sucks, I know, but it has to be done.
+			local dmg_ov = dmg:GetDamage()
+			if target:GetClass() == "npc_antlionguard" then
+				-- MODS
+				dmg_ov = math.floor( dmg_ov * 0.75 )
+			end
+			---------------------------------------------------------
+			PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." dealt ".. dmg_ov .." ".. c_type2 .." damage to ".. target:GetName() .."!" )
+			if dmg_ov >= target:Health() and target:Health() > 0 then
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
@@ -68,6 +77,11 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			end
 		end
 	end
+end)
+
+hook.Add( "EntityTakeDamage", "UP_detect_hook2", function( target, dmg )
+	-- Make sure it doesn't somehow run when outside of battle.
+	print( dmg:GetDamage() )
 end)
 
 hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attacker )
@@ -152,7 +166,6 @@ function EncounterReset2()
 				cam_override = ents.Create( "info_target" )
 					cam_override:SetPos( Vector( -333, 84.5, -815 ) )
 					cam_override:SetAngles( Angle( 30, -36, 0 ) )
-				--Entity(1):SetViewEntity( cam_override )
 			end)
 		end
 	end)
@@ -175,6 +188,7 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 	wpndmg1 = net.ReadDouble()
 	wpndmg2 = net.ReadDouble()
 	pltype2 = net.ReadString()
+	c_type2 = pltype2
 	allplayers = net.ReadTable()
 	wpn = net.ReadString()
     slash_dmg = net.ReadInt( 32 ) * 0.05 
@@ -208,6 +222,9 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 		EnemyAttack()
 		dmg_modifier = 1
 	end)
+
+	local note = c_type2 .." Attack"
+	SendSkillNote( note )
 end)
 
 net.Receive( "player_brace", function( len, ply )
@@ -326,3 +343,10 @@ net.Receive( "player_removestunturns", function( len, ply )
 		EnemyAttack()
 	end)
 end)
+
+-- This manages skill tooltips that you see on the battle hud.
+function SendSkillNote( skillnote )
+	net.Start( "sendskillnote" )
+		net.WriteString( skillnote )
+	net.Broadcast()
+end
