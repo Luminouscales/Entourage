@@ -19,7 +19,6 @@ function Fists()
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "dfeNW" ) + math.random( wpndmg1, wpndmg2 ) * ( player:GetNWInt( "mgtNW" ) * 0.25 ) ) * dmg_modifier
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
-		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Blunt damage to ".. turntargetsave .."!" )
 		if turntarget:Health() <= 0 then
 			PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
 			deaths = deaths + 1
@@ -39,26 +38,23 @@ function OldCrowbar()
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) +  pl_stats_tbl[ player:UserID() ].MGT * 0.25 + pl_stats_tbl[ player:UserID() ].AGI * 0.25 + pl_stats_tbl[ player:UserID() ].VIT * 0.25 ) * dmg_modifier + slash_dmg
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
-		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
 	else
 		PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 	end
 end
 
 function RustyKnife()
-	wp_pierce = 0.25 + player:GetNWInt( "fcsNW" ) * 0.02
+	wp_pierce = 0.25 + pl_stats_tbl[ player:UserID() ].FCS * 0.02
 
 	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * acc_modifier then
-		if math.random( 1, 100 ) <= 5 + player:GetNWInt( "fcsNW" ) * 3 then
+		if math.random( 1, 100 ) <= 5 + pl_stats_tbl[ player:UserID() ].FCS * 3 then
 			critmp = 2.5
 			DoCrit()
 			PrintMessage( HUD_PRINTTALK, player:Name() .." dealt critical damage!" )
 		end
-		wpndmg3 = wpndmg1 + player:GetNWInt( "agiNW" ) * 0.25
-		wpndmg3 = ( wpndmg3 + wpndmg3 * ( player:GetNWInt( "fcsNW" ) * 0.1 ) ) * critmp * dmg_modifier
+		wpndmg3 = ( ( wpndmg1 + pl_stats_tbl[ player:UserID() ].FCS + pl_stats_tbl[ player:UserID() ].AGI ) * critmp ) * dmg_modifier
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
-		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Pierce damage to ".. turntargetsave .."!" )
 		critmp = 1
 	else
 		PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
@@ -71,7 +67,6 @@ function WoodenClub()
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW" ) * 0.15 + math.random( wpndmg1, wpndmg2 ) * ( player:GetNWInt( "dfeNW" ) * 0.1 ) ) * dmg_modifier
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
-		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Blunt damage to ".. turntargetsave .."!" )
 		if turntarget:Health() <= 0 then
 			PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
 			deaths = deaths + 1
@@ -89,10 +84,9 @@ end
 function RopeSpear() -- use pltype2 to derive proper attack from damage type
 	if pltype2 == "Slash" then
 		if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) then 
-			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ player:UserID() ].MGT * 0.20 ) * dmg_modifier + slash_dmg
+			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ player:UserID() ].MGT * 0.75 ) * ( dmg_modifier + slash_dmg )
 			RunString( enemies_table[ turntargetsave ].AI2 )
 			turntarget:TakeDamage( wpndmg3, player )
-			PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
 		else
 			PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 		end
@@ -105,22 +99,21 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 		end
 		if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * acc_modifier then 
 			wp_pierce = 0.25 + pl_stats_tbl[ player:UserID() ].FCS * 0.02
-			wpndmg3 = ( wpndmg1 + pl_stats_tbl[ player:UserID() ].FCS * 0.2 ) * critmp * dmg_modifier
+			wpndmg3 = ( ( wpndmg1 + pl_stats_tbl[ player:UserID() ].AGI * 0.75 ) * critmp ) * dmg_modifier
 			RunString( enemies_table[ turntargetsave ].AI2 )
 			turntarget:TakeDamage( wpndmg3, player )
-			PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Pierce damage to ".. turntargetsave .."!" )
 			critmp = 1
 
 		else
 			PrintMessage( HUD_PRINTTALK, turntargetsave .." dodged ".. player:GetName() .."'s attack!" )
 		end
+
 	else -- BLUNT
 		thp = turntarget:Health()
 		if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * acc_modifier then 
-			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ player:UserID() ].VIT * 0.2 ) * dmg_modifier
+			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) ) * dmg_modifier
 			RunString( enemies_table[ turntargetsave ].AI2 )
 			turntarget:TakeDamage( wpndmg3, player )
-			PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Blunt damage to ".. turntargetsave .."!" )
 			if turntarget:Health() <= 0 then
 				PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
 				deaths = deaths + 1
@@ -141,7 +134,6 @@ function KillerSword()
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW") * 0.25 + player:GetNWInt( "agiNW") * 0.25 + player:GetNWInt( "dfeNW") * 0.25 ) * dmg_modifier + slash_dmg
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
-		PrintMessage( HUD_PRINTTALK, player:Name() .." dealt ".. wpndmg3 .." Slash damage to ".. turntargetsave .."!" )
 	else
 		PrintMessage( HUD_PRINTTALK, "I never miss... I DON'T MISS! GET BACK HERE." )
 	end
