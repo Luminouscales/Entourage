@@ -154,7 +154,7 @@ function FrostlionGuardian()
         guardian:SetName( "Frostlion Guardian" ) 
         guardian:SetNWString( "nameNW", "Frostlion Guardian" ) 
         guardian:Spawn()
-        local health = 400
+        local health = 500
         guardian:SetMaxHealth( health )
         guardian:SetHealth( health )
         guardian:SetNWString( "nwhudname", "Frostlion Guardian" )
