@@ -16,6 +16,8 @@ end
 
 -- Skills
 function Guardian_Bash()
+    SendSkillNote( "Bash" )
+
     enemy1:ResetSequence( "ragdoll" )
     enemy1:ResetSequence( "shove" )
     timer.Simple( 0.5, function()
@@ -32,6 +34,8 @@ function Guardian_Bash()
 end
 
 function Guardian_Stagger()
+    SendSkillNote( "Wide Stagger" )
+
     enemy1:ResetSequence( "ragdoll" )
     enemy1:ResetSequence( "bash_cave01" )
     timer.Simple( 0.8, function()

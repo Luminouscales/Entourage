@@ -1,6 +1,7 @@
 exp_real = 0
 just_leveledup = false
 local up_int = 0
+skillnote_show = false
 
 net.Receive( "up_hudshow", function()
     up_int = up_int + 1
@@ -239,6 +240,14 @@ function BattleHud()
                 draw.SimpleTextOutlined( enemy3:GetNWString( "nwhudname" ), "danger_font", enemy3point.x, enemy3point.y + 25, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
 			end
 		end)
+
+        hook.Add( "HUDPaint", "skillname_test", function()
+            if skillnote_show then
+                local all_width = string.len( skillnote ) * 12.3 + 50
+                draw.RoundedBoxEx( 14, ScrW()/2 - all_width / 2, 250, all_width, 32, Color( 60, 60, 60, Lerp( ( SysTime() - show_x ) * 10, 0, 240 ) ), true, true, true, true )
+                draw.SimpleText( skillnote, "equipment_plname2", ScrW()/2, 266, Color( 255, 255, 255, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+        end)
 	end)
 end
 
@@ -738,3 +747,13 @@ function clickframe_Init()
     cl_s_targets =  weaponlist[ playerstats_a["currentweapon"] ].targets
     cl_s_targets_tbl = {}
 end
+
+-- Skill note management
+net.Receive( "sendskillnote", function()
+    skillnote = net.ReadString()
+    skillnote_show = true
+    show_x = SysTime()
+    timer.Simple( 1.75, function()
+        skillnote_show = false
+    end)
+end)
