@@ -130,8 +130,8 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 end
 
 function KillerSword()
-	if math.random( 1, 100 ) <= player:GetNWString( "trueaccNW" ) * ( acc_modifier + slash_acc ) then 
-		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + player:GetNWInt( "mgtNW") * 0.25 + player:GetNWInt( "agiNW") * 0.25 + player:GetNWInt( "dfeNW") * 0.25 ) * dmg_modifier + slash_dmg
+	if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) then 
+		wpndmg3 = math.random( wpndmg1, wpndmg2 ) * ( dmg_modifier + slash_dmg )
 		RunString( enemies_table[ turntargetsave ].AI2 )
 		turntarget:TakeDamage( wpndmg3, player )
 	else
