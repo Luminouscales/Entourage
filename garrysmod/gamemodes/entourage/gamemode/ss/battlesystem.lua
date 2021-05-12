@@ -69,11 +69,23 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			---------------------------------------------------------
 			PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." dealt ".. dmg_ov .." ".. c_type2 .." damage to ".. target:GetName() .."!" )
 			if dmg_ov >= target:Health() and target:Health() > 0 then
+				-- Ugly, yes, but necessary. 
+				if target == enemy1 then
+					enemy1 = nil
+				elseif target == enemy2 then
+					enemy2 = nil
+				else
+					enemy3 = nil
+				end
+				-----------------
+				for k, v in pairs( battle_enemies ) do 
+					print( type( k ) )
+				end
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
-				print( deaths )
+				lives = lives - 1
 			end
 		end
 	end
@@ -280,16 +292,23 @@ function EnemyAttack()
 					v:SetAngles( v:GetNWAngle( "anglenw" ) )
 				end
 			end)
+
+			-- Reset resistances
+			for k, v in ipairs( player.GetAll() ) do
+				v:SetNWInt( "dmgresistance", 0 )
+			end
 		end)
 	elseif actions > 0 and next( battle_enemies, previous_enemya ) == nil then
 		current_enemy = battle_enemies[1]
 		previous_enemy = current_enemy
 		previous_enemya = 1
+		print( current_enemy )
 		EnemyAttack1()
 	elseif actions > 0 then 
 		current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
 		previous_enemy = current_enemy
 		previous_enemya = previous_enemya + 1
+		print( current_enemy )
 		EnemyAttack1()
 	else
 		playerturn()
@@ -319,8 +338,13 @@ function playerturn() -- let the player attack
 	PrintMessage( HUD_PRINTTALK, "_____________________" )
 	PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
 	Levitus:TakeDamage( 1 ) -- turnholder. I shall present what I am capable of. The chains are great, but my fortitude is beyond anything. Now suffer!
-	actions = #battle_enemies
-	previous_enemya = 0
+	sexy_int = 0
+	for k, v in pairs( battle_enemies ) do 
+		sexy_int = sexy_int + 1
+	end
+	actions = sexy_int
+	-- Doing the action below causes additional spawning enemies to not function but also breaks the attack sequence in spawning battles.
+	-- previous_enemya = 0
 
 	entourage_AddUP( 5, 25 )
 
