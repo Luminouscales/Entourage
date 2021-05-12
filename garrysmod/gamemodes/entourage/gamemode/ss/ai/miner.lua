@@ -17,6 +17,8 @@ function FrostlionMinerAI()
     current_enemy:ResetSequence( current_enemy:GetNWString( "animstart" ) )
     -- Unique attack sound.
     current_enemy:EmitSound( enemies_table[current_enemy:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
+
+    SendSkillNote( "Blunt Attack" )
     
     timer.Simple( 0.5, function()
         current_enemy:ResetSequenceInfo()
