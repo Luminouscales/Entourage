@@ -154,15 +154,13 @@ function FrostlionGuardian()
         guardian:SetName( "Frostlion Guardian" ) 
         guardian:SetNWString( "nameNW", "Frostlion Guardian" ) 
         guardian:Spawn()
-        local health = 500
+        local health = 300
         guardian:SetMaxHealth( health )
         guardian:SetHealth( health )
         guardian:SetNWString( "nwhudname", "Frostlion Guardian" )
         guardian:SetModelScale( 1.15, 0 )
         guardian:SetNWFloat( "animend", 0.5 )
         guardian:SetNWString( "animstart", "shove" )
-        --guardian:SetNWString( "animend_a", "charge_end" )
-        --guardian:SetNWFloat( "animend_b", 1.3 )
         guardian:SetNWFloat( "scaleNW", 1.15 )
 
         enemy1 = guardian
@@ -191,8 +189,14 @@ function sendIDs()
         net.WriteEntity( enemy2 )
         net.WriteEntity( enemy3 )
     net.Broadcast()
-    actions = #battle_enemies
-    previous_enemya = 0
+    sexy_int = 0
+	for k, v in pairs( battle_enemies ) do 
+		sexy_int = sexy_int + 1
+	end
+	actions = sexy_int
+    if previous_enemya == nil then
+        previous_enemya = 0
+    end
     for k, v in ipairs( battle_enemies ) do
         v:SetNWInt( "tbl_deaths", k )
     end
