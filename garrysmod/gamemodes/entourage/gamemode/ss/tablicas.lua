@@ -245,14 +245,14 @@ items_table = {
         ["Desc3"] = "No scaling",
         ["dmgtype"] = "Slash",
         ["BaseAcc"] = 200,
-        ["DMG1"] = 35,
-        ["DMG2"] = 35,
+        ["DMG1"] = 100,
+        ["DMG2"] = 100,
         ["Icon"] = "items/entourage_killersword.png",
         ["Type"] = "Weapon",
-        ["PDEF"] = "0",
+        ["PDEF"] = 0,
         ["PSDL"] = 0,
         ["PAGI"] = 0,
         ["func"] = "KillerSword()",
-        ["targets"] = 4
+        ["targets"] = 1
     }
 }
