@@ -16,6 +16,8 @@ function FrostlionScoutAI()
     current_enemy:ResetSequence( "ragdoll" ) -- Reset the animation
     current_enemy:ResetSequence( "attack1" )
 
+    SendSkillNote( "Slash Attack" )
+
     timer.Simple( 0.5, function()
         SlashAttack()
     end)
