@@ -166,30 +166,39 @@ function BattleHud()
         local down = Vector( 0, 0, 0 )
         local down2 = Vector( 0, 0, -16 )
 
-		local playerpoint = LocalPlayer():GetPos()
-		local playerpoint2 = playerpoint:ToScreen()
-        local playerpointn = LocalPlayer():GetPos()
-		local playerpoint2n = playerpointn:ToScreen()
-
-		local enemy1loc = enemy1:GetPos() 
-		local enemy1point = enemy1loc:ToScreen()
-        local enemy1locn = enemy1:GetPos()
-		local enemy1pointn = enemy1locn:ToScreen()
-
-		local enemy2loc = enemy2:GetPos()
-		local enemy2point = enemy2loc:ToScreen()
-        local enemy2locn = enemy2:GetPos()
-		local enemy2pointn = enemy2locn:ToScreen()
-
-		local enemy3loc = enemy3:GetPos() 
-		local enemy3point = enemy3loc:ToScreen()
-        local enemy3locn = enemy3:GetPos()
-		local enemy3pointn = enemy3locn:ToScreen()
-
-        up_start = 0
-        up_base = 0
+        local up_start = 0
+        local up_base = 0
 
 		hook.Add("HUDPaint", "battlehudpaint", function()
+
+            -- Probably necessary if you want the statuses to work properly in first-person
+            local playerpoint = LocalPlayer():GetPos()
+            local playerpoint2 = playerpoint:ToScreen()
+            local playerpointn = LocalPlayer():GetPos()
+            local playerpoint2n = playerpointn:ToScreen()
+
+            if IsValid( enemy1 ) then
+                enemy1loc = enemy1:GetPos() 
+                enemy1point = enemy1loc:ToScreen()
+                enemy1locn = enemy1:GetPos()
+                enemy1pointn = enemy1locn:ToScreen()
+            end
+
+            if IsValid( enemy2 ) then
+                enemy2loc = enemy2:GetPos()
+                enemy2point = enemy2loc:ToScreen()
+                enemy2locn = enemy2:GetPos()
+                enemy2pointn = enemy2locn:ToScreen()
+            end
+
+            if IsValid( enemy3 ) then
+                enemy3loc = enemy3:GetPos() 
+                enemy3point = enemy3loc:ToScreen()
+                enemy3locn = enemy3:GetPos()
+                enemy3pointn = enemy3locn:ToScreen()
+            end
+            ----------------------------------------------
+
             if inbattle then
                 -- Player text
 			    draw.SimpleTextOutlined( math.Clamp( LocalPlayer():Health(), 0, 1000 ) .."/".. LocalPlayer():GetMaxHealth(), "danger_font", playerpoint2n.x, playerpoint2n.y + 30, Color( 120, 255, 65 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0 ) )
@@ -227,6 +236,7 @@ function BattleHud()
                 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
             end
+
 			if IsValid( enemy1 ) then
 				draw.SimpleTextOutlined( math.Clamp( enemy1:Health(), 0, 1000 ) .."/".. enemy1:GetMaxHealth(), "danger_font", enemy1pointn.x, enemy1pointn.y + 48, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
                 draw.SimpleTextOutlined( enemy1:GetNWString( "nwhudname" ), "danger_font", enemy1point.x, enemy1point.y + 30, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
@@ -319,14 +329,12 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             clickframe:ShowCloseButton( false )
             clickframe:SetWorldClicker( true )
         clickframe.Paint = function( self, w, h )
-            -- surface.SetDrawColor( 0, 0, 0, 0)
-            -- surface.DrawRect( 0, 0, w, h )
         end
         -- basic attacks don't support 10 targetting yet
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
                 local rtrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
-                    if rtrace.Entity:Health() > 0 then
+                    if rtrace.Entity:Health() > 0 and rtrace.Entity:IsNPC() then
                         cl_s_int = cl_s_int + 1
                         cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
 
