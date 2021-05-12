@@ -6,7 +6,7 @@
 		"Item": "RopeSpear"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "KillerSword"
 	},
 	{
 		"Item": "EmptySlot"
