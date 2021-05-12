@@ -329,7 +329,6 @@ end
 function SlashAttack()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.9, 1.1 )
     attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.005 )
-    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
     c_miss = 0
     c_type = DMG_SLASH
@@ -341,7 +340,6 @@ end
 
 function PierceAttack()
     attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG ) - ( pl_stats_tbl[ attacktarget_id ].DEF * enemies_table[ current_enemy:GetName() ].DMGP )
-    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
     c_miss = 0
     c_type = DMG_SNIPER
@@ -353,7 +351,6 @@ end
 function BluntAttack()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.75, 1.25 )
     attackdmg = ( attackdmg - ( pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015  )
-    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
     c_miss = 0
     c_type = DMG_CLUB
@@ -365,7 +362,6 @@ end
 function Bash()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.8, 1.2 )
     attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
-    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
@@ -377,7 +373,6 @@ end
 function WideStagger()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.4, 0.65 )
     attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
-    attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
@@ -388,6 +383,10 @@ end
 
 function CalcAttack()
     if math.random( 1, 100 ) > pl_stats_tbl[ attacktarget_id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS + c_miss then
+
+        attackdmg = attackdmg + attackdmg * attacktarget:GetNWInt( "dmgresistance" )
+        attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
+
         calc_info = DamageInfo()
         calc_info:SetAttacker( current_enemy )
         calc_info:SetDamageType( c_type )
@@ -407,4 +406,37 @@ function CalcAttack()
     else
         PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. current_enemy:GetName() .."'s attack!" )
     end
+end
+
+function G_AllyCall()
+    if enemy2 == nil then
+        enemypos_placeholder = Vector( 60, -234, -982 )
+        SnowtlionScout()
+        enemy2 = necessity
+        timer.Simple( 1.25, function()
+            sendIDs()
+        end)
+    else
+        enemypos_placeholder = Vector( -225, -234, -982 )
+        SnowtlionScout()
+        enemy3 = necessity
+        timer.Simple( 1.25, function()
+            sendIDs()
+        end)
+    end
+end
+
+function G_Stampede()
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 1.5, 2 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+
+    c_type = DMG_CLUB
+    c_type2 = "Blunt"
+    c_miss = 0
+    stunbonus = 30
+    CalcAttack()
+end
+
+function G_Sudety()
+    attacktarget:SetNWInt( "dmgresistance", math.Clamp( attacktarget:GetNWInt( "dmgresistance" ) - 0.12, -0.46, 0.46 ) )
 end
