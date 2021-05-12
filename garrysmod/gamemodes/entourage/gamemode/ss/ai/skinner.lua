@@ -16,6 +16,8 @@ function FrostlionSkinnerAI()
     current_enemy:ResetSequence( "ragdoll" ) -- Reset the animation
     current_enemy:ResetSequence( "attack2" )
 
+    SendSkillNote( "Pierce Attack" )
+
     timer.Simple( 0.6, function()
         PierceAttack()
     end)
