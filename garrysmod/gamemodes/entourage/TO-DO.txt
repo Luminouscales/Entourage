@@ -1,16 +1,11 @@
-- Fix damage dealt not being shown properly in chat
-- Add sounds in battle
-- Add animations for enemies being stunned
-- Add animations for Frostlion Guardian being hit
+- Add more sounds in battle
 - Fix UP gain issue against Boss Battles
 - Change Basic Attack UI
 - Fix skills not applying damage multipliers properly
-- Add hit sounds for Frostlion Guardian
-- Fix Tier 1 weapons dealing lackluster damage against Guardian
-	- They should use base damage and damage-per-point more instead of scaling
 - Convert FE addon for gamemode
 - Add buff mechanics
 - Add debuff mechanics (different)
 - Add items
-- Fix Rusty Knife dealing too much damage
 - Add effects
+- Fix arov
+- Add music
