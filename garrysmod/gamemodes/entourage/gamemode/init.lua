@@ -8,11 +8,13 @@ include( "ss/battlesystem.lua" )
 include( "ss/encountertypes.lua" )
 include( "ss/skillfunctions.lua" )
 include( "ss/tablicas.lua" )
+--include( "ss/hitsounds.lua" ) -- it's broken. Stick to the base addon for now.
 -- ai
 include( "ss/ai/guardian.lua")
 include( "ss/ai/miner.lua")
 include( "ss/ai/scout.lua")
 include( "ss/ai/skinner.lua")
+include( "ss/ai/prince.lua")
 
 AddCSLuaFile( "cl/datacontrol_cl.lua" )
 
@@ -27,6 +29,7 @@ AddCSLuaFile( "cl/menu/cl_menu_weaponsframe.lua" )
 AddCSLuaFile( "cl/encountersystem_cl.lua" )
 AddCSLuaFile( "cl/hud_cl.lua" )
 AddCSLuaFile( "cl/battlesystem_cl.lua" )
+
 
 ------------------------------
 util.AddNetworkString( "encounter_var" )
@@ -83,7 +86,7 @@ end)
 
 hook.Add( "PlayerInitialSpawn", "startvar", function() 
 
-	encounter_rate = math.random( 250, 250 )
+	encounter_rate = math.random( 9999, 9999 )
 	encounter_rate2 = 0
 
 	net.Start( "encounter_var" )
