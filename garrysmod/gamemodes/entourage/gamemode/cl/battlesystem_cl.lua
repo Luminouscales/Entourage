@@ -63,6 +63,7 @@ net.Receive( "encounter_intro", function()
     SendStats()
 
     local difficulty = net.ReadInt( 32 )
+    local delay = net.ReadInt( 32 )
 
 	surface.PlaySound( "shink.wav" )
 	surface.PlaySound( "shink.wav" )
@@ -92,7 +93,7 @@ net.Receive( "encounter_intro", function()
 		net.WriteDouble( playerstats_a["HP1"] )
 	net.SendToServer()
 
-	timer.Simple( 4, function()
+	timer.Simple( 4 + delay, function()
 		BattleHud()
 	end)
 end)
