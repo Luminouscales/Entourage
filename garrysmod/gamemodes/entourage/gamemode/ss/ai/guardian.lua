@@ -6,7 +6,6 @@ sktbl_guardian = {
 }
 
 function GuardianAI()
-    print("AI is ran.")
     attacktarget = table.Random( allplayers )
     attacktarget_id = attacktarget:UserID()
     enemy1:UseNoBehavior()
@@ -144,9 +143,6 @@ function Stampede()
 
     timer.Simple( 4.5, function()
         enemy1:ResetSequence( table.Random( guardian_idle ) )
-    end)
-    
-    timer.Simple( 6.5, function()
         hook.Remove( "EntityTakeDamage", "widestagger" )
         playerturn()
     end)
@@ -177,5 +173,23 @@ function Sudety()
     
     timer.Simple( 2.5, function()
         playerturn()
+    end)
+end
+
+function GuardianStun()
+    turntarget:ResetSequence( "ragdoll" )
+    turntarget:ResetSequence( "physhit_rl" )
+
+    timer.Simple( 2, function()
+        turntarget:ResetSequence( table.Random( antlion_idle ) )
+    end)
+end
+
+function GuardianPain()
+    turntarget:ResetSequence( "ragdoll" )
+    turntarget:ResetSequence( "pain" )
+
+    timer.Simple( 1, function()
+        turntarget:ResetSequence( table.Random( antlion_idle ) )
     end)
 end
