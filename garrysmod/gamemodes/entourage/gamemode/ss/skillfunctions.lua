@@ -23,6 +23,8 @@ net.Receive( "player_makeskill", function( len, ply )
     timer.Simple( 2, function()
         EnemyAttack()
     end)
+
+    hook.Call( "PlayerTurnEnd" )
 end)
 
 -- Utility
@@ -57,6 +59,8 @@ function DoCrit2a()
 		calc_info:SetDamage( calc_info:GetDamage() * 2.5 )
         DoCrit2()
 		PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt critical damage!" )
+
+        attacktarget:EmitSound( "mgb_crit1.mp3", 150, 100, 1, CHAN_BODY )
 	end
 end
 
@@ -233,7 +237,7 @@ function s_broadswing()
 
     if pltype == "Slash" then
         dmg_modifier = 0.40 + bonus1
-        acc_modifier = 0.9
+        acc_modifier = 1.1
     else
         dmg_modifier = 0.1 + bonus1
         acc_modifier = 0.6
@@ -307,7 +311,6 @@ function s_medicsupplies()
     end)
 
     player:SetNWBool( "s_medicsupplies_oncd", true )
-
 
     local pl_id = player:AccountID()
     local cd = 0
@@ -405,6 +408,13 @@ function CalcAttack()
 
     else
         PrintMessage( HUD_PRINTTALK, attacktarget:GetName() .." dodged ".. current_enemy:GetName() .."'s attack!" )
+        if c_type2 == "Slash" then
+            attacktarget:EmitSound( "mgb_miss1.mp3", 150, 100, 1, CHAN_BODY )
+        elseif c_type2 == "Pierce" then
+            attacktarget:EmitSound( "mgb_miss2.mp3", 150, 100, 1, CHAN_BODY )
+        else
+            attacktarget:EmitSound( "mgb_miss3.mp3", 150, 100, 1, CHAN_BODY )
+        end
     end
 end
 
@@ -439,4 +449,15 @@ end
 
 function G_Sudety()
     attacktarget:SetNWInt( "dmgresistance", math.Clamp( attacktarget:GetNWInt( "dmgresistance" ) - 0.12, -0.46, 0.46 ) )
+end
+
+function P_Eviscerate()
+    -- Eviscerate ignores defence and flex defence completely.
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * 2 + 10
+
+    c_miss = -25
+    c_type = DMG_SNIPER
+    c_type2 = "Pierce"
+
+    CalcAttack()
 end
