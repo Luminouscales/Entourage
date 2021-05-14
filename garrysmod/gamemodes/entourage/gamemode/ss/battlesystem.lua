@@ -86,6 +86,8 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				lives = lives - 1
+			elseif enemies_table[ target:GetName() ].PainAnim ~= nil then
+				RunString( enemies_table[ target:GetName() ].PainAnim )
 			end
 		end
 	end
@@ -106,7 +108,7 @@ end)
 
 -- This function is used in EVERY battle encounter and so shares functions.
 -- However, every function must specify beforeclaw what colours to use. (this is the "doom" variable)
-function EncounterInit()
+function EncounterInit( delay )
 
 	-- Start-up variables
 	encounter_rate2 = 0 
@@ -143,6 +145,7 @@ function EncounterInit()
 
 	net.Start( "encounter_intro" ) -- Send the go-ahead to the clients
 		net.WriteInt( stakes, 32 ) -- 1 for generic 2 for boss
+		net.WriteInt( delay, 32 )
 	net.Broadcast()
 
 	hook.Remove( "Tick", "encounter_hook" )
@@ -167,23 +170,27 @@ function EncounterReset2()
 		end
 	
 		if encounter_rate2 >= encounter_rate then -- ENCOUNTER!
-			doom = color_white
+			EncounterRun1()
+		end
+	end)
+
+	net.Start( "encounter_cl" )
+	net.Broadcast()
+end
+
+function EncounterRun1()
+	doom = color_white
 			stakes = 1
 			-- this is where everything ubiquitous happens
 			EncounterInit()
 			-----------------------
 	
 			timer.Simple( 3, function()
-				EncounterAntlion()  
+				EncounterAntlion( zone1_1 )  
 				cam_override = ents.Create( "info_target" )
 					cam_override:SetPos( Vector( -333, 84.5, -815 ) )
 					cam_override:SetAngles( Angle( 30, -36, 0 ) )
 			end)
-		end
-	end)
-
-	net.Start( "encounter_cl" )
-	net.Broadcast()
 end
 
 net.Receive( "getmycordsyoufuckingcunt", function( len, ply ) -- reset cords setup
@@ -237,6 +244,8 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 
 	local note = c_type2 .." Attack"
 	SendSkillNote( note )
+
+	hook.Call( "PlayerTurnEnd" )
 end)
 
 net.Receive( "player_brace", function( len, ply )
@@ -256,12 +265,16 @@ net.Receive( "player_brace", function( len, ply )
 		EnemyAttack()
 	end)
 	PrintMessage( HUD_PRINTTALK, player:GetName() .." are bracing themselves for the attack..." )
+
+	hook.Call( "PlayerTurnEnd" )
 end)
 
 net.Receive( "player_wait", function( len, ply )
 	allplayers = net.ReadTable()
 	player = ply
 	EnemyAttack()
+
+	hook.Call( "PlayerTurnEnd" )
 end)
 
 function EnemyAttack()
