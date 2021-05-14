@@ -31,3 +31,15 @@ function FrostlionScoutAI()
         EnemyAttack()
     end)
 end
+
+
+-- Stun animation. Used for all antlions
+
+function AntlionStun()
+    turntarget:ResetSequence( "ragdoll" )
+    turntarget:ResetSequence( "Flip1" )
+
+    timer.Simple( 2.25, function()
+        turntarget:ResetSequence( table.Random( antlion_idle ) )
+    end)
+end
