@@ -58,7 +58,7 @@ function DoTBLFirstInit()
         ["arov_def2"] = 5,
         ["arov_sdl2"] = 0,
         ["arov_pagi2"] = 0,
-        ["arov_ddg"] = 0,
+        ["arov_ddg"] = 5,
         ["LVL_POINTS"] = 0,
         ["SLASH_POINTS"] = 20,
         ["BLUNT_POINTS"] = 0,
@@ -275,9 +275,9 @@ function weaponlistTBL()
             ["Desc"] = "A shoddy attempt at plate armour.",
            ["Desc2"] = "-50 Dodge, -3 Celerity",
             ["PDEF"] = 1,
-            ["PDFX"] = 35,
+            ["PDFX"] = 60,
             ["PDG"] = -50,
-            ["PAGI"] = -3
+            ["PAGI"] = -5
         },
         ["EmptySlot2"] = {
             ["Name"] = "None",
@@ -306,8 +306,24 @@ function weaponlistTBL()
             ["PAGI"] = 0,
             ["func"] = "KillerSword()",
             ["targets"] = 1
+        },
+        ["SalvagedBlade"] = {
+            ["Name"] = "Salvaged Blade",
+            ["Type"] = "Weapon",
+            ["Icon"] = "items/entourage_salvagedblade.png",
+            ["DMG1"] = 15,
+            ["DMG2"] = 18,
+            ["dmgtype"] = "Slash",
+            ["BaseAcc"] = 65,
+            ["Desc"] = "Crude metal marks this weapon's sharp edge.",
+           ["Desc2"] = "None",
+            ["Desc3"] = "+100% MGT, +75% FCS",
+            ["PDEF"] = 0,
+            ["PSDL"] = 0,
+            ["PAGI"] = 0,
+            ["func"] = "SalvagedBlade()",
+            ["targets"] = 1
         }
-            
     }
     skillsbase = {
         ["s_precstrike"] = {
