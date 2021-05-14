@@ -24,7 +24,8 @@ enemies_table = {
 		["AI2"] = "UniversalDMG()",
 		["LVL"] = 1,
 		["EXP"] = 10,
-        ["idletbl"] = antlion_idle
+        ["idletbl"] = antlion_idle,
+        ["StunAnim"] = "AntlionStun()"
 	},
 	["Frostlion Skinner"] = {
 		["Name"] = "Frostlion Skinner",
@@ -41,7 +42,8 @@ enemies_table = {
 		["AI2"] = "SkinnerDMG()",
 		["LVL"] = 3,
 		["EXP"] = 20,
-        ["idletbl"] = antlion_idle
+        ["idletbl"] = antlion_idle,
+        ["StunAnim"] = "AntlionStun()"
 	},
 	["Frostlion Miner"] = {
 		["Name"]= "Frostlion Miner",
@@ -58,7 +60,8 @@ enemies_table = {
 		["LVL"] = 4,
 		["EXP"] = 30,
         ["idletbl"] = antlion_idle,
-        ["sound_att"] = "npc/antlion/attack_double3.wav"
+        ["sound_att"] = "npc/antlion/attack_double3.wav",
+        ["StunAnim"] = "AntlionStun()"
 	},
 
     -- FROSTLION GUARDIAN
@@ -78,6 +81,26 @@ enemies_table = {
 		["EXP"] = 500,
         ["idletbl"] = guardian_idle,
         ["sound_att"] = "npc/antlion/attack_double3.wav",
+        ["StunAnim"] = "GuardianStun()",
+        ["PainAnim"] = "GuardianPain()"
+	},
+    ["Frostlion Prince"] = {
+		["Name"] = "Frostlion Prince",
+		["Description"] = "Swift and of sharp senses, the Prince seeks out dazed targets and executes them.",
+		["DMG"] = 10,
+		["DMGT"] = "Pierce",
+		["DMGP"] = 0,
+		["DMGC"] = 35,
+		["DEF"] = 0,
+		["DFX"] = -10,
+		["DDG"] = 25,
+		["MISS"] = -30,
+		["AI"] = "PrinceAI()",
+		["AI2"] = "SkinnerDMG()",
+		["LVL"] = 6,
+		["EXP"] = 100,
+        ["idletbl"] = antlion_idle,
+        ["StunAnim"] = "AntlionStun()"
 	}
 }
 
@@ -166,10 +189,27 @@ items_table = {
         ["Desc"] = "Knife on a long stick, reinforced with rope. Multi-purpose.",
        ["Desc2"] = "-1 Celerity, +1 Defence",
         ["Desc3"] = "+75% MGT / 75% CLE, 50% armour pen. / No scaling",
-        ["PDEF"] = "1",
+        ["PDEF"] = 0,
         ["PSDL"] = 0,
         ["PAGI"] = -1,
         ["func"] = "RopeSpear()",
+        ["targets"] = 1
+    },
+    ["SalvagedBlade"] = {
+        ["Name"] = "Salvaged Blade",
+        ["Type"] = "Weapon",
+        ["Icon"] = "items/entourage_salvagedblade.png",
+        ["DMG1"] = 15,
+        ["DMG2"] = 18,
+        ["dmgtype"] = "Slash",
+        ["BaseAcc"] = 65,
+        ["Desc"] = "Crude metal marks this weapon's sharp edge.",
+       ["Desc2"] = "None",
+        ["Desc3"] = "+100% MGT, +75% FCS",
+        ["PDEF"] = 0,
+        ["PSDL"] = 0,
+        ["PAGI"] = 0,
+        ["func"] = "SalvagedBlade()",
         ["targets"] = 1
     },
     ["ClothArmour"] = {
@@ -223,9 +263,9 @@ items_table = {
         ["Desc"] = "A shoddy attempt at plate armour.",
        ["Desc2"] = "-50 Dodge, -3 Celerity",
         ["PDEF"] = 1,
-        ["PDFX"] = 35,
+        ["PDFX"] = 60,
         ["PDG"] = -50,
-        ["PAGI"] = -3
+        ["PAGI"] = -5
     },
     ["EmptySlot2"] = {
         ["Name"] = "None",
