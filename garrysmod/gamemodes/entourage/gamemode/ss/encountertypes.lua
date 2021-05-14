@@ -7,20 +7,42 @@ zone1_3 = {
     "SnowtlionMiner()"
 }
 
+zone1_1 = {
+    "SnowtlionScout()"
+}
+
+zone1_2 = {
+    "SnowtlionScout()",
+    "SnowtlionScout()",
+    "SnowtlionSkinner()"
+}
+
+zone1_3secret = {
+    "SnowtlionScout()",
+    "SnowtlionScout()",
+    "SnowtlionScout()",
+    "SnowtlionSkinner()",
+    "SnowtlionSkinner()",
+    "SnowtlionMiner()",
+    "FrostlionGuardian()"
+}
+
 
 
 
 -- Intro anim for antlion enemies
-function AntUnborrow()
+function AntUnborrow( delay )
     local ant = necessity
     -- this ensures the antlion is invisible when spawned
     ant:DrawShadow( false )
     ant:SetRenderMode( RENDERMODE_NONE )
     -- after a given random amount of time, make visible and dig out
-    timer.Simple( 0.3 + math.random( 0.1, 0.2 ), function()
-        ant:ResetSequence( "digout" )
+    timer.Simple( 0.3 + math.random( 0.1, 0.2 ) + delay , function()
         ant:DrawShadow( true )
         ant:SetRenderMode( RENDERMODE_NORMAL )
+        ant:ResetSequenceInfo()
+        ant:ResetSequence( "digout" )
+
         timer.Simple( 1, function()
             if math.random( 1, 10 ) == 1 then
                 ant:ResetSequence( "distract" )
@@ -56,7 +78,7 @@ function SnowtlionScout()
         necessity:SetNWFloat( "animend_b", 0 )
         ----------------------------------------------------------------------------
         necessity:SetNWString( "animstart", "attack1" )
-        AntUnborrow()
+        AntUnborrow(0)
         
 		lives = lives + 1
         battle_enemies[lives] = necessity
@@ -82,7 +104,7 @@ function SnowtlionSkinner()
         necessity:SetNWString( "animend_a", 0 )
         necessity:SetNWFloat( "animend_b", 0 )
         necessity:SetNWFloat( "scaleNW", 0.9 )
-        AntUnborrow()
+        AntUnborrow(0)
 		
 		lives = lives + 1
         battle_enemies[lives] = necessity
@@ -108,24 +130,24 @@ function SnowtlionMiner()
         necessity:SetNWString( "animend_a", "charge_end" )
         necessity:SetNWFloat( "animend_b", 1.3 )
         necessity:SetNWFloat( "scaleNW", 1.15 )
-        AntUnborrow()
+        AntUnborrow(0)
 		
 		lives = lives + 1
         battle_enemies[lives] = necessity
 end
 
-function EncounterAntlion() -- Function for spawning antlions.
+function EncounterAntlion( zone ) -- Function for spawning antlions.
 
     
     enemypos_placeholder = Vector( -80, -234, -982 )
-    RunString( table.Random( zone1_3 ) )
+    RunString( table.Random( zone ) )
     enemy1 = necessity
 
 	
     timer.Simple( 0.5, function()
         if math.random( 1, 2 ) == 2 then -- 50% chance, right antlion
             enemypos_placeholder = Vector( 60, -234, -982 )
-            RunString( table.Random( zone1_3 ) )
+            RunString( table.Random( zone ) )
             enemy2 = necessity
         end
     end)
@@ -133,7 +155,7 @@ function EncounterAntlion() -- Function for spawning antlions.
     timer.Simple( 1, function()
         if math.random( 1, 4 ) == 1 then -- 25% chance, left antlion
             enemypos_placeholder = Vector( -225, -234, -982 )
-            RunString( table.Random( zone1_3 ) )
+            RunString( table.Random( zone ) )
             enemy3 = necessity
         end
     end)
@@ -154,13 +176,11 @@ function FrostlionGuardian()
         guardian:SetName( "Frostlion Guardian" ) 
         guardian:SetNWString( "nameNW", "Frostlion Guardian" ) 
         guardian:Spawn()
-        local health = 300
+        local health = 230
         guardian:SetMaxHealth( health )
         guardian:SetHealth( health )
         guardian:SetNWString( "nwhudname", "Frostlion Guardian" )
         guardian:SetModelScale( 1.15, 0 )
-        guardian:SetNWFloat( "animend", 0.5 )
-        guardian:SetNWString( "animstart", "shove" )
         guardian:SetNWFloat( "scaleNW", 1.15 )
 
         enemy1 = guardian
@@ -168,10 +188,30 @@ function FrostlionGuardian()
         battle_enemies[lives] = guardian
 end
 
+function FrostlionPrince()
+    necessity = ents.Create( "npc_antlion" )
+        necessity:SetKeyValue( "spawnflags", SF_NPC_WAIT_FOR_SCRIPT )
+        necessity:SetPos( Vector( -80, -234, -982 ) )
+        necessity:SetAngles( Angle( 0, 90, 0 ) )
+        necessity:SetName( "Frostlion Prince" ) 
+        necessity:SetNWString( "nameNW", "Frostlion Prince" ) 
+        necessity:SetNWString( "nwhudname", "Frostlion Prince" )
+        necessity:Spawn()
+        necessity:SetSkin( 3 )
+        local health = 95
+        necessity:SetMaxHealth( health )
+        necessity:SetHealth( health )
+        necessity:SetModelScale( 1.6, 0 )
+        necessity:SetNWFloat( "scaleNW", 1.6 )
+
+        lives = lives + 1
+        battle_enemies[lives] = necessity
+end
+
 function EncounterGuardian()
     doom = Color( 255, 40, 40 )
     stakes = 2
-    EncounterInit()
+    EncounterInit( 0 )
 
     timer.Simple( 3, function()
         FrostlionGuardian()
@@ -180,7 +220,40 @@ function EncounterGuardian()
     timer.Simple( 4.25, function()
         sendIDs()
     end)
+end
 
+function EncounterPrince()
+    doom = Color( 255, 40, 40 )
+    stakes = 2
+    EncounterInit( 0 )
+
+    timer.Simple( 3, function()
+        timer.Simple( 1, function()
+            enemypos_placeholder = Vector( 60, -234, -982 ) 
+            SnowtlionMiner()
+            enemy2 = necessity
+
+            enemypos_placeholder = Vector( -225, -234, -982 )
+            SnowtlionMiner()
+            enemy3 = necessity
+        end)
+
+        --timer.Simple( 3, function()
+            FrostlionPrince()
+            enemy1 = necessity
+        --end)
+        
+        timer.Simple( 2, function()
+            sendIDs()
+        end)
+    end)
+
+    timer.Simple( 7, function() 
+        local x = battle_enemies[1]
+        local y = battle_enemies[3]
+        battle_enemies[1] = y
+        battle_enemies[3] = x
+    end)
 end
 
 function sendIDs()
