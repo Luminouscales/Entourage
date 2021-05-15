@@ -7,5 +7,4 @@
 - Add debuff mechanics (different)
 - Add items
 - Add effects
-- Fix arov
 - Add music
