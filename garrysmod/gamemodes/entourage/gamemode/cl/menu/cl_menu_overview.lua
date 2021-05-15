@@ -80,7 +80,7 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 			draw.SimpleText( LocalPlayer():Name(), "encounter_font", w/2, 75, plcol, a, a )
 			draw.SimpleText( "Level ".. playerstats_a["LVL3"] .." ".. tag, "equipment_plname4", w/2, 130, color_white, a, a )
 			draw.SimpleText( playerstats_a["LVL1"] .."/".. playerstats_a["LVL2"], "equipment_plname4", w/2, 165, color_white, a, a )
-			draw.SimpleText( playerstats_a["HP1"] .."/".. LocalPlayer():GetMaxHealth(), "equipment_plname2", w/2 - 32, 690, color_white, b, a )
+			draw.SimpleText( LocalPlayer():Health() .."/".. playerstats_a["HP2"], "equipment_plname2", w/2 - 32, 690, color_white, b, a )
 			draw.SimpleText( weaponlist[ playerstats_a["currentweapon"] ].Name, "equipment_plname2", w/2 - 35, 730, color_white, b, a )
 			draw.SimpleText( weaponlist[ playerstats_a["currentarmour"] ].Name, "equipment_plname2", w/2 - 35, 770, color_white, b, a )
 			draw.SimpleText( playerstats_a["MGT"], "equipment_plname2", 545, 275, color_white, b, a )
@@ -88,8 +88,8 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 			draw.SimpleText( playerstats_a["AGI"], "equipment_plname2", 545, 380, color_white, b, a )
 			draw.SimpleText( playerstats_a["SDL"], "equipment_plname2", 545, 435, color_white, b, a )
 			draw.SimpleText( playerstats_a["FCS"], "equipment_plname2", 545, 490, color_white, b, a )
-			draw.SimpleText( playerstats_a["DEF"] + playerstats_a["VIT"] + playerstats_a["SDL"], "equipment_plname2", 545, 545, color_white, b, a )
-			draw.SimpleText( playerstats_a["DFX"] + playerstats_a["SDL"] * 2, "equipment_plname2", 545, 600, color_white, b, a )
+			draw.SimpleText( playerstats_a["DEF"], "equipment_plname2", 545, 545, color_white, b, a )
+			draw.SimpleText( playerstats_a["DFX"], "equipment_plname2", 545, 600, color_white, b, a )
 			draw.SimpleText( playerstats_a["LVL_POINTS"], "equipment_plname2", 545, 670, color_white, b, a )
 		end
 			
@@ -241,6 +241,11 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 		overview_cross_mgt:SetPos( 580, 255 ) 
 		overview_cross_mgt.DoClick = function()
 			playerstats_a["MGT"] = playerstats_a["MGT"] + 1
+
+			-- Increase health and max health by 1 :)
+			playerstats_a["HP1"] = playerstats_a["HP1"] + 1
+			playerstats_a["HP2"] = playerstats_a["HP2"] + 1
+
 			playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] - 1
 
 			if playerstats_a["MGT"] % 2 == 0 then
@@ -260,6 +265,10 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 		overview_cross_dfe.DoClick = function()
 			playerstats_a["VIT"] = playerstats_a["VIT"] + 1
 			playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] - 1
+
+			playerstats_a["HP1"] = playerstats_a["HP1"] + 5
+			playerstats_a["HP2"] = playerstats_a["HP2"] + 5
+			playerstats_a["DEF"] = playerstats_a["DEF"] + 2
 
 			if playerstats_a["VIT"] % 2 == 0 then
 				playerstats_a["BLUNT_POINTS"] = playerstats_a["BLUNT_POINTS"] + 1
@@ -290,6 +299,9 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 		overview_cross_sdl.DoClick = function()
 			playerstats_a["SDL"] = playerstats_a["SDL"] + 1
 			playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] - 1
+
+			playerstats_a["DEF"] = playerstats_a["DEF"] + 1
+			playerstats_a["DFX"] = playerstats_a["DFX"] + 3
 
 			if playerstats_a["SDL"] % 3 == 0 then
 				playerstats_a["SLASH_POINTS"] = playerstats_a["SLASH_POINTS"] + 1
@@ -322,6 +334,12 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 		overview_save:SetPos( mainframe:GetWide() - 45, mainframe:GetTall() - 45 )
 		overview_save.DoClick = function()
 			playerstats = table.Copy( playerstats_a )
+
+			net.Start( "maxhealth" )
+				net.WriteDouble( playerstats["HP1"] )
+				net.WriteDouble( playerstats["HP2"] )
+			net.SendToServer()
+			
 			madechanges = false
 		end
 	overview_revert = vgui.Create( "DImageButton", mainframe )
