@@ -94,15 +94,21 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 				image_check1:SetParent( weapons_frame )
 				image_check1:SetPos( self:GetPos() )
 
+				
+				playerstats_a["DEF"] = playerstats_a["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats_a["currentweapon"] ].PDEF -- defence
+				playerstats["DEF"] = playerstats["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats["currentweapon"] ].PDEF -- defence
+					--playerstats["arov_def2"] = weaponlist[ v["Item"] ].PDEF
+				playerstats_a["SDL"] = playerstats_a["SDL"] + weaponlist[ v["Item"] ].PSDL - weaponlist[ playerstats_a["currentweapon"] ].PSDL -- sidle
+				playerstats["SDL"] = playerstats["SDL"] + weaponlist[ v["Item"] ].PSDL - weaponlist[ playerstats["currentweapon"] ].PSDL -- sidle
+					--playerstats["arov_sdl2"] = weaponlist[ v["Item"] ].PSDL
+				playerstats_a["AGI"] = playerstats_a["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats_a["currentweapon"] ].PAGI
+				playerstats["AGI"] = playerstats["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats["currentweapon"] ].PAGI
+					--playerstats["arov_pagi2"] = weaponlist[ v["Item"] ].PAGI
+				
+				playerstats_a["currentweapon"] = v["Item"]
 				playerstats["currentweapon"] = v["Item"]
-				playerstats["DEF"] = playerstats["DEF"] + weaponlist[ v["Item"] ].PDEF - playerstats["arov_def2"] -- defence
-					playerstats["arov_def2"] = weaponlist[ v["Item"] ].PDEF
-				playerstats["SDL"] = playerstats["SDL"] + weaponlist[ v["Item"] ].PSDL - playerstats["arov_sdl2"] -- sidle
-					playerstats["arov_sdl2"] = weaponlist[ v["Item"] ].PSDL
-				playerstats["AGI"] = playerstats["AGI"] + weaponlist[ v["Item"] ].PAGI - playerstats["arov_pagi2"]
-					playerstats["arov_pagi2"] = weaponlist[ v["Item"] ].PAGI
-					
-				PlayerstatsSave()
+
+				--PlayerstatsSave()
 				rt_weapon()
 			end
 
@@ -123,10 +129,10 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 			end
 			if k < 7 then
 				weaponbutton:SetPos( (k * 100 - 100 + k * 5 - 5) + 250, 65 )
-				elseif k < 13 then
-					weaponbutton:SetPos( ( k * 100 - 700 + k * 5 - 35 ) + 250, 170 )
-					else 
-						weaponbutton:SetPos( ( k * 100 - 1300 + k * 5 - 65 ) + 250, 275 ) 
+			elseif k < 13 then
+				weaponbutton:SetPos( ( k * 100 - 700 + k * 5 - 35 ) + 250, 170 )
+			else 
+				weaponbutton:SetPos( ( k * 100 - 1300 + k * 5 - 65 ) + 250, 275 ) 
 			end
 
 	for k, v in pairs( plarmours ) do
@@ -142,16 +148,24 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 
 				image_check2:SetParent( weapons_frame )
 				image_check2:SetPos( self:GetPos() )
+				
+				playerstats_a["DEF"] = playerstats_a["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats_a["currentarmour"] ].PDEF -- what else do I do and not spam?
+				playerstats["DEF"] = playerstats["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats["currentarmour"] ].PDEF
+				--playerstats["arov_def"] = weaponlist[ v["Item"] ].PDEF
+				playerstats_a["DFX"] = playerstats_a["DFX"] + weaponlist[ v["Item"] ].PDFX - weaponlist[ playerstats_a["currentarmour"] ].PDFX
+				playerstats["DFX"] = playerstats["DFX"] + weaponlist[ v["Item"] ].PDFX - weaponlist[ playerstats["currentarmour"] ].PDFX
+				--playerstats["arov_dfx"] = weaponlist[ v["Item"] ].PDFX
+				playerstats_a["DDG"] = playerstats_a["DDG"] + weaponlist[ v["Item"] ].PDG - weaponlist[ playerstats_a["currentarmour"] ].PDG
+				playerstats["DDG"] = playerstats["DDG"] + weaponlist[ v["Item"] ].PDG - weaponlist[ playerstats["currentarmour"] ].PDG
+				--playerstats["arov_ddg"] = weaponlist[ v["Item"] ].PDG
+				playerstats_a["AGI"] = playerstats_a["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats_a["currentarmour"] ].PAGI
+				playerstats["AGI"] = playerstats["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats["currentarmour"] ].PAGI
+				--playerstats["arov_pagi"] = weaponlist[ v["Item"] ].PAGI
+
+				playerstats_a["currentarmour"] = v["Item"]
 				playerstats["currentarmour"] = v["Item"]
-				playerstats["DEF"] = playerstats["DEF"] + weaponlist[ v["Item"] ].PDEF - playerstats["arov_def"] -- what else do I do and not spam?
-				playerstats["arov_def"] = weaponlist[ v["Item"] ].PDEF
-				playerstats["DFX"] = playerstats["DFX"] + weaponlist[ v["Item"] ].PDFX - playerstats["arov_dfx"]
-				playerstats["arov_dfx"] = weaponlist[ v["Item"] ].PDFX
-				playerstats["DDG"] = playerstats["DDG"] + weaponlist[ v["Item"] ].PDG - playerstats["arov_ddg"]
-				playerstats["arov_ddg"] = weaponlist[ v["Item"] ].PDG
-				playerstats["AGI"] = playerstats["AGI"] + weaponlist[ v["Item"] ].PAGI - playerstats["arov_pagi"]
-				playerstats["arov_pagi"] = weaponlist[ v["Item"] ].PAGI
-				PlayerstatsSave()
+
+				--PlayerstatsSave()
 			end
 			armourbutton.DoRightClick = function( self )
 				menuarm = weaponlist[ v["Item"] ].Name
@@ -162,10 +176,10 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 			end
 			if k < 7 then
 				armourbutton:SetPos( ( k * 100 - 100 + k * 5 - 5 ) + 250, 455 )
-				elseif k < 13 then
-					armourbutton:SetPos( ( k * 100 - 700 + k * 5 - 35 ) + 250, 560 )
-					else 
-						armourbutton:SetPos( ( k * 100 - 1300 + k * 5 - 65 ) + 250, 665 ) 
+			elseif k < 13 then
+				armourbutton:SetPos( ( k * 100 - 700 + k * 5 - 35 ) + 250, 560 )
+			else 
+				armourbutton:SetPos( ( k * 100 - 1300 + k * 5 - 65 ) + 250, 665 ) 
 			end
 	end
 	end
