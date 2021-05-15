@@ -154,6 +154,7 @@ function CheckEXP()
         playerstats_a["LVL3"] = playerstats_a["LVL3"] + 1
         playerstats_a["LVL2"] = playerstats_a["LVL2"] * playerstats_a["LVL3"]
         playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] + 2
+        playerstats_a["HP2"] = playerstats_a["HP2"] + 10
         CheckEXP()
     end
 end
