@@ -67,21 +67,20 @@ net.Receive( "savetable", function( len, ply )
 	end
 	pl_stats_tbl[ id ] = tableph
 	-- calculate some stats prematurely
-	pl_stats_tbl[ id ].DEF = pl_stats_tbl[ id ].DEF + pl_stats_tbl[ id ].VIT + pl_stats_tbl[ id ].SDL
-	pl_stats_tbl[ id ].DFX = pl_stats_tbl[ id ].DFX + pl_stats_tbl[ id ].SDL * 4
-	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS
+	-- pl_stats_tbl[ id ].DEF = pl_stats_tbl[ id ].DEF + pl_stats_tbl[ id ].VIT + pl_stats_tbl[ id ].SDL
+	-- pl_stats_tbl[ id ].DFX = pl_stats_tbl[ id ].DFX + pl_stats_tbl[ id ].SDL * 4
+	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
 	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
-
 end)
 
 net.Receive( "maxhealth", function( len, ply )
-	player = net.ReadEntity()
+	-- player = net.ReadEntity()
 	playerhealth = net.ReadDouble()
 	playerhealth2 = net.ReadDouble()
-	timer.Simple(2, function()
-		ply:SetMaxHealth( playerhealth )
+	--timer.Simple(2, function()
 		ply:SetHealth( playerhealth2 )
-	end)
+		ply:SetMaxHealth( playerhealth2 )
+	--end)
 end)
 
 hook.Add( "PlayerInitialSpawn", "startvar", function() 
@@ -106,6 +105,7 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 	-- Manages player team's Utility Points. Convenience.
 	Levitus:SetNWInt( "team_UP", 0 )
 
+	-- The fuck is this timer?
 	timer.Simple( 10, function()
 		cam_override = ents.Create( "info_target" )
 		cam_override:SetPos( Vector( -333, 84.5, -815 ) )
