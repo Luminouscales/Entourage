@@ -78,14 +78,20 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 					enemy3 = nil
 				end
 				-----------------
-				for k, v in pairs( battle_enemies ) do 
-					print( type( k ) )
-				end
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				lives = lives - 1
+
+				-- Send EXP
+				local timer_delay = 0 -- change if necessary
+				timer.Simple( timer_delay, function() -- im pretty sure this is necessary to prevent shit from fucking up
+					net.Start( "net_enemy_senddata" )
+						net.WriteInt( enemies_table[ target:GetName() ].LVL, 32 )
+						net.WriteInt( enemies_table[ target:GetName() ].EXP, 32 )
+					net.Broadcast()
+				end)
 			elseif enemies_table[ target:GetName() ].PainAnim ~= nil then
 				RunString( enemies_table[ target:GetName() ].PainAnim )
 			end
@@ -104,6 +110,20 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 		entourage_AddUP( -25, 25 )
 	end
 end)
+
+-- True Accuracy and True Dodge calculation for players
+hook.Add( "EnemyTurnEnd", "accresets", function()
+	local id = Entity(1):UserID()
+	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
+	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
+end)
+
+hook.Add( "PlayerTurnEnd", "accresets2", function()
+	local id = Entity(1):UserID()
+	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
+	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
+end)
+
 --------------------------------------------------------------------------------------
 
 -- This function is used in EVERY battle encounter and so shares functions.
@@ -149,16 +169,6 @@ function EncounterInit( delay )
 	net.Broadcast()
 
 	hook.Remove( "Tick", "encounter_hook" )
-
-	hook.Add( "OnNPCKilled", "enemy_senddata", function( npc )
-		local timer_delay = 0 -- change if necessary
-		timer.Simple( timer_delay, function() -- im pretty sure this is necessary to prevent shit from fucking up
-			net.Start( "net_enemy_senddata" )
-				net.WriteInt( enemies_table[ npc:GetName() ].LVL, 32 )
-				net.WriteInt( enemies_table[ npc:GetName() ].EXP, 32 )
-			net.Broadcast()
-		end)
-	end)
 end
 -------------------------------------------------------------------------------------------------------------------------------
 
@@ -254,12 +264,10 @@ net.Receive( "player_brace", function( len, ply )
 	local braceidentifier = "bracerhook_".. ply:AccountID()
 	pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF + 3 + pl_stats_tbl[ player:UserID() ].LVL3
 	pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX + 20
-	hook.Add( "EntityTakeDamage", braceidentifier, function( target, dmginfo )
-		if target == Levitus then
-			pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - 3 - pl_stats_tbl[ player:UserID() ].LVL3
-			pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - 20
-			hook.Remove( "EntityTakeDamage", braceidentifier )
-		end
+	hook.Add( "EnemyTurnEnd", braceidentifier, function()
+		pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - 3 - pl_stats_tbl[ player:UserID() ].LVL3
+		pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - 20
+		hook.Remove( "EnemyTurnEnd", braceidentifier )
 	end)
 	timer.Simple( 2, function() 
 		EnemyAttack()
@@ -350,7 +358,8 @@ function playerturn() -- let the player attack
 	turn = turn + 1
 	PrintMessage( HUD_PRINTTALK, "_____________________" )
 	PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
-	Levitus:TakeDamage( 1 ) -- turnholder. I shall present what I am capable of. The chains are great, but my fortitude is beyond anything. Now suffer!
+	-- Levitus:TakeDamage( 1 ) -- turnholder. I shall present what I am capable of. The chains are great, but my fortitude is beyond anything. Now suffer!
+	hook.Call( "EnemyTurnEnd" )
 	sexy_int = 0
 	for k, v in pairs( battle_enemies ) do 
 		sexy_int = sexy_int + 1
