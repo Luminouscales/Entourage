@@ -3,16 +3,16 @@
 		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "RustyKnife"
+		"Item": "KillerSword"
 	},
 	{
-		"Item": "WoodenClub"
+		"Item": "EmptySlot"
 	},
 	{
-		"Item": "RopeSpear"
+		"Item": "EmptySlot"
 	},
 	{
-		"Item": "SalvagedBlade"
+		"Item": "EmptySlot"
 	},
 	{
 		"Item": "EmptySlot"
