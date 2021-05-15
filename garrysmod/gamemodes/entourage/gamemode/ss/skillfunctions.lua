@@ -131,14 +131,12 @@ function s_precstrike()
     local cd = 0
     local hookv1 = player
     local hookv2 = lvl
-    hook.Add( "EntityTakeDamage", pl_id .."precstrikehook", function( target )
-        if target == Levitus then
-            cd = cd + 1
-            if cd >= 3 then
-                pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS - 1 - hookv2
-                hookv1:SetNWBool( "s_precstrike_oncd", false )
-                hook.Remove( "EntityTakeDamage", pl_id .."precstrikehook" )
-            end
+    hook.Add( "EnemyTurnEnd", pl_id .."precstrikehook", function()
+        cd = cd + 1
+        if cd >= 3 then
+            pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS - 1 - hookv2
+            hookv1:SetNWBool( "s_precstrike_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."precstrikehook" )
         end
     end)
     SendSkillNote( "Precision Strike" )
@@ -175,15 +173,13 @@ function s_defmano()
     local cd = 0
     local hookv1 = player
     local hookv2 = lvl
-    hook.Add( "EntityTakeDamage", pl_id .."defmanohook", function( target )
-        if target == Levitus then
-            cd = cd + 1
-            if cd >= 3 then
-                pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - calc1
-                pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - calc2
-                hookv1:SetNWBool( "s_defmano_oncd", false )
-                hook.Remove( "EntityTakeDamage", pl_id .."defmanohook" )
-            end
+    hook.Add( "EnemyTurnEnd", pl_id .."defmanohook", function()
+        cd = cd + 1
+        if cd >= 3 then
+            pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - calc1
+            pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - calc2
+            hookv1:SetNWBool( "s_defmano_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."defmanohook" )
         end
     end)
 end
@@ -215,14 +211,12 @@ function s_firstaid()
     local cd = 0
     local hookv1 = player
     local hookv2 = lvl
-    hook.Add( "EntityTakeDamage", pl_id .."firstaidhook", function( target )
-        if target == Levitus then
-            cd = cd + 1
-            if cd >= 3 then
-                pl_stats_tbl[ player:UserID() ].MGT = pl_stats_tbl[ player:UserID() ].MGT - lvl
-                hookv1:SetNWBool( "s_firstaid_oncd", false )
-                hook.Remove( "EntityTakeDamage", pl_id .."firstaidhook" )
-            end
+    hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
+        cd = cd + 1
+        if cd >= 3 then
+            pl_stats_tbl[ player:UserID() ].MGT = pl_stats_tbl[ player:UserID() ].MGT - lvl
+            hookv1:SetNWBool( "s_firstaid_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."firstaidhook" )
         end
     end)
 end
@@ -250,13 +244,11 @@ function s_broadswing()
     local pl_id = player:AccountID()
     local cd = 0
     local hookv1 = player
-    hook.Add( "EntityTakeDamage", pl_id .."broadswinghook", function( target )
-        if target == Levitus then
-            cd = cd + 1
-            if cd >= 2 then
-                hookv1:SetNWBool( "s_broadswing_oncd", false )
-                hook.Remove( "EntityTakeDamage", pl_id .."broadswinghook" )
-            end
+    hook.Add( "EnemyTurnEnd", pl_id .."broadswinghook", function()
+        cd = cd + 1
+        if cd >= 2 then
+            hookv1:SetNWBool( "s_broadswing_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."broadswinghook" )
         end
     end)
 end
@@ -284,13 +276,11 @@ function s_fragmentation()
     local pl_id = player:AccountID()
     local cd = 0
     local hookv1 = player
-    hook.Add( "EntityTakeDamage", pl_id .."fragmentationhook", function( target )
-        if target == Levitus then
-            cd = cd + 1
-            if cd >= 4 then
-                hookv1:SetNWBool( "s_fragmentation_oncd", false )
-                hook.Remove( "EntityTakeDamage", pl_id .."fragmentationhook" )
-            end
+    hook.Add( "EnemyTurnEnd", pl_id .."fragmentationhook", function()
+        cd = cd + 1
+        if cd >= 4 then
+            hookv1:SetNWBool( "s_fragmentation_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."fragmentationhook" )
         end
     end)
 end
@@ -315,13 +305,11 @@ function s_medicsupplies()
     local pl_id = player:AccountID()
     local cd = 0
     local hookv1 = player
-    hook.Add( "EntityTakeDamage", pl_id .."firstaidhook", function( target )
-        if target == Levitus then
-            cd = cd + 1
-            if cd >= 3 then
-                hookv1:SetNWBool( "s_medicsupplies_oncd", false )
-                hook.Remove( "EntityTakeDamage", pl_id .."medicsupplieshook" )
-            end
+    hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
+        cd = cd + 1
+        if cd >= 3 then
+            hookv1:SetNWBool( "s_medicsupplies_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."medicsupplieshook" )
         end
     end)
 end
