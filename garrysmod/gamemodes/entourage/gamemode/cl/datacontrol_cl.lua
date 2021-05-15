@@ -19,9 +19,9 @@ function PlayerstatsSave()
     -- THIS HAS TO BE OPTIMIZED. in the future
     -- SendStats()
     -------------------------------------------
-	LocalPlayer():SetNWInt( "playerdef", playerstats[ "DEF" ] )
-	LocalPlayer():SetNWInt( "playerdfx", playerstats[ "DFX" ] )
-	LocalPlayer():SetNWFloat( "playerdef2", playerstats[ "DEF" ] )
+	-- LocalPlayer():SetNWInt( "playerdef", playerstats[ "DEF" ] )
+	-- LocalPlayer():SetNWInt( "playerdfx", playerstats[ "DFX" ] )
+	-- LocalPlayer():SetNWFloat( "playerdef2", playerstats[ "DEF" ] )
 end
 
 function SendStats()
@@ -218,10 +218,27 @@ function weaponlistTBL()
             ["Desc"] = "Knife on a long stick, reinforced with rope. Multi-purpose.",
            ["Desc2"] = "-1 Celerity, +1 Defence",
             ["Desc3"] = "+75% MGT / 75% CLE, 50% armour pen. / No scaling",
-            ["PDEF"] = "1",
+            ["PDEF"] = 0,
             ["PSDL"] = 0,
             ["PAGI"] = -1,
             ["func"] = "RopeSpear()",
+            ["targets"] = 1
+        },
+        ["SalvagedBlade"] = {
+            ["Name"] = "Salvaged Blade",
+            ["Type"] = "Weapon",
+            ["Icon"] = "items/entourage_salvagedblade.png",
+            ["DMG1"] = 15,
+            ["DMG2"] = 18,
+            ["dmgtype"] = "Slash",
+            ["BaseAcc"] = 65,
+            ["Desc"] = "Crude metal marks this weapon's sharp edge.",
+           ["Desc2"] = "None",
+            ["Desc3"] = "+100% MGT, +75% FCS",
+            ["PDEF"] = 0,
+            ["PSDL"] = 0,
+            ["PAGI"] = 0,
+            ["func"] = "SalvagedBlade()",
             ["targets"] = 1
         },
         ["ClothArmour"] = {
@@ -240,11 +257,11 @@ function weaponlistTBL()
             ["Type"] = "Armour",
             ["Icon"] = "items/entourage_slimarmour.png",
             ["Desc"] = "Slim clothes with a premise on light weight.",
-           ["Desc2"] = "+12 Dodge, +1 Celerity",
+           ["Desc2"] = "+12 Dodge, +2 Celerity",
             ["PDEF"] = 2,
             ["PDFX"] = 0,
             ["PDG"] = 12,
-            ["PAGI"] = 1
+            ["PAGI"] = 2
         },
         ["PaddedArmour"] = {
             ["Name"] = "Padded Armour",
@@ -252,7 +269,7 @@ function weaponlistTBL()
             ["Icon"] = "items/entourage_paddedarmour.png",
             ["Desc"] = "Reinforced standard armour. Heavier, sturdier.",
            ["Desc2"] = "No bonus effects.",
-            ["PDEF"] = 10,
+            ["PDEF"] = 15,
             ["PDFX"] = 0,
             ["PDG"] = 0,
             ["PAGI"] = 0
@@ -274,7 +291,7 @@ function weaponlistTBL()
             ["Icon"] = "items/entourage_impracticalarmour.png",
             ["Desc"] = "A shoddy attempt at plate armour.",
            ["Desc2"] = "-50 Dodge, -3 Celerity",
-            ["PDEF"] = 1,
+            ["PDEF"] = 0,
             ["PDFX"] = 60,
             ["PDG"] = -50,
             ["PAGI"] = -5
@@ -305,23 +322,6 @@ function weaponlistTBL()
             ["PSDL"] = 0,
             ["PAGI"] = 0,
             ["func"] = "KillerSword()",
-            ["targets"] = 1
-        },
-        ["SalvagedBlade"] = {
-            ["Name"] = "Salvaged Blade",
-            ["Type"] = "Weapon",
-            ["Icon"] = "items/entourage_salvagedblade.png",
-            ["DMG1"] = 15,
-            ["DMG2"] = 18,
-            ["dmgtype"] = "Slash",
-            ["BaseAcc"] = 65,
-            ["Desc"] = "Crude metal marks this weapon's sharp edge.",
-           ["Desc2"] = "None",
-            ["Desc3"] = "+100% MGT, +75% FCS",
-            ["PDEF"] = 0,
-            ["PSDL"] = 0,
-            ["PAGI"] = 0,
-            ["func"] = "SalvagedBlade()",
             ["targets"] = 1
         }
     }
@@ -439,9 +439,9 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
     --------------------------------------------------------------------------------------------------
 
     net.Start( "maxhealth" ) -- set max health
-        net.WriteEntity( LocalPlayer() )
-        net.WriteDouble( 100 + playerstats["VIT"] * 5 + playerstats["MGT"] * 2 )
+        --net.WriteEntity( LocalPlayer() )
         net.WriteDouble( playerstats["HP1"] )
+        net.WriteDouble( playerstats["HP2"] )
     net.SendToServer()
 
     PlayerstatsSave()
