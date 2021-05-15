@@ -35,20 +35,24 @@ function DoDodge()
 		turntarget:EmitSound( "mgb_miss3.mp3", 150, 100, 1, CHAN_BODY )
 	end
 end
+
+function DoDamage()
+	RunString( enemies_table[ turntargetsave ].AI2 )
+
+	if turntarget:GetClass() == "npc_antlion" then
+		wpndmg3 = math.Clamp( wpndmg3, 0, turntarget:Health() )
+	end
+
+	turntarget:TakeDamage( wpndmg3, player )
+end
 ---------------------------------------------------------------
 
 function Fists()
 	thp = turntarget:Health()
 	if math.random( 1, 100 ) <= ( pl_stats_tbl[ player:UserID() ].ACC_TRUE * acc_modifier ) - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ player:UserID() ].VIT + math.random( wpndmg1, wpndmg2 ) * ( pl_stats_tbl[ player:UserID() ].MGT * 3 ) ) * dmg_modifier
-		RunString( enemies_table[ turntargetsave ].AI2 )
-		turntarget:TakeDamage( wpndmg3, player )
-		if turntarget:Health() <= 0 then
-			PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
-			deaths = deaths + 1
-		else
-			DoStun2( 5 )
-		end
+		DoDamage()
+		DoStun2( 5 )
 	else
 		DoDodge()
 	end
@@ -57,8 +61,7 @@ end
 function OldCrowbar()
 	if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) +  pl_stats_tbl[ player:UserID() ].MGT * 0.25 + pl_stats_tbl[ player:UserID() ].AGI * 0.25 + pl_stats_tbl[ player:UserID() ].VIT * 0.25 ) * ( dmg_modifier + slash_dmg )
-		RunString( enemies_table[ turntargetsave ].AI2 )
-		turntarget:TakeDamage( wpndmg3, player )
+		DoDamage()
 	else
 		DoDodge()
 	end
@@ -71,11 +74,9 @@ function RustyKnife()
 		if math.random( 1, 100 ) <= 5 + pl_stats_tbl[ player:UserID() ].FCS * 3 then
 			critmp = 2.5
 			DoCrit()
-			
 		end
 		wpndmg3 = ( ( wpndmg1 + pl_stats_tbl[ player:UserID() ].FCS + pl_stats_tbl[ player:UserID() ].AGI ) * critmp ) * dmg_modifier
-		RunString( enemies_table[ turntargetsave ].AI2 )
-		turntarget:TakeDamage( wpndmg3, player )
+		DoDamage()
 		critmp = 1
 	else
 		DoDodge()
@@ -86,14 +87,8 @@ function WoodenClub()
 	thp = turntarget:Health()
 	if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ player:UserID() ].MGT * 0.15 + math.random( wpndmg1, wpndmg2 ) * ( pl_stats_tbl[ player:UserID() ].VIT * 0.1 ) ) * dmg_modifier
-		RunString( enemies_table[ turntargetsave ].AI2 )
-		turntarget:TakeDamage( wpndmg3, player )
-		if turntarget:Health() <= 0 then
-			PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
-			deaths = deaths + 1
-		else
-			DoStun2( 0 )
-		end
+		DoDamage()
+		DoStun2( 0 )
 	else
 		DoDodge()
 	end
@@ -103,8 +98,7 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 	if pltype2 == "Slash" then
 		if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) - enemies_table[ turntargetsave ].DDG then 
 			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ player:UserID() ].MGT * 0.75 ) * ( dmg_modifier + slash_dmg )
-			RunString( enemies_table[ turntargetsave ].AI2 )
-			turntarget:TakeDamage( wpndmg3, player )
+			DoDamage()
 		else
 			DoDodge()
 		end
@@ -117,10 +111,8 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 		if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then 
 			wp_pierce = 0.25 + pl_stats_tbl[ player:UserID() ].FCS * 0.02
 			wpndmg3 = ( ( wpndmg1 + pl_stats_tbl[ player:UserID() ].AGI * 0.75 ) * critmp ) * dmg_modifier
-			RunString( enemies_table[ turntargetsave ].AI2 )
-			turntarget:TakeDamage( wpndmg3, player )
+			DoDamage()
 			critmp = 1
-
 		else
 			DoDodge()
 		end
@@ -129,14 +121,8 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 		thp = turntarget:Health()
 		if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then 
 			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) ) * dmg_modifier
-			RunString( enemies_table[ turntargetsave ].AI2 )
-			turntarget:TakeDamage( wpndmg3, player )
-			if turntarget:Health() <= 0 then
-				PrintMessage( HUD_PRINTTALK, player:Name() .." defeated ".. turntargetsave .."!" )
-				deaths = deaths + 1
-			else
-				DoStun2( 0 )
-			end
+			DoDamage()
+			DoStun2( 0 )
 		else
 			DoDodge()
 		end
@@ -146,8 +132,7 @@ end
 function KillerSword()
 	if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = math.random( wpndmg1, wpndmg2 ) * ( dmg_modifier + slash_dmg )
-		RunString( enemies_table[ turntargetsave ].AI2 )
-		turntarget:TakeDamage( wpndmg3, player )
+		DoDamage()
 	else
 		PrintMessage( HUD_PRINTTALK, "I never miss... I DON'T MISS! GET BACK HERE." )
 	end
@@ -156,8 +141,7 @@ end
 function SalvagedBlade()
 	if math.random( 1, 100 ) <= pl_stats_tbl[ player:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) +  pl_stats_tbl[ player:UserID() ].MGT + pl_stats_tbl[ player:UserID() ].FCS * 0.75 ) * ( dmg_modifier + slash_dmg )
-		RunString( enemies_table[ turntargetsave ].AI2 )
-		turntarget:TakeDamage( wpndmg3, player )
+		DoDamage()
 	else
 		DoDodge()
 	end
