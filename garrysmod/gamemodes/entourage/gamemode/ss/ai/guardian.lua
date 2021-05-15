@@ -177,19 +177,19 @@ function Sudety()
 end
 
 function GuardianStun()
-    turntarget:ResetSequence( "ragdoll" )
-    turntarget:ResetSequence( "physhit_rl" )
+    enemy1:ResetSequence( "ragdoll" )
+    enemy1:ResetSequence( "physhit_rl" )
 
     timer.Simple( 2, function()
-        turntarget:ResetSequence( table.Random( antlion_idle ) )
+        enemy1:ResetSequence( table.Random( antlion_idle ) )
     end)
 end
 
 function GuardianPain()
-    turntarget:ResetSequence( "ragdoll" )
-    turntarget:ResetSequence( "pain" )
+    enemy1:ResetSequence( "ragdoll" )
+    enemy1:ResetSequence( "pain" )
 
     timer.Simple( 1, function()
-        turntarget:ResetSequence( table.Random( antlion_idle ) )
+        enemy1:ResetSequence( table.Random( antlion_idle ) )
     end)
 end
