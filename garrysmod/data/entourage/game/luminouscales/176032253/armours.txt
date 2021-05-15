@@ -3,16 +3,16 @@
 		"Item": "ClothArmour"
 	},
 	{
-		"Item": "PrecisionArmour"
+		"Item": "EmptySlot2"
 	},
 	{
-		"Item": "SlimArmour"
+		"Item": "EmptySlot2"
 	},
 	{
-		"Item": "ImpracticalArmour"
+		"Item": "EmptySlot2"
 	},
 	{
-		"Item": "PaddedArmour"
+		"Item": "EmptySlot2"
 	},
 	{
 		"Item": "EmptySlot2"
