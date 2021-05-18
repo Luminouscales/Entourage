@@ -15,7 +15,7 @@ net.Receive( "player_makeskill", function( len, ply )
     slash_dfx = net.ReadInt( 32 ) * 0.03
     slash_acc = net.ReadInt( 32 ) * 0.05 
 
-	player = ply
+	mgbplayer = ply
     vis_int = 0
 
     RunString( skill_id .."()" )
@@ -47,8 +47,10 @@ function s_Retract()
             end
         end)
     end
-    dmg_modifier = 1
-    acc_modifier = 1
+    timer.Simple( 1.25, function()
+        dmg_modifier = 1
+        acc_modifier = 1
+    end)
 end
 
 function DoCrit2a()
@@ -121,20 +123,20 @@ function s_precstrike()
     s_Retract()
 
     -- Cooldown
-    player:SetNWBool( "s_precstrike_oncd", true )
+    mgbplayer:SetNWBool( "s_precstrike_oncd", true )
 
     -- Other effects.
     -- Add Focus for 3 turns.
-    pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS + 1 + lvl
+    pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS + 1 + lvl
     -- Remove focus after 3 turns.
-    local pl_id = player:AccountID()
+    local pl_id = mgbplayer:AccountID()
     local cd = 0
-    local hookv1 = player
+    local hookv1 = mgbplayer
     local hookv2 = lvl
     hook.Add( "EnemyTurnEnd", pl_id .."precstrikehook", function()
         cd = cd + 1
         if cd >= 3 then
-            pl_stats_tbl[ player:UserID() ].FCS = pl_stats_tbl[ player:UserID() ].FCS - 1 - hookv2
+            pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS - 1 - hookv2
             hookv1:SetNWBool( "s_precstrike_oncd", false )
             hook.Remove( "EnemyTurnEnd", pl_id .."precstrikehook" )
         end
@@ -160,24 +162,24 @@ function s_defmano()
 
     s_Retract()
 
-    player:SetNWBool( "s_defmano_oncd", true )
+    mgbplayer:SetNWBool( "s_defmano_oncd", true )
 
     -- Other effects.
 
-    local calc1 = 2 + pl_stats_tbl[ player:UserID() ].DEF / 10 + 3 * lvl
-    local calc2 = 5 + pl_stats_tbl[ player:UserID() ].DFX / 10 + 2 * lvl
-    pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF + calc1
-    pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX + calc2
+    local calc1 = 2 + pl_stats_tbl[ mgbplayer:UserID() ].DEF / 10 + 3 * lvl
+    local calc2 = 5 + pl_stats_tbl[ mgbplayer:UserID() ].DFX / 10 + 2 * lvl
+    pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF + calc1
+    pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX + calc2
 
-    local pl_id = player:AccountID()
+    local pl_id = mgbplayer:AccountID()
     local cd = 0
-    local hookv1 = player
+    local hookv1 = mgbplayer
     local hookv2 = lvl
     hook.Add( "EnemyTurnEnd", pl_id .."defmanohook", function()
         cd = cd + 1
         if cd >= 3 then
-            pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - calc1
-            pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - calc2
+            pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF - calc1
+            pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX - calc2
             hookv1:SetNWBool( "s_defmano_oncd", false )
             hook.Remove( "EnemyTurnEnd", pl_id .."defmanohook" )
         end
@@ -201,20 +203,20 @@ function s_firstaid()
         PrintMessage( HUD_PRINTTALK, target:GetName() .." was healed for ".. heal .." HP!" )
     end)
 
-    player:SetNWBool( "s_firstaid_oncd", true )
+    mgbplayer:SetNWBool( "s_firstaid_oncd", true )
 
     -- Other effects.
 
-    pl_stats_tbl[ player:UserID() ].MGT = pl_stats_tbl[ player:UserID() ].MGT + lvl
+    pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT + lvl
 
-    local pl_id = player:AccountID()
+    local pl_id = mgbplayer:AccountID()
     local cd = 0
-    local hookv1 = player
+    local hookv1 = mgbplayer
     local hookv2 = lvl
     hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
         cd = cd + 1
         if cd >= 3 then
-            pl_stats_tbl[ player:UserID() ].MGT = pl_stats_tbl[ player:UserID() ].MGT - lvl
+            pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT - lvl
             hookv1:SetNWBool( "s_firstaid_oncd", false )
             hook.Remove( "EnemyTurnEnd", pl_id .."firstaidhook" )
         end
@@ -239,11 +241,11 @@ function s_broadswing()
 
     s_Retract()
 
-    player:SetNWBool( "s_broadswing_oncd", true )
+    mgbplayer:SetNWBool( "s_broadswing_oncd", true )
 
-    local pl_id = player:AccountID()
+    local pl_id = mgbplayer:AccountID()
     local cd = 0
-    local hookv1 = player
+    local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."broadswinghook", function()
         cd = cd + 1
         if cd >= 2 then
@@ -271,11 +273,11 @@ function s_fragmentation()
 
     s_Retract()
 
-    player:SetNWBool( "s_fragmentation_oncd", true )
+    mgbplayer:SetNWBool( "s_fragmentation_oncd", true )
 
-    local pl_id = player:AccountID()
+    local pl_id = mgbplayer:AccountID()
     local cd = 0
-    local hookv1 = player
+    local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."fragmentationhook", function()
         cd = cd + 1
         if cd >= 4 then
@@ -300,11 +302,11 @@ function s_medicsupplies()
         PrintMessage( HUD_PRINTTALK, target:GetName() .." was healed for ".. heal .." HP!" )
     end)
 
-    player:SetNWBool( "s_medicsupplies_oncd", true )
+    mgbplayer:SetNWBool( "s_medicsupplies_oncd", true )
 
-    local pl_id = player:AccountID()
+    local pl_id = mgbplayer:AccountID()
     local cd = 0
-    local hookv1 = player
+    local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
         cd = cd + 1
         if cd >= 3 then
@@ -314,6 +316,95 @@ function s_medicsupplies()
     end)
 end
 
+function s_moraleslash()
+    -- Morale Slash
+
+    entourage_AddUP( -15, 25 )
+
+    local lvl = skill_lvl
+    local bonus1 = lvl * 0.05
+
+    if pltype == "Slash" then
+        dmg_modifier = 1.1 + bonus1
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.55 + bonus1
+        acc_modifier = 0.50
+    end
+
+    s_Retract()
+
+    mgbplayer:SetNWBool( "s_moraleslash_oncd", true )
+
+    local pl_id = mgbplayer:AccountID()
+    local cd = 0
+    local hookv1 = mgbplayer
+    hook.Add( "EnemyTurnEnd", pl_id .."moraleslashhook", function()
+        cd = cd + 1
+        if cd >= 3 then
+            hookv1:SetNWBool( "s_moraleslash_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."moraleslashhook" )
+        end
+    end)
+
+    hook.Add( "EntityTakeDamage", "moraleslash_oh", function( target, dmg )
+        local playa = dmg:GetAttacker()
+        if target:IsNPC() and playa == hookv1 then
+            pl_stats_tbl[ pl_id ].AGI = pl_stats_tbl[ pl_id ].AGI + 1
+            playa:SetHealth( playa:Health() + 5 * lvl )
+            hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
+        end
+    end)
+    timer.Simple( 1.25, function()
+        hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
+    end)
+end
+
+function s_acrobatics()
+    -- Acrobatics
+
+    entourage_AddUP( -10, 25 )
+
+    local lvl = skill_lvl
+    local bonus1 = lvl * 0.05
+
+    if pltype == "Slash" then
+        dmg_modifier = 0.2 + bonus1
+        acc_modifier = 1.5
+    else
+        dmg_modifier = 0.05 + bonus1
+        acc_modifier = 0.75
+    end
+
+    s_Retract()
+
+    mgbplayer:SetNWBool( "s_acrobatics_oncd", true )
+
+    local pl_id = mgbplayer:AccountID()
+    local cd = 0
+    local hookv1 = mgbplayer
+    hook.Add( "EnemyTurnEnd", pl_id .."acrobaticshook", function()
+        cd = cd + 1
+        if cd >= 5 then
+            hookv1:SetNWBool( "s_acrobatics_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."acrobaticshook" )
+        end
+    end)
+
+    hook.Add( "EntityTakeDamage", "acrobatics_oh", function( target, dmg )
+        local playa = dmg:GetAttacker()
+        if target:IsNPC() and playa:IsPlayer() then
+            pl_stats_tbl[ pl_id ].DDG_TRUE = pl_stats_tbl[ pl_id ].DDG_TRUE + 75 + bonus1
+
+            hook.Add( "PlayerTurnEnd")
+
+            hook.Remove( "EntityTakeDamage", "acrobatics_oh" )
+        end
+    end)
+    timer.Simple( 1.25, function()
+        hook.Remove( "EntityTakeDamage", "acrobatics_oh" )
+    end)
+end
 
 -- Enemy-only functions
 
