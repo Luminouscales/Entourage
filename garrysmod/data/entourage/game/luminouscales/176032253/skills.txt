@@ -8,31 +8,31 @@
 		"equipped": 0.0
 	},
 	"s_defmano": {
-		"Level": 0.0,
-		"equipped": 0.0
+		"Level": 1.0,
+		"equipped": 1.0
 	},
 	"s_slasher": {
 		"Level": 0.0,
 		"equipped": 2.0
 	},
 	"s_broadswing": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_slicer": {
 		"Level": 0.0,
-		"equipped": 0.0
+		"equipped": 2.0
 	},
 	"s_dicer": {
 		"Level": 0.0,
 		"equipped": 2.0
 	},
 	"s_fragmentation": {
-		"Level": 0.0,
-		"equipped": 0.0
+		"Level": 1.0,
+		"equipped": 1.0
 	},
 	"s_medicsupplies": {
-		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_slicer": {
-		"Level": 0.0,
-		"equipped": 2.0
+		"Level": 1.0,
+		"equipped": 1.0
 	}
 }
