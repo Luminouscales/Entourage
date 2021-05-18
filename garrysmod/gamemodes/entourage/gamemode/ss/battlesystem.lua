@@ -71,13 +71,17 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			if dmg_ov >= target:Health() and target:Health() > 0 then
 				-- Ugly, yes, but necessary. 
 				if target == enemy1 then
+					print( "enemy1" )
 					enemy1 = nil
 				elseif target == enemy2 then
+					print( "enemy2" )
 					enemy2 = nil
 				else
+					print( "enemy3" )
 					enemy3 = nil
 				end
 				-----------------
+				print( target:GetNWInt( "tbl_deaths" ) )
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
@@ -99,10 +103,10 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 	end
 end)
 
-hook.Add( "EntityTakeDamage", "UP_detect_hook2", function( target, dmg )
-	-- Make sure it doesn't somehow run when outside of battle.
-	print( dmg:GetDamage() )
-end)
+-- hook.Add( "EntityTakeDamage", "UP_detect_hook2", function( target, dmg )
+-- 	-- Make sure it doesn't somehow run when outside of battle.
+-- 	print( dmg:GetDamage() )
+-- end)
 
 hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attacker )
 	if attacker:IsNPC() or attacker:IsPlayer() then
@@ -161,6 +165,15 @@ function EncounterInit( delay )
 
 		PrintMessage( HUD_PRINTTALK, "_____________________" )
 		PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
+
+		-- This helps shit work. Without this, the battle sequence will 
+		-- break if an enemy is insta-killed on the first turn. Fun.
+		timer.Simple( 4, function()
+			for k, v in ipairs( battle_enemies ) do
+				v:SetNWInt( "tbl_deaths", k )
+			end
+			print( "fml" )
+		end)
 	end)
 
 	net.Start( "encounter_intro" ) -- Send the go-ahead to the clients
@@ -223,7 +236,7 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
     slash_dmg = net.ReadInt( 32 ) * 0.05 
     slash_dfx = net.ReadInt( 32 ) * 0.03
     slash_acc = net.ReadInt( 32 ) * 0.05 
-	player = ply
+	mgbplayer = ply
 	vis_int = 0
 
 	-- basic attack multi-target damage management and calculation
@@ -260,26 +273,26 @@ end)
 
 net.Receive( "player_brace", function( len, ply )
 	allplayers = net.ReadTable()
-	player = ply
+	mgbplayer = ply
 	local braceidentifier = "bracerhook_".. ply:AccountID()
-	pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF + 3 + pl_stats_tbl[ player:UserID() ].LVL3
-	pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX + 20
+	pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF + 3 + pl_stats_tbl[ mgbplayer:UserID() ].LVL3
+	pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX + 20
 	hook.Add( "EnemyTurnEnd", braceidentifier, function()
-		pl_stats_tbl[ player:UserID() ].DEF = pl_stats_tbl[ player:UserID() ].DEF - 3 - pl_stats_tbl[ player:UserID() ].LVL3
-		pl_stats_tbl[ player:UserID() ].DFX = pl_stats_tbl[ player:UserID() ].DFX - 20
+		pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF - 3 - pl_stats_tbl[ mgbplayer:UserID() ].LVL3
+		pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX - 20
 		hook.Remove( "EnemyTurnEnd", braceidentifier )
 	end)
 	timer.Simple( 2, function() 
 		EnemyAttack()
 	end)
-	PrintMessage( HUD_PRINTTALK, player:GetName() .." are bracing themselves for the attack..." )
+	PrintMessage( HUD_PRINTTALK, mgbplayer:GetName() .." are bracing themselves for the attack..." )
 
 	hook.Call( "PlayerTurnEnd" )
 end)
 
 net.Receive( "player_wait", function( len, ply )
 	allplayers = net.ReadTable()
-	player = ply
+	mgbplayer = ply
 	EnemyAttack()
 
 	hook.Call( "PlayerTurnEnd" )
@@ -323,13 +336,13 @@ function EnemyAttack()
 		current_enemy = battle_enemies[1]
 		previous_enemy = current_enemy
 		previous_enemya = 1
-		print( current_enemy )
+		--print( current_enemy )
 		EnemyAttack1()
 	elseif actions > 0 then 
 		current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
 		previous_enemy = current_enemy
 		previous_enemya = previous_enemya + 1
-		print( current_enemy )
+		--print( current_enemy )
 		EnemyAttack1()
 	else
 		playerturn()
