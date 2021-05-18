@@ -401,6 +401,33 @@ function weaponlistTBL()
             ["max"] = 10,
             ["cost"] = 25,
             ["targets"] = 11
+        },
+        ["s_moraleslash"] = {
+            ["Name"] = "Morale slash",
+            ["Description"] = "Strike a target; gain Agility and recover HP on hit",
+            ["tier"] = 1,
+            ["min"] = 1,
+            ["max"] = 10,
+            ["cost"] = 15,
+            ["targets"] = 1
+        },
+        ["s_acrobatics"] = {
+            ["Name"] = "Acrobatics",
+            ["Description"] = "Strike all targets, gaining a very high dodge chance for 1 turn.",
+            ["tier"] = 1,
+            ["min"] = 1,
+            ["max"] = 10,
+            ["cost"] = 10,
+            ["targets"] = 10
+        },
+        ["s_distraction"] = {
+            ["Name"] = "Distraction",
+            ["Description"] = "Choose two targets; the first becomes stunned, the other takes damage.",
+            ["tier"] = 1,
+            ["min"] = 1,
+            ["max"] = 10,
+            ["cost"] = 20,
+            ["targets"] = 2
         }
     }
 end
