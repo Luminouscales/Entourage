@@ -16,7 +16,27 @@ function rt_weapon()
     function rt_weapontext:PerformLayout()
         self:SetFontInternal( "equipment_plname2" )
     end
-    wpmodel:Show()
+    --wpmodel:Show()
+end
+
+function rt_armour()
+    if IsValid( rt_armourtext ) then -- if exists (button pressed)
+        rt_armourtext:Remove()
+    end
+    rt_armourtext = vgui.Create( "RichText", weapons_frame )
+        rt_armourtext:SetSize( 680, 300 )
+        rt_armourtext:SetPos( 900, 455 )
+        rt_armourtext:SetVerticalScrollbarEnabled( false )
+        rt_armourtext:InsertColorChange( 255, 255, 255, 255 )
+        rt_armourtext:AppendText( menuarm .."\n" )
+        rt_armourtext:AppendText( '"'.. menuarm2 ..'"\n' )
+        rt_armourtext:AppendText( menuarm3 .." Defence\n" )
+        rt_armourtext:AppendText( menuarm4 .." Flex Defence\n" )
+        rt_armourtext:AppendText( menuarm5 .."\n" )
+    function rt_armourtext:PerformLayout()
+        self:SetFontInternal( "equipment_plname2" )
+    end
+    --wpmodel:Show()
 end
 
 -- INIT
@@ -34,15 +54,16 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
             draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 110, 110, 115, 240 ), true, true, true, true)
             draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol, true, true, false, false)
             draw.RoundedBoxEx( 0, 225, 25, 3, h, color_black, false, false, false, false)
+			draw.RoundedBoxEx( 0, 225, weapons_frame:GetTall()/2 + 16, w - 225, 3, color_black, false, false, false, false)
             draw.SimpleText( "Equipment", "equipment_plname4", w/2, 10, color_white, a, a )
         end
     --------------------
     -- Model displayer. Needs tweaking.
-    wpmodel = vgui.Create( "DAdjustableModelPanel", weapons_frame )
-        wpmodel:SetSize( 725, 305 )
-        wpmodel:SetPos( 875, 455 )
-        wpmodel:SetAmbientLight( Color( 255, 255, 255, 255 ) )
-        wpmodel:SetModel( "models/rustyknife/rustyknife.mdl" )
+    -- wpmodel = vgui.Create( "DAdjustableModelPanel", weapons_frame )
+    --     wpmodel:SetSize( 725, 305 )
+    --     wpmodel:SetPos( 875, 455 )
+    --     wpmodel:SetAmbientLight( Color( 255, 255, 255, 255 ) )
+    --     wpmodel:SetModel( "models/rustyknife/rustyknife.mdl" )
     --------------------
     -- Exit buttons. Should be changed.
     local wf_ovbutton = vgui.Create( "DImageButton", weapons_frame )
@@ -60,17 +81,17 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 			CrossCheck1()
 		end
 
-    local st_ovbutton = vgui.Create( "DImageButton", stats_frame )
-		st_ovbutton:SetSize( 200, 35 )
-		st_ovbutton:SetPos( 0, stats_frame:GetTall()/2 )
-		st_ovbutton:SetImage( "hud/entourage_overview.png" )
-		st_ovbutton.Paint = function( self, w, h )
-			draw.RoundedBoxEx( 8, 0, 0, w, h, plcol, false, true, false, true)
-		end
-			st_ovbutton.DoClick = function()
-			mainframe:ToggleVisible()
-			stats_frame:ToggleVisible()
-		end
+    -- local st_ovbutton = vgui.Create( "DImageButton", stats_frame )
+	-- 	st_ovbutton:SetSize( 200, 35 )
+	-- 	st_ovbutton:SetPos( 0, stats_frame:GetTall()/2 )
+	-- 	st_ovbutton:SetImage( "hud/entourage_overview.png" )
+	-- 	st_ovbutton.Paint = function( self, w, h )
+	-- 		draw.RoundedBoxEx( 8, 0, 0, w, h, plcol, false, true, false, true)
+	-- 	end
+	-- 		st_ovbutton.DoClick = function()
+	-- 		mainframe:ToggleVisible()
+	-- 		stats_frame:ToggleVisible()
+	-- 	end
     --------------------
     -- Here comes the big one.
     for k, v in pairs( plweapons ) do -- my dearest creation
@@ -128,7 +149,7 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 				end
 			end
 			if k < 7 then
-				weaponbutton:SetPos( (k * 100 - 100 + k * 5 - 5) + 250, 65 )
+				weaponbutton:SetPos( ( k * 100 - 100 + k * 5 - 5 ) + 250, 65 )
 			elseif k < 13 then
 				weaponbutton:SetPos( ( k * 100 - 700 + k * 5 - 35 ) + 250, 170 )
 			else 
@@ -166,6 +187,7 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 				playerstats["currentarmour"] = v["Item"]
 
 				--PlayerstatsSave()
+				rt_armour()
 			end
 			armourbutton.DoRightClick = function( self )
 				menuarm = weaponlist[ v["Item"] ].Name
