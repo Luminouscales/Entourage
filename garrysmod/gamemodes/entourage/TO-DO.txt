@@ -1,5 +1,4 @@
 - Add more sounds in battle
-- Fix UP gain issue against Boss Battles
 - Change Basic Attack UI
 - Fix skills not applying damage multipliers properly
 - Convert FE addon for gamemode
@@ -8,3 +7,8 @@
 - Add items
 - Add effects
 - Add music
+- Add delays for battle hud appearing
+- Miner animation delays
+- Code stats menu
+- Code all other skills
+- Code proper skill upgrade order
