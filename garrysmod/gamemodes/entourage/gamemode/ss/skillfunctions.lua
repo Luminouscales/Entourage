@@ -100,6 +100,51 @@ function DoCrit2()
 	end)
 end
 
+-- Special Retract function for Distraction skill
+function s_Retract2( bonus )
+    local stuntarget = turntargets[1]
+    local hittarget = turntargets[2]
+    local dmg_modifier3 = dmg_modifier
+
+    timer.Simple( 0.25, function()
+        if IsValid(stuntarget) and stuntarget:Health() > 0 then
+            turntarget = stuntarget
+            turntargetsave = stuntarget:GetName()
+            up_open = false
+
+            dmg_modifier = dmg_modifier3 / 4
+            RunString( items_table[ wpn ].func )
+
+            -- again
+            if IsValid(stuntarget) and stuntarget:Health() > 0 then
+                if math.random( 1, 100 ) <= ( 25 + bonus * 5 ) - enemies_table[ turntargetsave ].DFX * 0.5 then
+                    turntarget:SetNWInt( "stunturns", turntarget:GetNWInt( "stunturns" ) + 1 )
+                    PrintMessage( HUD_PRINTTALK, turntargetsave .." is stunned for ".. turntarget:GetNWInt( "stunturns" ) .." turn(s)..." )
+                    if enemies_table[ turntargetsave ].StunAnim ~= nil then
+                        RunString( enemies_table[ turntargetsave ].StunAnim )
+                    end
+                end
+            end
+        end
+    end)
+
+    timer.Simple( 0.5, function()
+        if IsValid(hittarget) and hittarget:Health() > 0 then
+            turntarget = hittarget
+            turntargetsave = hittarget:GetName()
+            up_open = false
+
+            dmg_modifier = dmg_modifier3
+            RunString( items_table[ wpn ].func )
+        end
+    end)
+
+    timer.Simple( 1.25, function()
+        dmg_modifier = 1
+        acc_modifier = 1
+    end)
+end
+
 -- SLASH
 function s_precstrike()
     -- Precision Strike
@@ -110,14 +155,13 @@ function s_precstrike()
     -- First, check whether the weapon type is appropriate - if not, deduct damage and accuracy. Define level variables.
     local lvl = skill_lvl
     local bonus1 = lvl * 0.1
-    local bonus2 = lvl * 0.05
 
     if pltype == "Slash" or "Multiple" then
         dmg_modifier = 1 + bonus1
-        acc_modifier = 1.1 + bonus2
+        acc_modifier = 1.5 + bonus1
     else
         dmg_modifier = 0.25 + bonus1
-        acc_modifier = 0.90 + bonus2
+        acc_modifier = 0.75 + bonus1
     end
     -- Deal damage and stuffs, leave it to the weapon functions.
     s_Retract()
@@ -127,16 +171,16 @@ function s_precstrike()
 
     -- Other effects.
     -- Add Focus for 3 turns.
-    pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS + 1 + lvl
+    pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS + 2 + lvl
     -- Remove focus after 3 turns.
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     local hookv2 = lvl
     hook.Add( "EnemyTurnEnd", pl_id .."precstrikehook", function()
         cd = cd + 1
         if cd >= 3 then
-            pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS - 1 - hookv2
+            pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS - 2 - hookv2
             hookv1:SetNWBool( "s_precstrike_oncd", false )
             hook.Remove( "EnemyTurnEnd", pl_id .."precstrikehook" )
         end
@@ -153,10 +197,10 @@ function s_defmano()
     local bonus1 = lvl * 0.05
 
     if pltype == "Slash" then
-        dmg_modifier = 0.75 + bonus1
+        dmg_modifier = 0.4 + bonus1 * 2
         acc_modifier = 1
     else
-        dmg_modifier = 0.25 + bonus1
+        dmg_modifier = 0.25 + bonus1 * 2
         acc_modifier = 0.75
     end
 
@@ -166,12 +210,12 @@ function s_defmano()
 
     -- Other effects.
 
-    local calc1 = 2 + pl_stats_tbl[ mgbplayer:UserID() ].DEF / 10 + 3 * lvl
-    local calc2 = 5 + pl_stats_tbl[ mgbplayer:UserID() ].DFX / 10 + 2 * lvl
+    local calc1 = 2 + 3 * lvl + pl_stats_tbl[ mgbplayer:UserID() ].DEF / 10
+    local calc2 = 20 + 2 * lvl
     pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF + calc1
     pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX + calc2
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     local hookv2 = lvl
@@ -184,6 +228,7 @@ function s_defmano()
             hook.Remove( "EnemyTurnEnd", pl_id .."defmanohook" )
         end
     end)
+    SendSkillNote( "Defensive Manoeuvre" )
 end
 
 function s_firstaid()
@@ -199,8 +244,7 @@ function s_firstaid()
 
     timer.Simple( 0.5, function()
         local heal = math.Round( 20 + 10 * lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * lvl ) ), 0 )
-        target:SetHealth( math.Clamp( target:Health() + heal, 0, target:GetMaxHealth() ) )
-        PrintMessage( HUD_PRINTTALK, target:GetName() .." was healed for ".. heal .." HP!" )
+        entourage_AddHealth( target, heal )
     end)
 
     mgbplayer:SetNWBool( "s_firstaid_oncd", true )
@@ -209,7 +253,7 @@ function s_firstaid()
 
     pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT + lvl
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     local hookv2 = lvl
@@ -221,6 +265,7 @@ function s_firstaid()
             hook.Remove( "EnemyTurnEnd", pl_id .."firstaidhook" )
         end
     end)
+    SendSkillNote( "First Aid" )
 end
 
 function s_broadswing()
@@ -243,7 +288,7 @@ function s_broadswing()
 
     mgbplayer:SetNWBool( "s_broadswing_oncd", true )
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."broadswinghook", function()
@@ -253,6 +298,7 @@ function s_broadswing()
             hook.Remove( "EnemyTurnEnd", pl_id .."broadswinghook" )
         end
     end)
+    SendSkillNote( "Broad Swing" )
 end
 
 function s_fragmentation()
@@ -275,7 +321,7 @@ function s_fragmentation()
 
     mgbplayer:SetNWBool( "s_fragmentation_oncd", true )
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."fragmentationhook", function()
@@ -285,6 +331,7 @@ function s_fragmentation()
             hook.Remove( "EnemyTurnEnd", pl_id .."fragmentationhook" )
         end
     end)
+    SendSkillNote( "Fragmentation" )
 end
 
 function s_medicsupplies()
@@ -298,13 +345,12 @@ function s_medicsupplies()
 
     timer.Simple( 0.5, function()
         local heal = math.Round( 40 + 10 * lvl, 0 )
-        target:SetHealth( math.Clamp( target:Health() + heal, 0, target:GetMaxHealth() ) )
-        PrintMessage( HUD_PRINTTALK, target:GetName() .." was healed for ".. heal .." HP!" )
+        entourage_AddHealth( target, heal )
     end)
 
     mgbplayer:SetNWBool( "s_medicsupplies_oncd", true )
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
@@ -314,6 +360,7 @@ function s_medicsupplies()
             hook.Remove( "EnemyTurnEnd", pl_id .."medicsupplieshook" )
         end
     end)
+    SendSkillNote( "Medical Supplies" )
 end
 
 function s_moraleslash()
@@ -332,11 +379,11 @@ function s_moraleslash()
         acc_modifier = 0.50
     end
 
-    s_Retract()
+    s_Retract( bonus1 )
 
     mgbplayer:SetNWBool( "s_moraleslash_oncd", true )
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
     hook.Add( "EnemyTurnEnd", pl_id .."moraleslashhook", function()
@@ -351,13 +398,14 @@ function s_moraleslash()
         local playa = dmg:GetAttacker()
         if target:IsNPC() and playa == hookv1 then
             pl_stats_tbl[ pl_id ].AGI = pl_stats_tbl[ pl_id ].AGI + 1
-            playa:SetHealth( playa:Health() + 5 * lvl )
+            entourage_AddHealth( playa, 5 * lvl + playa:GetMaxHealth() * 0.05 )
             hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
         end
     end)
     timer.Simple( 1.25, function()
         hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
     end)
+    SendSkillNote( "Morale Slash" )
 end
 
 function s_acrobatics()
@@ -380,32 +428,93 @@ function s_acrobatics()
 
     mgbplayer:SetNWBool( "s_acrobatics_oncd", true )
 
-    local pl_id = mgbplayer:AccountID()
+    local pl_id = mgbplayer:UserID()
     local cd = 0
     local hookv1 = mgbplayer
+
+    pl_stats_tbl[ pl_id ].DDG_OV = pl_stats_tbl[ pl_id ].DDG_OV + 50 + bonus1
+
     hook.Add( "EnemyTurnEnd", pl_id .."acrobaticshook", function()
         cd = cd + 1
-        if cd >= 5 then
+        if cd == 1 then
+            pl_stats_tbl[ pl_id ].DDG_OV = pl_stats_tbl[ pl_id ].DDG_OV - 50 - bonus1
+        elseif cd >= 5 then
             hookv1:SetNWBool( "s_acrobatics_oncd", false )
             hook.Remove( "EnemyTurnEnd", pl_id .."acrobaticshook" )
         end
-    end)
-
-    hook.Add( "EntityTakeDamage", "acrobatics_oh", function( target, dmg )
-        local playa = dmg:GetAttacker()
-        if target:IsNPC() and playa:IsPlayer() then
-            pl_stats_tbl[ pl_id ].DDG_TRUE = pl_stats_tbl[ pl_id ].DDG_TRUE + 75 + bonus1
-
-            hook.Add( "PlayerTurnEnd")
-
-            hook.Remove( "EntityTakeDamage", "acrobatics_oh" )
-        end
-    end)
-    timer.Simple( 1.25, function()
-        hook.Remove( "EntityTakeDamage", "acrobatics_oh" )
-    end)
+    end) 
+    SendSkillNote( "Acrobatics" )
 end
 
+function s_distraction()
+    -- Distraction
+
+    entourage_AddUP( -20, 25 )
+
+    local lvl = skill_lvl
+    local bonus1 = lvl * 0.05
+
+    if pltype == "Slash" then
+        dmg_modifier = 1.15 + bonus1
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.55 + bonus1
+        acc_modifier = 0.5
+    end
+
+    s_Retract2( lvl )
+
+    mgbplayer:SetNWBool( "s_distraction_oncd", true )
+
+    local pl_id = mgbplayer:UserID()
+    local cd = 0
+    local hookv1 = mgbplayer
+    hook.Add( "EnemyTurnEnd", pl_id .."distractionhook", function()
+        cd = cd + 1
+        if cd >= 4 then
+            hookv1:SetNWBool( "s_distraction_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."distractionhook" )
+        end
+    end)
+    SendSkillNote( "Distraction" )
+end
+
+function s_performance()
+    -- Performance
+
+    entourage_AddUP( -15, 25 )
+
+    local lvl = skill_lvl
+    local bonus1 = lvl * 0.05
+
+    if pltype == "Pierce" then
+        dmg_modifier = 0.55 + bonus1
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.25 + bonus1
+        acc_modifier = 0.5
+    end
+
+    s_Retract()
+
+    for _, v in ipairs( player.GetAll() ) do
+        entourage_AddHealth( v, 5 + 5 * lvl )
+    end
+
+    mgbplayer:SetNWBool( "s_performance_oncd", true )
+
+    local pl_id = mgbplayer:UserID()
+    local cd = 0
+    local hookv1 = mgbplayer
+    hook.Add( "EnemyTurnEnd", pl_id .."performancehook", function()
+        cd = cd + 1
+        if cd >= 2 then
+            hookv1:SetNWBool( "s_performance_oncd", false )
+            hook.Remove( "EnemyTurnEnd", pl_id .."performancehook" )
+        end
+    end)
+    SendSkillNote( "Performance" )
+end
 -- Enemy-only functions
 
 function SlashAttack()
@@ -479,7 +588,13 @@ function CalcAttack()
         end
 
         attacktarget:TakeDamageInfo( calc_info )
-        PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. math.Round( calc_info:GetDamage(), 0 ) .." ".. c_type2 .." damage to ".. attacktarget:GetName() )
+        local ah = math.Round( calc_info:GetDamage(), 0 )
+        PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. ah .." ".. c_type2 .." damage to ".. attacktarget:GetName() )
+        net.Start( "DISPLAY_PAIN" )
+            net.WriteEntity( attacktarget )
+            net.WriteInt( ah, 32 )
+            net.WriteBool( false ) -- heal? true or false
+        net.Broadcast()
 
         if c_type2 == "Blunt" then
             DoStun()
