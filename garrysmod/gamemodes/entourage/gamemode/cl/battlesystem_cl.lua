@@ -1,12 +1,15 @@
 exp_real = 0
 just_leveledup = false
-local up_int = 0
+up_int2 = 0
+hp_int2 = 0
 skillnote_show = false
 
 net.Receive( "up_hudshow", function()
-    up_int = up_int + 1
+    -- I'm going to kiss myself on the lips.
+    up_int2 = up_int2 + 1
+    local up_int = up_int2
     local up_start = SysTime()
-    up_value = net.ReadInt( 32 )
+    local up_value = net.ReadInt( 32 )
     -- If value negative
     if up_value < 0 then
         hook.Add( "HUDPaint", "up_hudshow_hook".. up_int, function() 
@@ -21,6 +24,33 @@ net.Receive( "up_hudshow", function()
     end
     timer.Simple( 3, function()
         hook.Remove( "HUDPaint", "up_hudshow_hook".. up_int )
+    end)
+end)
+
+net.Receive( "DISPLAY_PAIN", function()
+    local hitent = net.ReadEntity()
+    local hitint = net.ReadInt( 32 )
+    local isheal = net.ReadBool()
+
+    local hp_start = SysTime()
+    hp_int2 = hp_int2 + 1
+    local hp_int = hp_int2
+
+    local brave_ness = 255
+
+    if isheal then
+        hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
+            local hitent_pos = hitent:GetPos():ToScreen()
+            draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 120, 255, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
+        end)
+    else
+        hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
+            local hitent_pos = hitent:GetPos():ToScreen()
+            draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 255, 65, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
+        end)
+    end
+    timer.Simple( 3, function()
+        hook.Remove( "HUDPaint", "hp_hudshow_hook".. hp_int )
     end)
 end)
 
@@ -49,13 +79,9 @@ function entourage_FadeOut( chan )
 end
 
 net.Receive( "enemysend", function()
-    print( "1" )
 	enemy1 = net.ReadEntity()
-    print( enemy1 )
 	enemy2 = net.ReadEntity()
-    print( enemy2 )
 	enemy3 = net.ReadEntity()
-    print( enemy3 )
 end)
 
 net.Receive( "encounter_intro", function()
