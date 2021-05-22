@@ -61,8 +61,8 @@ function DoTBLFirstInit()
         ["arov_ddg"] = 5,
         ["LVL_POINTS"] = 0,
         ["SLASH_POINTS"] = 20,
-        ["BLUNT_POINTS"] = 0,
-        ["PIERCE_POINTS"] = 0
+        ["BLUNT_POINTS"] = 20,
+        ["PIERCE_POINTS"] = 20
     }
 
     -- Equipment tables
@@ -125,6 +125,22 @@ function DoTBLFirstInit()
             ["equipped"] = 0
         },
         ["s_medicsupplies"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_moraleslash"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_distraction"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_acrobatics"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_performance"] = {
             ["Level"] = 0,
             ["equipped"] = 0
         }
@@ -341,7 +357,7 @@ function weaponlistTBL()
             ["tier"] = 1,
             ["min"] = 1,
             ["max"] = 10,
-            ["cost"] = 15,
+            ["cost"] = 20,
             ["targets"] = 1
         },
         ["s_firstaid"] = {
@@ -426,8 +442,17 @@ function weaponlistTBL()
             ["tier"] = 1,
             ["min"] = 1,
             ["max"] = 10,
-            ["cost"] = 20,
+            ["cost"] = 25,
             ["targets"] = 2
+        },
+        ["s_performance"] = {
+            ["Name"] = "Performance",
+            ["Description"] = "Strike all targets for low damage, heal allies.",
+            ["tier"] = 1,
+            ["min"] = 1,
+            ["max"] = 10,
+            ["cost"] = 15,
+            ["targets"] = 10
         }
     }
 end
@@ -453,6 +478,7 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         plarmours = armoursbase
         file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskillsbase )
         plskills = table.Copy( plskillsbase )
+        plskills_a = table.Copy( plskills )
     else -- if the save isn't new, compile data to tables
         local playerstats2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/stats.txt", "DATA" ) 
         playerstats = util.JSONToTable( playerstats2 )
@@ -462,6 +488,7 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         plarmours = util.JSONToTable( plarmours2 )
         plskills2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", "DATA" )
         plskills = util.JSONToTable( plskills2 )
+        plskills_a = table.Copy( plskills )
     end
     --------------------------------------------------------------------------------------------------
 

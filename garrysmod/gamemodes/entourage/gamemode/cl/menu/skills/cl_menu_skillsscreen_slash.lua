@@ -196,11 +196,11 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "slash weapon strength with ")
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( 10 + 5 * plskills_a["s_precstrike"].Level .."% " )
+                sk_desc1:AppendText( 50 + 10 * plskills_a["s_precstrike"].Level .."% " )
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "bonus accuracy. Gain " )
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( 1 + plskills_a["s_precstrike"].Level )
+                sk_desc1:AppendText( 2 + plskills_a["s_precstrike"].Level )
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( " FCS lasting for " )
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
@@ -240,7 +240,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
             s_defmano:SetSize( 50, 50 )
             s_defmano:SetPos( 325, 167 + 12 )
             s_defmano:SetImage( "skills/entourage_s_defmano.png" )
-            s_defmano.DoClick = function( )
+            s_defmano.DoClick = function()
                 skpic_a = s_defmano:GetImage()
                 skpic:Show()
 
@@ -259,23 +259,13 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Deal ")
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( 75 + 5 * plskills_a["s_defmano"].Level .."% ")
+                sk_desc1:AppendText( 40 + 10 * plskills_a["s_defmano"].Level .."% ")
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "base weapon damage to one target, gain ")
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( "(".. math.floor( 2 + playerstats_a["DEF"] / 10 + 3 * plskills_a["s_defmano"].Level ) .." DEF, ".. math.floor( 5 + playerstats_a["DFX"] / 10 + 2 * plskills_a["s_defmano"].Level ) .."% DFX) ")
+                sk_desc1:AppendText( "(".. math.floor( 2 + 3 * plskills_a["s_defmano"].Level + playerstats_a["DEF"] / 10 ) .." DEF, ".. math.floor( 20 + 2 * plskills_a["s_defmano"].Level ) .."% DFX) ")
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                sk_desc1:AppendText( "defensive stats for ")
-                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                if plskills_a["s_defmano"].Level > 4 then
-                    sk_desc1:AppendText( "2 " )
-                    sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                    sk_desc1:AppendText( "turns.")
-                else
-                    sk_desc1:AppendText( "1 " )
-                    sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                    sk_desc1:AppendText( "turn.")
-                end
+                sk_desc1:AppendText( "defensive stats for 3 turns. \n")
                 sk_desc1:AppendText( "\n" )
                 sk_desc1:AppendText( "\n" )
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
@@ -283,7 +273,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "turn cooldown \n" )
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( "10 " )
+                sk_desc1:AppendText( "20 " )
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "UP cost \n" )
                 sk_desc1:AppendText( "Skill level: ")
@@ -526,28 +516,150 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
             end
 
         --- Row 3
-        local sk_s_m3_1 = vgui.Create( "DImageButton", skills_frame_slash )
-            sk_s_m3_1:SetSize( 50, 50 )
-            sk_s_m3_1:SetPos( 225, 705 + 12 )
-            sk_s_m3_1:SetImage( "menu/entourage_skill_m_ph.png" )
-            sk_s_m3_1.DoClick = function()
-                PlaceholderFunction()
+        local s_moraleslash = vgui.Create( "DImageButton", skills_frame_slash )
+            s_moraleslash:SetSize( 50, 50 )
+            s_moraleslash:SetPos( 225, 705 + 12 )
+            s_moraleslash:SetImage( "skills/entourage_s_moraleslash.png" )
+            s_moraleslash.DoClick = function()
+                skpic_a = s_moraleslash:GetImage()
+                skpic:Show()
+
+                aimed_skill2 = s_moraleslash
+
+                define_col = "s_moraleslash"
+                define_text = "Morale Slash"
+
+                DoDescs()
+                DefineColour()
+
+                sk_name:AppendText( define_text )
+                DefineText()
+                sk_name:SetX( sk_name:GetX() - 12 )
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Deal " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 110 + 5 * plskills_a["s_moraleslash"].Level .."% " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "base weapon damage to target. If hit, gain 1 Celerity and heal for " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 5 + 5 * plskills_a["s_moraleslash"].Level .." + 5% max HP \n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "3 turn cooldown \n" )
+                sk_desc1:AppendText( "15 UP Cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_moraleslash"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                sk_desc1:SetSize( 380, 370 )
+                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
+                sk_desc1:Show()
+                skupgrade:Show()
+            end
+            if plskills_a["s_moraleslash"].equipped < 1 then
+                s_moraleslash:SetColor( unavailable )
             end
 
-        local sk_s_m3_2 = vgui.Create( "DImageButton", skills_frame_slash )
-            sk_s_m3_2:SetSize( 50, 50 )
-            sk_s_m3_2:SetPos( 325, 705 + 12 )
-            sk_s_m3_2:SetImage( "menu/entourage_skill_m_ph.png" )
-            sk_s_m3_2.DoClick = function()
-                PlaceholderFunction()
+        local s_distraction = vgui.Create( "DImageButton", skills_frame_slash )
+            s_distraction:SetSize( 50, 50 )
+            s_distraction:SetPos( 325, 705 + 12 )
+            s_distraction:SetImage( "skills/entourage_s_distraction.png" )
+            s_distraction.DoClick = function()
+                skpic_a = s_distraction:GetImage()
+                skpic:Show()
+
+                aimed_skill2 = s_distraction
+
+                define_col = "s_distraction"
+                define_text = "Distraction"
+
+                DoDescs()
+                DefineColour()
+
+                sk_name:AppendText( define_text )
+                DefineText()
+                sk_name:SetX( sk_name:GetX() - 12 )
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Pick two targets; the first takes " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 25 + 5 * plskills_a["s_distraction"].Level .."% " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "base weapon damage with a base " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 25 + 5 * plskills_a["s_distraction"].Level .."% " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "chance to get stunned. The other takes " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 115 + 5 * plskills_a["s_distraction"].Level .."% " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "base weapon damage.\n")
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "4 turn cooldown \n" )
+                sk_desc1:AppendText( "25 UP Cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_distraction"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                sk_desc1:SetSize( 380, 370 )
+                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
+                sk_desc1:Show()
+                skupgrade:Show()
+            end
+            if plskills_a["s_distraction"].equipped < 1 then
+                s_distraction:SetColor( unavailable )
             end
 
-        local sk_s_m3_3 = vgui.Create( "DImageButton", skills_frame_slash )
-            sk_s_m3_3:SetSize( 50, 50 )
-            sk_s_m3_3:SetPos( 425, 705 + 12 )
-            sk_s_m3_3:SetImage( "menu/entourage_skill_m_ph.png" )
-            sk_s_m3_3.DoClick = function()
-                PlaceholderFunction()
+        local s_acrobatics = vgui.Create( "DImageButton", skills_frame_slash )
+            s_acrobatics:SetSize( 50, 50 )
+            s_acrobatics:SetPos( 425, 705 + 12 )
+            s_acrobatics:SetImage( "skills/entourage_s_acrobatics.png" )
+            s_acrobatics.DoClick = function()
+                skpic_a = s_acrobatics:GetImage()
+                skpic:Show()
+
+                aimed_skill2 = s_acrobatics
+
+                define_col = "s_acrobatics"
+                define_text = "Acrobatics"
+
+                DoDescs()
+                DefineColour()
+
+                sk_name:AppendText( define_text )
+                DefineText()
+                sk_name:SetX( sk_name:GetX() - 12 )
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Deal " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 20 + 5 * plskills_a["s_acrobatics"].Level .."% " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "base weapon damage to all enemies. Gain " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 50 + 5 * plskills_a["s_acrobatics"].Level .."% " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "dodge chance for 1 turn. \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:AppendText( "4 turn cooldown \n" )
+                sk_desc1:AppendText( "10 UP Cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_acrobatics"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                sk_desc1:SetSize( 380, 370 )
+                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
+                sk_desc1:Show()
+                skupgrade:Show()
+            end
+            if plskills_a["s_acrobatics"].equipped < 1 then
+                s_acrobatics:SetColor( unavailable )
             end
         ------------------------
         -- Subclass Skills
@@ -990,39 +1102,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
             skpic:SetPos( skills_frame_slash:GetWide() - 293, 68 )
             skpic:SetSize( 200, 200 )
             skpic:Hide()
-        function DoDescs()
-
-            -- Check if skill icon should be transparent or not.
-            if IsValid( aimed_skill2 ) then 
-                if plskills_a[ define_col ].equipped < 1 then
-                    aimed_skill2:SetColor( unavailable )
-                else
-                    aimed_skill2:SetColor( Color( 255, 255, 255, 255 ) )
-                end
-            end
-
-            if IsValid( sk_name ) then
-                sk_name:Remove()
-                sk_desc1:Remove()
-            end
-
-            if IsValid( aimed_skill2 ) then
-                skpic:SetImage( skpic_a )
-            end
-
-            sk_name = vgui.Create( "RichText", skills_frame_slash )
-                sk_name:SetVerticalScrollbarEnabled( false )
-                sk_name:Hide()
-                function sk_name:PerformLayout()
-                    self:SetFontInternal( "equipment_plname3" )
-                end
-            sk_desc1 = vgui.Create( "RichText", skills_frame_slash )
-                sk_desc1:SetVerticalScrollbarEnabled( false )
-                sk_desc1:Hide()
-                function sk_desc1:PerformLayout()
-                    self:SetFontInternal( "equipment_plname2" )
-                end
-        end
+        
         DoDescs()
         
         -- Upgrade button
@@ -1097,6 +1177,9 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
             end
         end
 
+        local sk_s_cover = vgui.Create( "DImage", skills_frame_slash )
+            sk_s_cover:SetImage( "menu/entourage_cover.png" )
+            sk_s_cover:SetSize( 870, 805 )
+            sk_s_cover:SetPos( 480, 70 )
     end)
-    
 end)
