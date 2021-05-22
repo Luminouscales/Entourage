@@ -67,10 +67,10 @@ net.Receive( "savetable", function( len, ply )
 	end
 	pl_stats_tbl[ id ] = tableph
 	-- calculate some stats prematurely
-	-- pl_stats_tbl[ id ].DEF = pl_stats_tbl[ id ].DEF + pl_stats_tbl[ id ].VIT + pl_stats_tbl[ id ].SDL
-	-- pl_stats_tbl[ id ].DFX = pl_stats_tbl[ id ].DFX + pl_stats_tbl[ id ].SDL * 4
 	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
 	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
+	pl_stats_tbl[ id ].DDG_OV = 0
+	pl_stats_tbl[ id ].ACC_OV = 0
 end)
 
 net.Receive( "maxhealth", function( len, ply )
