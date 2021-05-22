@@ -12,3 +12,10 @@
 - Code stats menu
 - Code all other skills
 - Code proper skill upgrade order
+- Add healing function and vanity
+- Add data clearing after battle
+- Add game over screen
+- Make hitsounds louder
+- Make sure skill cooldowns work properly
+- Add class names
+- Add tips for menus
