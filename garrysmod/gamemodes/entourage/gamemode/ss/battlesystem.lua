@@ -14,6 +14,7 @@ util.AddNetworkString( "descmodel_cl2" )
 util.AddNetworkString( "net_enemy_senddata" )
 util.AddNetworkString( "up_hudshow" )
 util.AddNetworkString( "sendskillnote" )
+util.AddNetworkString( "DISPLAY_PAIN" )
 
 -- set variables
 lives = 0
@@ -71,13 +72,10 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			if dmg_ov >= target:Health() and target:Health() > 0 then
 				-- Ugly, yes, but necessary. 
 				if target == enemy1 then
-					print( "enemy1" )
 					enemy1 = nil
 				elseif target == enemy2 then
-					print( "enemy2" )
 					enemy2 = nil
 				else
-					print( "enemy3" )
 					enemy3 = nil
 				end
 				-----------------
@@ -99,14 +97,28 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			elseif enemies_table[ target:GetName() ].PainAnim ~= nil then
 				RunString( enemies_table[ target:GetName() ].PainAnim )
 			end
+			net.Start( "DISPLAY_PAIN" )
+				net.WriteEntity( target )
+				net.WriteInt( dmg_ov, 32 )
+				net.WriteBool( false ) -- heal? true or false
+			net.Broadcast()
 		end
 	end
 end)
 
--- hook.Add( "EntityTakeDamage", "UP_detect_hook2", function( target, dmg )
--- 	-- Make sure it doesn't somehow run when outside of battle.
--- 	print( dmg:GetDamage() )
--- end)
+-- Health add function
+function entourage_AddHealth( hptarget, hp )
+	local hp2 = math.Clamp( hp, 0, hptarget:GetMaxHealth() )
+	hptarget:SetHealth( hptarget:Health() + hp2 )
+
+	net.Start( "DISPLAY_PAIN" )
+		net.WriteEntity( hptarget )
+		net.WriteInt( hp2, 32 )
+		net.WriteBool( true ) -- heal? true or false
+	net.Broadcast()
+
+	PrintMessage( HUD_PRINTTALK, hptarget:GetName() .." was healed for ".. hp2 .." HP!" )
+end
 
 hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attacker )
 	if attacker:IsNPC() or attacker:IsPlayer() then
@@ -115,18 +127,15 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 	end
 end)
 
+function Calculatum()
+	local id = Entity(1):UserID()
+	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2 + pl_stats_tbl[ id ].DDG_OV
+	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5 + pl_stats_tbl[ id ].ACC_OV
+end
 -- True Accuracy and True Dodge calculation for players
-hook.Add( "EnemyTurnEnd", "accresets", function()
-	local id = Entity(1):UserID()
-	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
-	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
-end)
+hook.Add( "EnemyTurnEnd", "accresets", Calculatum )
 
-hook.Add( "PlayerTurnEnd", "accresets2", function()
-	local id = Entity(1):UserID()
-	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
-	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
-end)
+hook.Add( "PlayerTurnEnd", "accresets2", Calculatum )
 
 --------------------------------------------------------------------------------------
 
@@ -172,7 +181,6 @@ function EncounterInit( delay )
 			for k, v in ipairs( battle_enemies ) do
 				v:SetNWInt( "tbl_deaths", k )
 			end
-			print( "fml" )
 		end)
 	end)
 
