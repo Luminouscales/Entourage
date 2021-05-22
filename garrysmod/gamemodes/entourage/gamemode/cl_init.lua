@@ -36,6 +36,39 @@ function PlaceholderFunction()
 	print( "Debug message. Report this message to the developer." )
 end
 
+function DoDescs()
+	-- Check if skill icon should be transparent or not.
+	if IsValid( aimed_skill2 ) then 
+		if plskills_a[ define_col ].equipped < 1 then
+			aimed_skill2:SetColor( unavailable )
+		else
+			aimed_skill2:SetColor( Color( 255, 255, 255, 255 ) )
+		end
+	end
+
+	if IsValid( sk_name ) then
+		sk_name:Remove()
+		sk_desc1:Remove()
+	end
+
+	if IsValid( aimed_skill2 ) then
+		skpic:SetImage( skpic_a )
+	end
+
+	sk_name = vgui.Create( "RichText", skills_frame_slash )
+		sk_name:SetVerticalScrollbarEnabled( false )
+		sk_name:Hide()
+		function sk_name:PerformLayout()
+			self:SetFontInternal( "equipment_plname3" )
+		end
+	sk_desc1 = vgui.Create( "RichText", skills_frame_slash )
+		sk_desc1:SetVerticalScrollbarEnabled( false )
+		sk_desc1:Hide()
+		function sk_desc1:PerformLayout()
+			self:SetFontInternal( "equipment_plname2" )
+		end
+end
+
 --Fonts
 surface.CreateFont( "equipment_big", {
 	font = "Tajawal", 
