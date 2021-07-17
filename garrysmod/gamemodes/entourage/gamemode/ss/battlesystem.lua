@@ -9,12 +9,14 @@ util.AddNetworkString( "player_brace" )
 util.AddNetworkString( "player_wait" )
 util.AddNetworkString( "player_removestunturns" )
 util.AddNetworkString( "player_biststunned" )
-util.AddNetworkString( "descmodel_cl1" )
+util.AddNetworkString( "descmodel_cl1" ) 
 util.AddNetworkString( "descmodel_cl2" )
 util.AddNetworkString( "net_enemy_senddata" )
 util.AddNetworkString( "up_hudshow" )
 util.AddNetworkString( "sendskillnote" )
 util.AddNetworkString( "DISPLAY_PAIN" )
+util.AddNetworkString( "givemereverie" )
+util.AddNetworkString( "fuckmylife" )
 
 -- set variables
 lives = 0
@@ -167,11 +169,34 @@ function EncounterInit( delay )
 		Entity(1):SetEyeAngles( Angle( 0, -90, 0 ))
 		
 		-- change viewpoint
-		cam_override = ents.Create( "info_target" )
-		cam_override:SetPos( Vector( -333, 84.5, -815 ) )
-		cam_override:SetAngles( Angle( 30, -36, 0 ) )
-		Entity(1):SetViewEntity( cam_override )
 
+		-- i hate my life and i don't get why this is necessary and WHY THIS TAKES HOURS OFF MY LIFE.
+		-- if IsValid( ent_cam_override1) == false then
+		-- 	ent_cam_override1 = ents.Create( "info_target" )
+		-- 		ent_cam_override1:SetPos( Vector( -360, -60, -850 ) )
+		-- 		ent_cam_override1:SetAngles( Angle( 25, 0, 0 ) )
+		-- 		ent_cam_override1:Spawn()
+		-- 	ent_cam_override2 = ents.Create( "info_target" )
+		-- 		ent_cam_override2:SetPos( Vector( -75, -350, -800 ) )
+		-- 		ent_cam_override2:SetAngles( Angle( 40, 90, 0 ) )
+		-- 		ent_cam_override2:Spawn()
+		-- 	ent_cam_override3 = ents.Create( "info_target" )
+		-- 		ent_cam_override3:SetPos( Vector( -85, 260, -820 ) )
+		-- 		ent_cam_override3:SetAngles( Angle( 25, -90, 0 ) )
+		-- 		ent_cam_override3:Spawn()
+		-- 	ent_cam_override4 = ents.Create( "info_target" )
+		-- 		ent_cam_override4:SetPos( Vector( 225, -60, -850 ) )
+		-- 		ent_cam_override4:SetAngles( Angle( 25, 180, 0 ) )
+		-- 		ent_cam_override4:Spawn()
+		-- 	ent_cam_override5 = ents.Create( "info_target" )
+		-- 		ent_cam_override5:SetPos( Vector( -75, -80, -700 ) )
+		-- 		ent_cam_override5:SetAngles( Angle( 90, 0, 0 ) )
+		-- 		ent_cam_override5:Spawn()
+		-- 		Entity(1):SetViewEntity( ent_cam_override1 )
+		-- end
+
+		Entity(1):SetViewEntity( ent_cam_override1 )
+		
 		PrintMessage( HUD_PRINTTALK, "_____________________" )
 		PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
 
@@ -213,14 +238,11 @@ function EncounterRun1()
 	doom = color_white
 			stakes = 1
 			-- this is where everything ubiquitous happens
-			EncounterInit()
+			EncounterInit( 0 )
 			-----------------------
 	
 			timer.Simple( 3, function()
-				EncounterAntlion( zone1_1 )  
-				cam_override = ents.Create( "info_target" )
-					cam_override:SetPos( Vector( -333, 84.5, -815 ) )
-					cam_override:SetAngles( Angle( 30, -36, 0 ) )
+				EncounterAntlion( zone1_1 ) 
 			end)
 end
 
@@ -417,3 +439,26 @@ function SendSkillNote( skillnote )
 		net.WriteString( skillnote )
 	net.Broadcast()
 end
+
+net.Receive( "givemereverie", function( len, ply )
+	-- Only God can judge me.
+
+	ply:SetNWVector( "sexyheadpos", ply:HeadTarget( ply:GetPos() ) )
+
+	local a = net.ReadInt( 32 )
+	local b = nil
+	if a == 1 then
+		b = ent_cam_override1
+	elseif a == 2 then
+		b = ent_cam_override2
+	elseif a == 3 then
+		b = ent_cam_override3
+	elseif a == 4 then
+		b = ent_cam_override4
+	elseif a == 5 then
+		b = ent_cam_override5
+	else
+		b = ply
+	end
+	ply:SetViewEntity( b )
+end)

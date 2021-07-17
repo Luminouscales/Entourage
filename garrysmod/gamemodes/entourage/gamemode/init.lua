@@ -85,7 +85,7 @@ end)
 
 hook.Add( "PlayerInitialSpawn", "startvar", function() 
 
-	encounter_rate = math.random( 9999, 9999 )
+	encounter_rate = math.random( 100, 100 )
 	encounter_rate2 = 0
 
 	net.Start( "encounter_var" )
@@ -105,14 +105,24 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 	-- Manages player team's Utility Points. Convenience.
 	Levitus:SetNWInt( "team_UP", 0 )
 
-	-- The fuck is this timer?
-	timer.Simple( 10, function()
-		cam_override = ents.Create( "info_target" )
-		cam_override:SetPos( Vector( -333, 84.5, -815 ) )
-		cam_override:SetAngles( Angle( 30, -36, 0 ) )
-		cam_override:Spawn()
-	end)
-
 	battle_enemies = {}
+
+	timer.Simple( 2, function()
+		ent_cam_override1 = ents.GetMapCreatedEntity( 1726 )
+			ent_cam_override1:SetPos( Vector( -360, -60, -850 ) )
+			ent_cam_override1:SetAngles( Angle( 25, 0, 0 ) )
+		ent_cam_override2 = ents.GetMapCreatedEntity( 1724 )
+			ent_cam_override2:SetPos( Vector( -75, -350, -800 ) )
+			ent_cam_override2:SetAngles( Angle( 40, 90, 0 ) )
+		ent_cam_override3 = ents.GetMapCreatedEntity( 1723 )
+			ent_cam_override3:SetPos( Vector( -85, 260, -820 ) )
+			ent_cam_override3:SetAngles( Angle( 25, -90, 0 ) )
+		ent_cam_override4 = ents.GetMapCreatedEntity( 1722 )
+			ent_cam_override4:SetPos( Vector( 225, -60, -850 ) )
+			ent_cam_override4:SetAngles( Angle( 25, 180, 0 ) )
+		ent_cam_override5 = ents.GetMapCreatedEntity( 1725 )
+			ent_cam_override5:SetPos( Vector( -75, -80, -700 ) )
+			ent_cam_override5:SetAngles( Angle( 90, 0, 0 ) )
+	end)
 
 end)

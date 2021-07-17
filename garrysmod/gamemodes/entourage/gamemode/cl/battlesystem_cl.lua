@@ -45,8 +45,10 @@ net.Receive( "DISPLAY_PAIN", function()
         end)
     else
         hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
-            local hitent_pos = hitent:GetPos():ToScreen()
-            draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 255, 65, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
+            if IsValid( hitent ) then
+                local hitent_pos = hitent:GetPos():ToScreen()
+                draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 255, 65, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
+            end
         end)
     end
     timer.Simple( 3, function()
@@ -188,6 +190,7 @@ end
 
 function BattleHud()
 	bhud_frame:Show() -- this turns into clickframe then into a basic attack function
+    bhud_frame3:Show()
 	bhud_attbbasic:Hide() -- precached
 
 	timer.Simple(2, function()
@@ -335,6 +338,7 @@ net.Receive( "encounter_outro", function() -- everyone is dead, back to the over
     CheckEXP()
     inbattle = false
 	bhud_frame:Close()
+	bhud_frame3:Close()
 	timer.Simple(2, function()
 		hook.Remove( "HUDPaint", "battlehudpaint" )
 		pleqic:ToggleVisible()
@@ -361,7 +365,12 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         -- basic attacks don't support 10 targetting yet
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
-                local rtrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                local shitpos = LocalPlayer():GetViewEntity():GetPos()
+                local shitpos2 = LocalPlayer():GetViewEntity()
+                if shitpos2 == LocalPlayer() then
+                    shitpos = LocalPlayer():GetNWVector( "sexyheadpos" ) + Vector( 0, 0, 20 )
+                end
+                local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
                     if rtrace.Entity:Health() > 0 and rtrace.Entity:IsNPC() then
                         cl_s_int = cl_s_int + 1
                         cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
@@ -466,6 +475,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 end
             end
         end
+
         -------------------------------------------------------------------------------------------------------------------------------------------------
 
         bhud_frame2 = vgui.Create( "DFrame" )
@@ -482,6 +492,18 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             if keycode == 108 then
                 bhud_frame2:Hide()
             end
+        end
+
+        -- Frame for camera buttons
+        bhud_frame3 = vgui.Create( "DFrame" )
+        bhud_frame3:SetDraggable( false )
+        bhud_frame3:SetSize( 70, 290 ) 
+        bhud_frame3:SetPos( ScrW()-70, 250 )
+        bhud_frame3:SetTitle( "" ) 
+        bhud_frame3:ShowCloseButton( false )
+        bhud_frame3.Paint = function( self, w, h )
+            surface.SetDrawColor( 0, 0, 0, 0)
+            surface.DrawRect( 0, 0, ScrW(), ScrH() )
         end
 
         bhud_attb = vgui.Create( "DImageButton", bhud_frame )
@@ -573,6 +595,62 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 bhud_frame:Hide()
                 bhud_frame2:Hide()
             end
+        -- Buttons for changing perspectives
+        bhud_cam1 = vgui.Create( "DImageButton", bhud_frame3 )
+            bhud_cam1:SetSize( 40, 40 )
+            bhud_cam1:SetPos( 0, 0 )
+            bhud_cam1:SetImage( "hud/numba1.png" )
+            bhud_cam1.DoClick = function()
+                net.Start( "givemereverie" )
+                    net.WriteInt( 1, 32 )
+                net.SendToServer()
+            end
+        bhud_cam2 = vgui.Create( "DImageButton", bhud_frame3 )
+            bhud_cam2:SetSize( 40, 40 )
+            bhud_cam2:SetPos( 0, 50 )
+            bhud_cam2:SetImage( "hud/numba2.png" )
+            bhud_cam2.DoClick = function()
+                net.Start( "givemereverie" )
+                    net.WriteInt( 2, 32 )
+                net.SendToServer()
+            end
+        bhud_cam3 = vgui.Create( "DImageButton", bhud_frame3 )
+            bhud_cam3:SetSize( 40, 40 )
+            bhud_cam3:SetPos( 0, 100 )
+            bhud_cam3:SetImage( "hud/numba3.png" )
+            bhud_cam3.DoClick = function()
+                net.Start( "givemereverie" )
+                    net.WriteInt( 3, 32 )
+                net.SendToServer()
+            end
+        bhud_cam4 = vgui.Create( "DImageButton", bhud_frame3 )
+            bhud_cam4:SetSize( 40, 40 )
+            bhud_cam4:SetPos( 0, 150 )
+            bhud_cam4:SetImage( "hud/numba4.png" )
+            bhud_cam4.DoClick = function()
+                net.Start( "givemereverie" )
+                    net.WriteInt( 4, 32 )
+                net.SendToServer()
+            end
+        bhud_cam5 = vgui.Create( "DImageButton", bhud_frame3 )
+            bhud_cam5:SetSize( 40, 40 )
+            bhud_cam5:SetPos( 0, 200 )
+            bhud_cam5:SetImage( "hud/numba5.png" )
+            bhud_cam5.DoClick = function()
+                net.Start( "givemereverie" )
+                    net.WriteInt( 5, 32 )
+                net.SendToServer()
+            end
+        bhud_cam6 = vgui.Create( "DImageButton", bhud_frame3 )
+            bhud_cam6:SetSize( 40, 40 )
+            bhud_cam6:SetPos( 0, 250 )
+            bhud_cam6:SetImage( "hud/numba6.png" )
+            bhud_cam6.DoClick = function()
+                net.Start( "givemereverie" )
+                    net.WriteInt( 6, 32 )
+                net.SendToServer()
+            end
+
         ------------------------------------------------------------------
         -- Skills battle frame
 
@@ -645,7 +723,9 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         bhud_frame:SetDeleteOnClose( false )
         bhud_frame:Close()	
         bhud_frame2:SetDeleteOnClose( false )
-        bhud_frame2:Close()		
+        bhud_frame2:Close()	
+        bhud_frame3:SetDeleteOnClose( false )
+        bhud_frame3:Close()			
         -- End of battle hud.
 
         -------------------------------------------------------------------------------------
