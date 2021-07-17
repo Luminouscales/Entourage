@@ -27,7 +27,7 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_performance": {
+	"s_fragmentation": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
@@ -47,7 +47,7 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_fragmentation": {
+	"s_performance": {
 		"Level": 0.0,
 		"equipped": 0.0
 	}
