@@ -111,6 +111,7 @@ end)
 -- Health add function
 function entourage_AddHealth( hptarget, hp )
 	local hp2 = math.Clamp( hp, 0, hptarget:GetMaxHealth() )
+	local hp2 = math.Round( hp2, 0 )
 	hptarget:SetHealth( hptarget:Health() + hp2 )
 
 	net.Start( "DISPLAY_PAIN" )
@@ -441,24 +442,13 @@ function SendSkillNote( skillnote )
 end
 
 net.Receive( "givemereverie", function( len, ply )
-	-- Only God can judge me.
-
 	ply:SetNWVector( "sexyheadpos", ply:HeadTarget( ply:GetPos() ) )
 
 	local a = net.ReadInt( 32 )
-	local b = nil
-	if a == 1 then
-		b = ent_cam_override1
-	elseif a == 2 then
-		b = ent_cam_override2
-	elseif a == 3 then
-		b = ent_cam_override3
-	elseif a == 4 then
-		b = ent_cam_override4
-	elseif a == 5 then
-		b = ent_cam_override5
+
+	if a ~= 0 then
+		ply:SetViewEntity( ents.GetMapCreatedEntity( a ) )
 	else
-		b = ply
+		ply:SetViewEntity( ply )
 	end
-	ply:SetViewEntity( b )
 end)

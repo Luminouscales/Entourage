@@ -36,7 +36,7 @@ net.Receive( "DISPLAY_PAIN", function()
     hp_int2 = hp_int2 + 1
     local hp_int = hp_int2
 
-    local brave_ness = 255
+    --local brave_ness = 255
 
     if isheal then
         hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
@@ -178,7 +178,7 @@ function CheckEXP()
     playerstats_a["LVL1"] = playerstats_a["LVL1"] + exp_real
     if playerstats_a["LVL1"] >= playerstats_a["LVL2"] then
         just_leveledup = true
-        playerstats_a["LVL1"] = 0
+        playerstats_a["LVL1"] = playerstats_a["LVL1"] - playerstats_a["LVL2"]
         playerstats_a["LVL3"] = playerstats_a["LVL3"] + 1
         playerstats_a["LVL2"] = playerstats_a["LVL2"] * playerstats_a["LVL3"]
         playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] + 2
@@ -350,6 +350,15 @@ net.Receive( "encounter_outro", function() -- everyone is dead, back to the over
         ---------------------------
 	end)
 end) 
+
+function LookPos()
+    shitpos = LocalPlayer():GetViewEntity():GetPos()
+    shitpos2 = LocalPlayer():GetViewEntity()
+    if shitpos2 == LocalPlayer() then
+        shitpos = LocalPlayer():GetNWVector( "sexyheadpos" ) + Vector( 0, 0, 20 )
+    end
+end
+
 hook.Add( "InitPostEntity", "clickframe_init", function()
     timer.Simple( 1, function()
 
@@ -365,11 +374,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         -- basic attacks don't support 10 targetting yet
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
-                local shitpos = LocalPlayer():GetViewEntity():GetPos()
-                local shitpos2 = LocalPlayer():GetViewEntity()
-                if shitpos2 == LocalPlayer() then
-                    shitpos = LocalPlayer():GetNWVector( "sexyheadpos" ) + Vector( 0, 0, 20 )
-                end
+                LookPos()
                 local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
                     if rtrace.Entity:Health() > 0 and rtrace.Entity:IsNPC() then
                         cl_s_int = cl_s_int + 1
@@ -428,7 +433,8 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                     bhud_frame2:Hide()
                 -- otherwise do it normally
                 else
-                    local rtrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                    LookPos()
+                    local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
                         if rtrace.Entity:Health() > 0 then
                             cl_s_int = cl_s_int + 1
                             cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
@@ -465,7 +471,8 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         end
         function bhud_frame:OnMousePressed( keycode )
             if keycode == 108 then
-                desctrace = util.QuickTrace( Vector( -333, 84.5, -815 ), gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                LookPos()
+                desctrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
                 if desctrace.Entity:IsNPC() then
                     entdesc:Show()
                     entdesc_details()
@@ -602,7 +609,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_cam1:SetImage( "hud/numba1.png" )
             bhud_cam1.DoClick = function()
                 net.Start( "givemereverie" )
-                    net.WriteInt( 1, 32 )
+                    net.WriteInt( 1726, 32 )
                 net.SendToServer()
             end
         bhud_cam2 = vgui.Create( "DImageButton", bhud_frame3 )
@@ -611,7 +618,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_cam2:SetImage( "hud/numba2.png" )
             bhud_cam2.DoClick = function()
                 net.Start( "givemereverie" )
-                    net.WriteInt( 2, 32 )
+                    net.WriteInt( 1724, 32 )
                 net.SendToServer()
             end
         bhud_cam3 = vgui.Create( "DImageButton", bhud_frame3 )
@@ -620,7 +627,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_cam3:SetImage( "hud/numba3.png" )
             bhud_cam3.DoClick = function()
                 net.Start( "givemereverie" )
-                    net.WriteInt( 3, 32 )
+                    net.WriteInt( 1723, 32 )
                 net.SendToServer()
             end
         bhud_cam4 = vgui.Create( "DImageButton", bhud_frame3 )
@@ -629,7 +636,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_cam4:SetImage( "hud/numba4.png" )
             bhud_cam4.DoClick = function()
                 net.Start( "givemereverie" )
-                    net.WriteInt( 4, 32 )
+                    net.WriteInt( 1722, 32 )
                 net.SendToServer()
             end
         bhud_cam5 = vgui.Create( "DImageButton", bhud_frame3 )
@@ -638,7 +645,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_cam5:SetImage( "hud/numba5.png" )
             bhud_cam5.DoClick = function()
                 net.Start( "givemereverie" )
-                    net.WriteInt( 5, 32 )
+                    net.WriteInt( 1725, 32 )
                 net.SendToServer()
             end
         bhud_cam6 = vgui.Create( "DImageButton", bhud_frame3 )
@@ -647,7 +654,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_cam6:SetImage( "hud/numba6.png" )
             bhud_cam6.DoClick = function()
                 net.Start( "givemereverie" )
-                    net.WriteInt( 6, 32 )
+                    net.WriteInt( 0, 32 )
                 net.SendToServer()
             end
 
@@ -676,7 +683,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 bhud_skills_frame:ShowCloseButton( false )
                 bhud_skills_frame:SetDraggable( false )
                 bhud_skills_frame.Paint = function( self, w, h )
-                    draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 90, 85, 85 ), false, true, false, true )
+                    draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 90, 85, 85 ), true, true, true, true )
                 end
                 -- This function creates available skills.
                 function skills_frame_init()
@@ -697,6 +704,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                 skillbutton:SetSize( 25, 25 )
                                 skillbutton:SetPos( 10 + integer * 35, bhud_skills_frame:GetTall()/2 - skillbutton:GetTall()/2 )
                                 skillbutton:SetImage( "skills/entourage_".. k .."_small.png" )
+                                skillbutton:SetTooltip( skillsbase[ k ].Name .."\nUP Cost: ".. skillsbase[ k ].cost )
                                 skillbutton.DoClick = function()
                                     if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
                                         skill_id = k
@@ -708,6 +716,13 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                         PlaceholderFunction()
                                     end
                                 end
+                                skillbutton.DoRightClick = function()
+                                    bhud_skills_tip:ToggleVisible()
+                                    --bhud_skills_tip1:SetText( "" )
+                                    bhud_skills_tip1:SetText( skillsbase[ k ].Name )
+                                    --bhud_skills_tip2:SetText( "" )
+                                    bhud_skills_tip2:SetText( skillsbase[ k ].Description .."\nUP Cost: ".. skillsbase[ k ].cost .."\nCooldown: ".. skillsbase[ k ].cd .." turns" )
+                                end
                                 function skillbutton:Think()
                                     if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
                                         self:SetColor( Color( 255, 255, 255, 255 ) )
@@ -718,6 +733,32 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                         end
                     end
                 end
+            bhud_skills_tip = vgui.Create( "DFrame", bhud_frame )
+                bhud_skills_tip:SetPos( 150, 150 )
+                bhud_skills_tip:SetSize( 500, 200 )
+                bhud_skills_tip:SetTitle( "" )
+                bhud_skills_tip:ShowCloseButton( false )
+                bhud_skills_tip:SetDraggable( false )
+                bhud_skills_tip.Paint = function( self, w, h )
+                    draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 50, 50, 50 ), false, false, true, true )
+                end
+                bhud_skills_tip1 = vgui.Create( "RichText", bhud_skills_tip ) -- Skill name
+                    bhud_skills_tip1:SetPos( 0, 0 )
+                    bhud_skills_tip1:SetSize( 500, 30 )
+                    bhud_skills_tip1:SetVerticalScrollbarEnabled( false )
+                    bhud_skills_tip1:InsertColorChange( 255, 255, 255, 255 )
+                    function bhud_skills_tip1:PerformLayout()
+                        self:SetFontInternal( "equipment_plname4" )
+                    end
+                bhud_skills_tip2 = vgui.Create( "RichText", bhud_skills_tip ) -- other stuff
+                    bhud_skills_tip2:SetPos( 0, 50 )
+                    bhud_skills_tip2:SetSize( 500, 160 )
+                    bhud_skills_tip2:SetVerticalScrollbarEnabled( false )
+                    bhud_skills_tip2:InsertColorChange( 255, 255, 255, 255 )
+                    function bhud_skills_tip2:PerformLayout()
+                        self:SetFontInternal( "danger_font" )
+                    end
+            bhud_skills_tip:Hide()
             bhud_skills_frame:Hide()
         -------------------------------------
         bhud_frame:SetDeleteOnClose( false )
@@ -750,22 +791,22 @@ end)
 
 function entdesc_details()
     local entdesc_m = vgui.Create( "DModelPanel", entdesc )
-    entdesc_m:SetSize( 300, 300 )
-    entdesc_m:SetPos( 5, 5 )
-    entdesc_m:SetMouseInputEnabled( false )
-    entdesc_m:SetFOV( 40 )
-    entdesc_m:SetModel( desctrace.Entity:GetModel() )
-    entdesc_m:GetEntity():SetSkin( desctrace.Entity:GetSkin() )
-    entdesc_m:GetEntity():SetModelScale( desctrace.Entity:GetNWFloat( "scaleNW", 1 ) )
-    entdesc_m:SetAnimated( true )
-    entdesc_m:GetEntity():SetSequence( desctrace.Entity:GetSequence() )
-    function entdesc_m:LayoutEntity( ent )
-        if ( self.bAnimated ) then
-            self:RunAnimation()
+        entdesc_m:SetSize( 300, 300 )
+        entdesc_m:SetPos( 5, 5 )
+        entdesc_m:SetMouseInputEnabled( false )
+        entdesc_m:SetFOV( 40 )
+        entdesc_m:SetModel( desctrace.Entity:GetModel() )
+        entdesc_m:GetEntity():SetSkin( desctrace.Entity:GetSkin() )
+        entdesc_m:GetEntity():SetModelScale( desctrace.Entity:GetNWFloat( "scaleNW", 1 ) )
+        entdesc_m:SetAnimated( true )
+        entdesc_m:GetEntity():SetSequence( desctrace.Entity:GetSequence() )
+        function entdesc_m:LayoutEntity( ent )
+            if ( self.bAnimated ) then
+                self:RunAnimation()
+            end
+            entdesc_m:GetEntity():SetAngles( Angle( 0, RealTime() * 0 % 360, 0 ) ) -- Clever modification of this function prevents it from spinning whilst still allowing animations to run. I know, I know.
         end
-        entdesc_m:GetEntity():SetAngles( Angle( 0, RealTime() * 0 % 360, 0 ) ) -- Clever modification of this function prevents it from spinning whilst still allowing animations to run. I know, I know.
-    end
-    entdesc_m:SetCamPos( Vector( 165, -50, 10 ) )
+        entdesc_m:SetCamPos( Vector( 165, -50, 10 ) )
 
     entdesc_desc = vgui.Create( "RichText", entdesc )
 		entdesc_desc:SetSize( 470, 180 )
