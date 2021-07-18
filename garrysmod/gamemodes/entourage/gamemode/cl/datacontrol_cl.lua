@@ -349,7 +349,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 10,
-            ["targets"] = 1
+            ["targets"] = 1,
+            ["cd"] = 3
         },
         ["s_defmano"] = {
             ["Name"] = "Defensive Manoeuvre",
@@ -358,7 +359,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 20,
-            ["targets"] = 1
+            ["targets"] = 1,
+            ["cd"] = 3
         },
         ["s_firstaid"] = {
             ["Name"] = "First Aid",
@@ -367,7 +369,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 15,
-            ["targets"] = 1
+            ["targets"] = 1,
+            ["cd"] = 3
         },
         ["s_slasher"] = {
             ["Name"] = "Slasher",
@@ -398,7 +401,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 10,
-            ["targets"] = 10
+            ["targets"] = 10,
+            ["cd"] = 2
         },
         ["s_fragmentation"] = {
             ["Name"] = "Fragmentation",
@@ -407,7 +411,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 20,
-            ["targets"] = 2
+            ["targets"] = 2,
+            ["cd"] = 4
         },
         ["s_medicsupplies"] = {
             ["Name"] = "Medical Supplies",
@@ -416,16 +421,18 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 25,
-            ["targets"] = 11
+            ["targets"] = 11,
+            ["cd"] = 3
         },
         ["s_moraleslash"] = {
-            ["Name"] = "Morale slash",
-            ["Description"] = "Strike a target; gain Agility and recover HP on hit",
+            ["Name"] = "Morale Slash",
+            ["Description"] = "Strike a target; gain Celerity and recover HP on hit.",
             ["tier"] = 1,
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 15,
-            ["targets"] = 1
+            ["targets"] = 1,
+            ["cd"] = 3
         },
         ["s_acrobatics"] = {
             ["Name"] = "Acrobatics",
@@ -434,7 +441,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 10,
-            ["targets"] = 10
+            ["targets"] = 10,
+            ["cd"] = 4
         },
         ["s_distraction"] = {
             ["Name"] = "Distraction",
@@ -443,7 +451,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 25,
-            ["targets"] = 2
+            ["targets"] = 2,
+            ["cd"] = 4
         },
         ["s_performance"] = {
             ["Name"] = "Performance",
@@ -452,7 +461,8 @@ function weaponlistTBL()
             ["min"] = 1,
             ["max"] = 10,
             ["cost"] = 15,
-            ["targets"] = 10
+            ["targets"] = 10,
+            ["cd"] = 2
         }
     }
 end
