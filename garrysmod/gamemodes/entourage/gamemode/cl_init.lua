@@ -40,7 +40,7 @@ function DoDescs()
 	-- Check if skill icon should be transparent or not.
 	if IsValid( aimed_skill2 ) then 
 		if plskills_a[ define_col ].equipped < 1 then
-			aimed_skill2:SetColor( unavailable )
+			aimed_skill2:SetColor( Color( 255, 255, 255, 50 ) )
 		else
 			aimed_skill2:SetColor( Color( 255, 255, 255, 255 ) )
 		end

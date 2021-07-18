@@ -2,9 +2,9 @@
 -- I can think of. Iterating over a table is better for inventories that change - skills will never change 
 -- and when they will, I will want them to. If necessary, rework this, but this should do for the time being.
 
-local unavailable = Color( 255, 255, 255, 50 )
-local col_tier1 = Color( 255, 255, 255, 255 )
-local skpic_a = "skills/entourage_precstrike.png"
+sk_unavailable = Color( 255, 255, 255, 50 )
+col_tier1 = Color( 255, 255, 255, 255 )
+skpic_a = "skills/entourage_precstrike.png"
 local madechanges = false
 
 function DefineColour()
@@ -74,7 +74,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
 
                 if plskills_a[define_col].equipped < 1 then
-                    s_precstrike:SetColor( unavailable )
+                    s_precstrike:SetColor( sk_unavailable )
                 end
             end 
 
@@ -117,7 +117,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
 
                 if plskills_a[define_col].equipped < 1 then
-                    s_slicer:SetColor( unavailable )
+                    s_slicer:SetColor( sk_unavailable )
                 end
             end
 
@@ -160,7 +160,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
 
                 if plskills_a[define_col].equipped < 1 then
-                    s_dicer:SetColor( unavailable )
+                    s_dicer:SetColor( sk_unavailable )
                 end
             end
         ------------------------
@@ -172,7 +172,10 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
             s_precstrike:SetImage( "skills/entourage_s_precstrike.png" )
             s_precstrike.DoClick = function( )
                 -- First, define the image and show it...
+                
                 skpic_a = s_precstrike:GetImage()
+                print( skpic_a )
+                print( type( skpic_a ) )
                 skpic:Show()
 
                 aimed_skill2 = s_precstrike
@@ -208,14 +211,8 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "turns. \n" )
                 sk_desc1:AppendText( "\n" )
-                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                if plskills_a[define_col].Level > 4 then 
-                    sk_desc1:AppendText( 2 )
-                else 
-                    sk_desc1:AppendText( 3 )
-                end
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                sk_desc1:AppendText( " turn cooldown \n" )
+                sk_desc1:AppendText( "3 turn cooldown \n" )
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
                 sk_desc1:AppendText( "5 " )
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -233,7 +230,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 -- Holy shit.
             end
             if plskills_a["s_precstrike"].equipped < 1 then
-                s_precstrike:SetColor( unavailable )
+                s_precstrike:SetColor( sk_unavailable )
             end
 
         local s_defmano = vgui.Create( "DImageButton", skills_frame_slash )
@@ -289,7 +286,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
 
             end
             if plskills_a["s_defmano"].equipped < 1 then
-                s_defmano:SetColor( unavailable )
+                s_defmano:SetColor( sk_unavailable )
             end
 
         local s_firstaid = vgui.Create( "DImageButton", skills_frame_slash )
@@ -349,7 +346,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
             end
             if plskills_a["s_firstaid"].equipped < 1 then
-                s_firstaid:SetColor( unavailable )
+                s_firstaid:SetColor( sk_unavailable )
             end
         --- Row 2
         local s_broadswing = vgui.Create( "DImageButton", skills_frame_slash )
@@ -407,7 +404,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
 
             end
             if plskills_a["s_broadswing"].equipped < 1 then
-                s_broadswing:SetColor( unavailable )
+                s_broadswing:SetColor( sk_unavailable )
             end
 
         local s_fragmentation = vgui.Create( "DImageButton", skills_frame_slash )
@@ -461,7 +458,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
             end
             if plskills_a["s_fragmentation"].equipped < 1 then
-                s_fragmentation:SetColor( unavailable )
+                s_fragmentation:SetColor( sk_unavailable )
             end
 
         local s_medicsupplies = vgui.Create( "DImageButton", skills_frame_slash )
@@ -512,7 +509,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
             end
             if plskills_a["s_medicsupplies"].equipped < 1 then
-                s_medicsupplies:SetColor( unavailable )
+                s_medicsupplies:SetColor( sk_unavailable )
             end
 
         --- Row 3
@@ -559,7 +556,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
             end
             if plskills_a["s_moraleslash"].equipped < 1 then
-                s_moraleslash:SetColor( unavailable )
+                s_moraleslash:SetColor( sk_unavailable )
             end
 
         local s_distraction = vgui.Create( "DImageButton", skills_frame_slash )
@@ -611,7 +608,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
             end
             if plskills_a["s_distraction"].equipped < 1 then
-                s_distraction:SetColor( unavailable )
+                s_distraction:SetColor( sk_unavailable )
             end
 
         local s_acrobatics = vgui.Create( "DImageButton", skills_frame_slash )
@@ -659,7 +656,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 skupgrade:Show()
             end
             if plskills_a["s_acrobatics"].equipped < 1 then
-                s_acrobatics:SetColor( unavailable )
+                s_acrobatics:SetColor( sk_unavailable )
             end
         ------------------------
         -- Subclass Skills
