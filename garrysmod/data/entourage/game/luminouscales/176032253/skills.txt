@@ -15,19 +15,27 @@
 		"Level": 0.0,
 		"equipped": 2.0
 	},
-	"s_dicer": {
+	"s_performance": {
 		"Level": 0.0,
-		"equipped": 2.0
+		"equipped": 0.0
 	},
 	"s_moraleslash": {
 		"Level": 1.0,
 		"equipped": 1.0
 	},
 	"s_broadswing": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_acrobatics": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_performance": {
+	"s_medicsupplies": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_distraction": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
@@ -35,20 +43,12 @@
 		"Level": 0.0,
 		"equipped": 2.0
 	},
-	"s_distraction": {
+	"s_dicer": {
 		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_medicsupplies": {
-		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_acrobatics": {
-		"Level": 0.0,
-		"equipped": 0.0
+		"equipped": 2.0
 	},
 	"s_fragmentation": {
-		"Level": 0.0,
-		"equipped": 0.0
+		"Level": 1.0,
+		"equipped": 1.0
 	}
 }
