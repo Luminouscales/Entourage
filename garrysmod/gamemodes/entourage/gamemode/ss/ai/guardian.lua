@@ -14,9 +14,9 @@ function GuardianAI()
     -- Call allies every 5 turns
     if g_stampede ~= true then
         if g_sudety ~= true then
-            if turn % 10 == 0 then
+            if turn % 10 == 0 then -- Do charge attack every 10 turns
                 BattleCry()
-            elseif turn % 5 == 0 then -- Do charge attack every 10 turns
+            elseif turn % 5 == 0 then 
                 Guardian_AllyCall()
             else
                 RunString( table.Random( sktbl_guardian ) )
@@ -168,7 +168,7 @@ function Sudety()
 
     timer.Simple( 2, function()
         enemy1:ResetSequence( table.Random( guardian_idle ) )
-        SendSkillNote( "Damage resistance decreased!" )
+        SendSkillNote( "Party defence decreased significantly!" )
     end)
     
     timer.Simple( 2.5, function()

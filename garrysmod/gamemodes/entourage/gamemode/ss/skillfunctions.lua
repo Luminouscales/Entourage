@@ -552,12 +552,12 @@ end
 
 function Bash()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.8, 1.2 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.65 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 25
-    stunbonus = -10
+    c_miss = 20
+    stunbonus = 5
     CalcAttack()
 end
 
@@ -567,7 +567,7 @@ function WideStagger()
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 15
+    c_miss = 10
     stunbonus = 20
     CalcAttack()
 end
@@ -631,18 +631,18 @@ function G_AllyCall()
 end
 
 function G_Stampede()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 1.5, 2 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 2, 3 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 1.25 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.02 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
     c_miss = 0
-    stunbonus = 30
+    stunbonus = 50
     CalcAttack()
 end
 
 function G_Sudety()
-    attacktarget:SetNWInt( "dmgresistance", math.Clamp( attacktarget:GetNWInt( "dmgresistance" ) - 0.12, -0.46, 0.46 ) )
+    pl_stats_tbl[ attacktarget_id ].DEF = pl_stats_tbl[ attacktarget_id ].DEF - 7
 end
 
 function P_Eviscerate()
