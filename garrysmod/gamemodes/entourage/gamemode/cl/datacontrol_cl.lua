@@ -526,3 +526,11 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
 
 end)
 
+net.Receive( "sharetable", function()
+	enemies_table = net.ReadTable()
+	-- levi; UP purposes
+	levi = net.ReadInt( 32 )
+	timer.Simple( 2, function()
+		cl_Levitus = Entity( levi )
+	end)
+end)
