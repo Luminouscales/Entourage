@@ -1,3 +1,4 @@
+-- https://cdn.discordapp.com/attachments/471302316734283776/866657425557815306/IMG_20210718_111636.jpg
 include( "shared.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
@@ -53,6 +54,10 @@ function PlayerSave()
 	net.Start( "playersave" )
 	net.Broadcast()
 end
+
+-- Manages player death. Some of the death stuff is managed in battlesystem.lua
+function GM:PlayerDeathSound() return true end -- i am a filthy thief!
+function GM:PlayerDeathThink( ply )	return false end
 
 pl_stats_tbl = {}
 
@@ -126,3 +131,6 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 	end)
 
 end)
+
+-- Variable for managing uniqueness.
+mathilda = 0

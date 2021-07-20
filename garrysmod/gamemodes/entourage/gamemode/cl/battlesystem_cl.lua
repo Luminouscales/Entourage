@@ -175,16 +175,31 @@ function ResultsFrame()
 end
 --------------------------------------
 function CheckEXP()
-    playerstats_a["LVL1"] = playerstats_a["LVL1"] + exp_real
     if playerstats_a["LVL1"] >= playerstats_a["LVL2"] then
         just_leveledup = true
         playerstats_a["LVL1"] = playerstats_a["LVL1"] - playerstats_a["LVL2"]
         playerstats_a["LVL3"] = playerstats_a["LVL3"] + 1
-        playerstats_a["LVL2"] = playerstats_a["LVL2"] * playerstats_a["LVL3"]
+        playerstats_a["LVL2"] = 100 * playerstats_a["LVL3"] + 50 * playerstats_a["LVL3"]
         playerstats_a["LVL_POINTS"] = playerstats_a["LVL_POINTS"] + 2
         playerstats_a["HP2"] = playerstats_a["HP2"] + 10
         CheckEXP()
     end
+end
+
+function AddEXP( amount, override ) -- debug
+    if isnumber( override ) then
+        for i = 1, override, 1 do 
+            LevelUp()
+        end
+    else
+        playerstats_a["LVL1"] = playerstats_a["LVL1"] + amount
+        CheckEXP()
+    end
+end
+
+function LevelUp()
+    playerstats_a["LVL1"] = playerstats_a["LVL2"]
+    CheckEXP()
 end
 -------------------------
 
@@ -268,15 +283,15 @@ function BattleHud()
 
             end
 
-			if IsValid( enemy1 ) then
+			if IsValid( enemy1 ) and inbattle then
 				draw.SimpleTextOutlined( math.Clamp( enemy1:Health(), 0, 1000 ) .."/".. enemy1:GetMaxHealth(), "danger_font", enemy1pointn.x, enemy1pointn.y + 48, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
                 draw.SimpleTextOutlined( enemy1:GetNWString( "nwhudname" ), "danger_font", enemy1point.x, enemy1point.y + 30, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
 			end
-			if IsValid( enemy2 ) then
+			if IsValid( enemy2 ) and inbattle then
 				draw.SimpleTextOutlined( math.Clamp( enemy2:Health(), 0, 1000 ) .."/".. enemy2:GetMaxHealth(), "danger_font", enemy2pointn.x, enemy2pointn.y + 38, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
                 draw.SimpleTextOutlined( enemy2:GetNWString( "nwhudname" ), "danger_font", enemy2point.x, enemy2point.y + 20, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
 			end
-			if IsValid( enemy3 ) then
+			if IsValid( enemy3 ) and inbattle then
 				draw.SimpleTextOutlined( math.Clamp( enemy3:Health(), 0, 1000 ) .."/".. enemy3:GetMaxHealth(), "danger_font", enemy3pointn.x, enemy3pointn.y + 42, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
                 draw.SimpleTextOutlined( enemy3:GetNWString( "nwhudname" ), "danger_font", enemy3point.x, enemy3point.y + 25, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
 			end
@@ -335,7 +350,9 @@ net.Receive( "player_doturn", function()
 end) 
 
 net.Receive( "encounter_outro", function() -- everyone is dead, back to the overworld
+    playerstats_a["LVL1"] = playerstats_a["LVL1"] + exp_real
     CheckEXP()
+    exp_real = 0
     inbattle = false
 	bhud_frame:Close()
 	bhud_frame3:Close()
@@ -346,7 +363,6 @@ net.Receive( "encounter_outro", function() -- everyone is dead, back to the over
         ResultsFrame()
         -- Cleanup after battle
             just_leveledup = false
-            exp_true = 0
         ---------------------------
 	end)
 end) 
@@ -718,9 +734,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                 end
                                 skillbutton.DoRightClick = function()
                                     bhud_skills_tip:ToggleVisible()
-                                    --bhud_skills_tip1:SetText( "" )
                                     bhud_skills_tip1:SetText( skillsbase[ k ].Name )
-                                    --bhud_skills_tip2:SetText( "" )
                                     bhud_skills_tip2:SetText( skillsbase[ k ].Description .."\nUP Cost: ".. skillsbase[ k ].cost .."\nCooldown: ".. skillsbase[ k ].cd .." turns" )
                                 end
                                 function skillbutton:Think()
@@ -773,7 +787,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         -- Right-click Enemy description.
         entdesc = vgui.Create( "DFrame", bhud_frame )
             entdesc:MakePopup()
-            entdesc:SetDraggable( false )
+            entdesc:SetDraggable( true )
             entdesc:SetSize( 800, 800 )
             entdesc:Center()
             entdesc:SetTitle( "" )
@@ -826,7 +840,7 @@ function entdesc_details()
         entdesc_desc2:AppendText( "Health: ".. desctrace.Entity:Health() .." / ".. desctrace.Entity:GetMaxHealth() .."\n")
         entdesc_desc2:AppendText( "Defence: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DEF .."\n")
         entdesc_desc2:AppendText( "Flex Defence: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DFX .."\n")
-        entdesc_desc2:AppendText( "Damage: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMG1 .." - ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMG2 .." ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGT .."\n")
+        entdesc_desc2:AppendText( "Damage: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMG .." ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGT .."\n")
         if IsValid( enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGP ) then
             entdesc_desc2:AppendText( "Armour Penetration: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGP .."\n" )
         end
@@ -839,9 +853,9 @@ function entdesc_details()
         entdesc_desc2:AppendText( "Base Miss Chance: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].MISS .."%" .."\n" )
         entdesc_desc2:AppendText( "Base Dodge Chance: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DDG .."%" .."\n" )
         entdesc_desc2:AppendText( "\n" )
-        entdesc_desc2:AppendText( "Abilities:\n" )
-        entdesc_desc2:AppendText( "None" )
-
+        -- entdesc_desc2:AppendText( "Abilities:\n" )
+        -- entdesc_desc2:AppendText( "None" )
+        entdesc_desc2:AppendText( "Debug ID: ".. desctrace.Entity:EntIndex() ) -- MIKOŁAJ TO DEBIL
 		function entdesc_desc2:PerformLayout()
 			self:SetFontInternal( "equipment_plname2" )
 		end
@@ -849,7 +863,7 @@ function entdesc_details()
     local closebutton = vgui.Create( "DImageButton", entdesc )
         closebutton:SetImage( "icon16/cross.png" )
         closebutton:SetSize( 20, 20 )
-        closebutton:SetPos( 775, 5 )
+        closebutton:SetPos( 2, 2 )
         closebutton.DoClick = function()
             entdesc:Close()
             entdesc_m:Remove()
@@ -860,7 +874,6 @@ end
 
 function DefineDMG()
     local a = weaponlist[ playerstats_a["currentweapon"] ].dmgtype
-    -- local b = plskills[ "s_slasher" ]
     if a == "Slash" then
         plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
         plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
@@ -913,4 +926,11 @@ net.Receive( "sendskillnote", function()
     timer.Simple( 1.75, function()
         skillnote_show = false
     end)
+end)
+
+net.Receive( "endgame", function()
+    LocalPlayer():ScreenFade( 2, Color( 0, 0, 0 ), 2, 1000 )
+    bhud_frame:Close()
+    bhud_frame3:Close()
+    inbattle = false
 end)

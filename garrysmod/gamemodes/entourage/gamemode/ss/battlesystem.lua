@@ -17,6 +17,7 @@ util.AddNetworkString( "sendskillnote" )
 util.AddNetworkString( "DISPLAY_PAIN" )
 util.AddNetworkString( "givemereverie" )
 util.AddNetworkString( "fuckmylife" )
+util.AddNetworkString( "endgame" )
 
 -- set variables
 lives = 0
@@ -81,12 +82,14 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 					enemy3 = nil
 				end
 				-----------------
-				print( target:GetNWInt( "tbl_deaths" ) )
+				-- print( target:GetNWInt( "tbl_deaths" ) )
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				lives = lives - 1
+
+				-- c_type2 = nil
 
 				-- Send EXP
 				local timer_delay = 0 -- change if necessary
@@ -110,8 +113,7 @@ end)
 
 -- Health add function
 function entourage_AddHealth( hptarget, hp )
-	local hp2 = math.Clamp( hp, 0, hptarget:GetMaxHealth() )
-	local hp2 = math.Round( hp2, 0 )
+	local hp2 = math.Round( math.Clamp( hp, 0, hptarget:GetMaxHealth() - hptarget:Health() ), 0 )
 	hptarget:SetHealth( hptarget:Health() + hp2 )
 
 	net.Start( "DISPLAY_PAIN" )
@@ -128,6 +130,8 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 		-- Deduct UP for dying.
 		entourage_AddUP( -25, 25 )
 	end
+	-- Set spectate mode
+	victim:Spectate(OBS_MODE_CHASE)
 end)
 
 function Calculatum()
@@ -137,7 +141,6 @@ function Calculatum()
 end
 -- True Accuracy and True Dodge calculation for players
 hook.Add( "EnemyTurnEnd", "accresets", Calculatum )
-
 hook.Add( "PlayerTurnEnd", "accresets2", Calculatum )
 
 --------------------------------------------------------------------------------------
@@ -168,34 +171,6 @@ function EncounterInit( delay )
 		Entity(1):ScreenFade( 1, doom, 1.5, 0.6 )
 		Entity(1):SetPos( Vector( -80, 116, -982 ) )
 		Entity(1):SetEyeAngles( Angle( 0, -90, 0 ))
-		
-		-- change viewpoint
-
-		-- i hate my life and i don't get why this is necessary and WHY THIS TAKES HOURS OFF MY LIFE.
-		-- if IsValid( ent_cam_override1) == false then
-		-- 	ent_cam_override1 = ents.Create( "info_target" )
-		-- 		ent_cam_override1:SetPos( Vector( -360, -60, -850 ) )
-		-- 		ent_cam_override1:SetAngles( Angle( 25, 0, 0 ) )
-		-- 		ent_cam_override1:Spawn()
-		-- 	ent_cam_override2 = ents.Create( "info_target" )
-		-- 		ent_cam_override2:SetPos( Vector( -75, -350, -800 ) )
-		-- 		ent_cam_override2:SetAngles( Angle( 40, 90, 0 ) )
-		-- 		ent_cam_override2:Spawn()
-		-- 	ent_cam_override3 = ents.Create( "info_target" )
-		-- 		ent_cam_override3:SetPos( Vector( -85, 260, -820 ) )
-		-- 		ent_cam_override3:SetAngles( Angle( 25, -90, 0 ) )
-		-- 		ent_cam_override3:Spawn()
-		-- 	ent_cam_override4 = ents.Create( "info_target" )
-		-- 		ent_cam_override4:SetPos( Vector( 225, -60, -850 ) )
-		-- 		ent_cam_override4:SetAngles( Angle( 25, 180, 0 ) )
-		-- 		ent_cam_override4:Spawn()
-		-- 	ent_cam_override5 = ents.Create( "info_target" )
-		-- 		ent_cam_override5:SetPos( Vector( -75, -80, -700 ) )
-		-- 		ent_cam_override5:SetAngles( Angle( 90, 0, 0 ) )
-		-- 		ent_cam_override5:Spawn()
-		-- 		Entity(1):SetViewEntity( ent_cam_override1 )
-		-- end
-
 		Entity(1):SetViewEntity( ent_cam_override1 )
 		
 		PrintMessage( HUD_PRINTTALK, "_____________________" )
@@ -367,13 +342,11 @@ function EnemyAttack()
 		current_enemy = battle_enemies[1]
 		previous_enemy = current_enemy
 		previous_enemya = 1
-		--print( current_enemy )
 		EnemyAttack1()
 	elseif actions > 0 then 
 		current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
 		previous_enemy = current_enemy
 		previous_enemya = previous_enemya + 1
-		--print( current_enemy )
 		EnemyAttack1()
 	else
 		playerturn()
@@ -381,19 +354,31 @@ function EnemyAttack()
 end
 
 function EnemyAttack1()
-	actions = actions - 1
-	if IsValid(current_enemy) and current_enemy:Health() > 0 then -- if alive
-		if current_enemy:GetNWInt( "stunturns" ) == 0 then -- if not stunned
-			RunString( enemies_table[ current_enemy:GetName() ].AI )
-		else -- stunned lol
-			PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." was stunned and could not attack!" )
-			current_enemy:SetNWInt( "stunturns", current_enemy:GetNWInt( "stunturns" ) - 1 )
-			current_enemy:SetNWInt( "stunturns_a", current_enemy:GetNWInt( "stunturns_a" ) - 1 )
-			EnemyAttack()
+	timer.Simple( 0.15, function()
+		-- Check if all players are dead
+		local hot = 0
+		for _, ply in ipairs( player.GetAll() ) do 
+			if ply:Alive()  then
+				hot = hot + 1
+				actions = actions - 1
+				if IsValid(current_enemy) and current_enemy:Health() > 0 then -- if alive
+					if current_enemy:GetNWInt( "stunturns" ) == 0 then -- if not stunned
+						RunString( enemies_table[ current_enemy:GetName() ].AI )
+					else -- stunned lol
+						PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." was stunned and could not attack!" )
+						current_enemy:SetNWInt( "stunturns", current_enemy:GetNWInt( "stunturns" ) - 1 )
+						current_enemy:SetNWInt( "stunturns_a", current_enemy:GetNWInt( "stunturns_a" ) - 1 )
+						EnemyAttack()
+					end
+				else -- peter was here
+					EnemyAttack()
+				end
+			return end
 		end
-	else -- peter was here
-		EnemyAttack()
-	end
+		if hot == 0 then
+			timer.Simple( 2, EndGame )
+		end
+	end)
 end
 
 function playerturn() -- let the player attack
@@ -409,14 +394,18 @@ function playerturn() -- let the player attack
 		sexy_int = sexy_int + 1
 	end
 	actions = sexy_int
-	-- Doing the action below causes additional spawning enemies to not function but also breaks the attack sequence in spawning battles.
-	-- previous_enemya = 0
 
 	entourage_AddUP( 5, 25 )
 
 	for k, v in ipairs( battle_enemies ) do
 		v:SetNWInt( "tbl_deaths", k )
 	end
+end
+
+function EndGame()
+	PrintMessage( HUD_PRINTTALK, "The party has been wiped... " )
+	net.Start( "endgame" )
+	net.Broadcast()
 end
 
 function EncounterReset()
