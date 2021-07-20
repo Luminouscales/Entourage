@@ -13,7 +13,7 @@ guardian_idle = {
 enemies_table = {
 	["Frostlion Scout"] = {
 		["Name"] = "Frostlion Scout",
-		["Description"] = "Average unit of the snow insect forces. Strong in numbers.",
+		["Description"] = "An average unit of the snow insect forces. Only powerful in numbers.",
 		["DMG"] = 11,
 		["DMGT"] = "Slash",
 		["DEF"] = 5,
@@ -67,7 +67,7 @@ enemies_table = {
     -- FROSTLION GUARDIAN
     ["Frostlion Guardian"] = {
 		["Name"]= "Frostlion Guardian",
-		["Description"] = "This beast roams the lands with a crazed thirst for vengeance.",
+		["Description"] = "This ground-quaking beast roams the lands with a crazed thirst for vengeance.",
 		["DMG"] = 40,
 		["DMGT"] = "Blunt",
 		["DMGS"] = 50,
