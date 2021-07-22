@@ -180,7 +180,7 @@ function s_precstrike()
     s_Retract()
 
     -- Cooldown, buffs, skillnote
-    entourage_AddBuff( mgbplayer, s_precstrike, 3, skill_lvl )
+    entourage_AddBuff( mgbplayer, "precstrike", 3, skill_lvl )
     DoCooldown( mgbplayer, "precstrike", 3 )
     SendSkillNote( "Precision Strike" )
 end
@@ -200,7 +200,7 @@ function s_defmano()
 
     s_Retract()
 
-    entourage_AddBuff( mgbplayer, s_defmano, 3, skill_lvl )
+    entourage_AddBuff( mgbplayer, "defmano", 3, skill_lvl )
     DoCooldown( mgbplayer, "defmano", 3 )
     SendSkillNote( "Defensive Manoeuvre" )
 end
@@ -217,7 +217,7 @@ function s_firstaid()
         entourage_AddHealth( target, heal )
     end)
 
-    entourage_AddBuff( mgbplayer, s_firstaid, 3, skill_lvl )
+    entourage_AddBuff( mgbplayer, "firstaid", 3, skill_lvl )
     DoCooldown( mgbplayer, "firstaid", 3 )
     SendSkillNote( "First Aid" )
 end

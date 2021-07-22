@@ -9,6 +9,7 @@ include( "ss/battlesystem.lua" )
 include( "ss/encountertypes.lua" )
 include( "ss/skillfunctions.lua" )
 include( "ss/tablicas.lua" )
+include( "scripts/buffs.lua" )
 --include( "ss/hitsounds.lua" ) -- it's broken. Stick to the base addon for now.
 -- ai
 include( "ss/ai/guardian.lua")

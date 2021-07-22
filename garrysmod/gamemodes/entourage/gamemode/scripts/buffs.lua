@@ -1,8 +1,40 @@
+util.AddNetworkString( "getbufftbl" )
+util.AddNetworkString( "sendbufftbl" )
+
 -- This file contains code for the implementation of buffs and debuffs.
+
+-- Table for managing every player's buffs
+-- REWORK FOR MULTIPLAYER
+
+-- buff table for properties
+buffs_id_tbl = {
+    ["precstrike"] = {
+        ["id"] = 1,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Player FCS is increased temporarily.\nSource: Precision Strike" 
+    }
+
+}
+
+hook.Add("PlayerInitialSpawn", "placeholderfunco", function()
+    buffs_tbl = {
+        [Entity(1):UserID()] = {}
+    }
+end)
+
+net.Receive( "getbufftbl", function( len, ply )
+    local buffent = net.ReadEntity()
+    net.Start( "sendbufftbl" )
+        net.WriteTable( buffs_tbl[ buffent:UserID() ] )
+    net.Send( ply )
+end)
+
 
 function entourage_AddBuff( target, buff, turns, lvl )
     local sex = 0
     local valid = 0
+    local buffid = buffs_id_tbl[ buff ].id
+    print( buffid )
 
     -- Proofcheck target
     if isstring( target ) then
@@ -35,13 +67,11 @@ function entourage_AddBuff( target, buff, turns, lvl )
         valid = valid + 1
     end
 
-    -- Proofcheck buff name
-    if isfunction( buff ) then
+    -- Proofcheck buff name  
+    if isstring( buff ) then
         valid = valid + 1
-    elseif isstring( buff ) then
-        print( "Buff error: invalid buff name (name must not be a string).")
     else
-        print( "Buff error: invalid buff name.")
+        print( "Buff error: invalid buff type.")
     end
 
     -- Proofcheck turns
@@ -61,12 +91,20 @@ function entourage_AddBuff( target, buff, turns, lvl )
     if valid ~= 4 then
         print( "Unable to apply buff.")
     else
-        turns2 = turns
-        print( turns2, turns )
-        lvl2 = lvl
         if target2:IsPlayer() then -- this is the solution until I add actual stats for enemies. if ever.
-            buff()
+            turns2 = turns
+            lvl2 = lvl
+            RunString( "b_".. buff .."()" )
             print( "Buff successfully applied." )
+
+            table.insert( buffs_tbl[ target2:UserID() ], buffid, buff ) -- add buff
+            local cd = -1
+            hook.Add( "EnemyTurnEnd", "pestremoval", function() -- remove when necessary
+                cd = cd + 1
+                if cd >= turns2 then
+                    table.remove( buffs_tbl[ target2:UserID() ], buffid )
+                end
+            end)
         else
             print( "Buff could not be applied: target is not a player.")
         end
