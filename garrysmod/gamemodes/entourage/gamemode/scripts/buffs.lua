@@ -39,7 +39,7 @@ function entourage_AddBuff( target, buff, turns, lvl )
     if isfunction( buff ) then
         valid = valid + 1
     elseif isstring( buff ) then
-        print( "Buff error: invalid buff name (name must be a string).")
+        print( "Buff error: invalid buff name (name must not be a string).")
     else
         print( "Buff error: invalid buff name.")
     end

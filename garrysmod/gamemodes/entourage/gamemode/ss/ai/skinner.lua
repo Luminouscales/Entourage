@@ -1,11 +1,5 @@
 -- This is a script file for Frostlion Skinner
 
-
--- This is the most basic of basic enemies; pick a random target and stab them for crits
-local skill_table = {
-    "PierceAttack()"
-}
-
 function FrostlionSkinnerAI()
     attacktarget = table.Random( allplayers )
     attacktarget_id = attacktarget:UserID()

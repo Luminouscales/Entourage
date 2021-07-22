@@ -203,15 +203,15 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 			end
 	---------------------------
 	-- No idea what this does. Unused?
-	local equipframe2 = vgui.Create( "DFrame", equipframe )
-		equipframe2:SetDraggable( "false" )
-		equipframe2:SetTitle( "" )
-		equipframe2:ShowCloseButton( false )
-		equipframe2:SetPaintShadow( false )
-		equipframe2:SetSize( 700, 400 )
-		equipframe2:SetPos( 850, 0 )
-		equipframe2.Paint = function( self, w, h )
-		end
+	-- local equipframe2 = vgui.Create( "DFrame", equipframe )
+	-- 	equipframe2:SetDraggable( "false" )
+	-- 	equipframe2:SetTitle( "" )
+	-- 	equipframe2:ShowCloseButton( false )
+	-- 	equipframe2:SetPaintShadow( false )
+	-- 	equipframe2:SetSize( 700, 400 )
+	-- 	equipframe2:SetPos( 850, 0 )
+	-- 	equipframe2.Paint = function( self, w, h )
+	-- 	end
 	---------------------------
 	-- This one is omnipresent; close button for everything.
 	local closebutton = vgui.Create( "DImageButton", equipframe )
@@ -368,7 +368,7 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 	---------------------------
 	-- Epilogue
 	equipframe:SetDeleteOnClose( false )
-	equipframe2:SetDeleteOnClose( false )
+	--equipframe2:SetDeleteOnClose( false )
 	mainframe:SetDeleteOnClose( false )
 	---------------------------
 
