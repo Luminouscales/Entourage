@@ -101,21 +101,11 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 
 	Levitus = ents.GetMapCreatedEntity( 1263 )
 	
-	net.Start( "sharetable" )
-		net.WriteTable( enemies_table )
-		-- convenience
-		net.WriteInt( ents.GetMapCreatedEntity( 1263 ):EntIndex(), 32 )
-	net.Broadcast()
-
-	-- Manages player team's Utility Points. Convenience.
-	Levitus:SetNWInt( "team_UP", 0 )
-
-	battle_enemies = {}
-
 	timer.Simple( 2, function()
 		ent_cam_override1 = ents.GetMapCreatedEntity( 1726 )
 			ent_cam_override1:SetPos( Vector( -360, -60, -850 ) )
 			ent_cam_override1:SetAngles( Angle( 25, 0, 0 ) )
+			ent_cam_override1:SetNWBool( "obnoxious_bool", true )
 		ent_cam_override2 = ents.GetMapCreatedEntity( 1724 )
 			ent_cam_override2:SetPos( Vector( -75, -350, -800 ) )
 			ent_cam_override2:SetAngles( Angle( 40, 90, 0 ) )
@@ -125,10 +115,31 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 		ent_cam_override4 = ents.GetMapCreatedEntity( 1722 )
 			ent_cam_override4:SetPos( Vector( 225, -60, -850 ) )
 			ent_cam_override4:SetAngles( Angle( 25, 180, 0 ) )
+			ent_cam_override4:SetNWInt( "obnoxious_int", 1 )
 		ent_cam_override5 = ents.GetMapCreatedEntity( 1725 )
 			ent_cam_override5:SetPos( Vector( -75, -80, -700 ) )
 			ent_cam_override5:SetAngles( Angle( 90, 0, 0 ) )
+		ent_cam_override1:SetSolid( 0 )
+		ent_cam_override2:SetSolid( 0 )
+		ent_cam_override3:SetSolid( 0 )
+		ent_cam_override4:SetSolid( 0 )
+		ent_cam_override5:SetSolid( 0 )
+
+		net.Start( "sharetable" )
+			net.WriteTable( enemies_table )
+			-- convenience
+			net.WriteInt( ents.GetMapCreatedEntity( 1263 ):EntIndex(), 32 )
+		net.Broadcast()
 	end)
+
+	-- Manages player team's Utility Points. Convenience.
+	Levitus:SetNWInt( "team_UP", 0 )
+
+	battle_enemies = {}
+
+
+
+
 
 end)
 

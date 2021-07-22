@@ -3,6 +3,7 @@ just_leveledup = false
 up_int2 = 0
 hp_int2 = 0
 skillnote_show = false
+tosia = "no"
 
 net.Receive( "up_hudshow", function()
     -- I'm going to kiss myself on the lips.
@@ -368,16 +369,15 @@ net.Receive( "encounter_outro", function() -- everyone is dead, back to the over
 end) 
 
 function LookPos()
-    shitpos = LocalPlayer():GetViewEntity():GetPos()
     shitpos2 = LocalPlayer():GetViewEntity()
+    shitpos = shitpos2:GetPos()
     if shitpos2 == LocalPlayer() then
-        shitpos = LocalPlayer():GetNWVector( "sexyheadpos" ) + Vector( 0, 0, 20 )
+        shitpos = LocalPlayer():GetShootPos() -- + Vector( 0, 0, 20 )
     end
 end
 
 hook.Add( "InitPostEntity", "clickframe_init", function()
     timer.Simple( 1, function()
-
         clickframe = vgui.Create("DFrame")
             clickframe:MakePopup()
             clickframe:SetSize( ScrW(), ScrH() )
@@ -391,7 +391,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
                 LookPos()
-                local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), { LocalPlayer() } )
                     if rtrace.Entity:Health() > 0 and rtrace.Entity:IsNPC() then
                         cl_s_int = cl_s_int + 1
                         cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
@@ -489,12 +489,11 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             if keycode == 108 then
                 LookPos()
                 desctrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
-                if desctrace.Entity:IsNPC() then
-                    entdesc:Show()
-                    entdesc_details()
-                elseif desctrace.Entity:IsPlayer() then
-                    entdesc:Show()
-                    entdesc_details()
+                if desctrace.Entity:IsNPC() or desctrace.Entity:IsPlayer() then
+                    if entdesc:IsVisible() == false then
+                        entdesc:Show()
+                        entdesc_details()
+                    end
                 end
             end
         end
@@ -690,6 +689,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_skills_button.DoClick = function()
                 bhud_skills_frame:ToggleVisible()
                 skills_frame_init()
+                bhud_skills_tip:Hide()
             end
             -- Actual skills frame
             bhud_skills_frame = vgui.Create( "DFrame", bhud_frame )
@@ -720,7 +720,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                 skillbutton:SetSize( 25, 25 )
                                 skillbutton:SetPos( 10 + integer * 35, bhud_skills_frame:GetTall()/2 - skillbutton:GetTall()/2 )
                                 skillbutton:SetImage( "skills/entourage_".. k .."_small.png" )
-                                skillbutton:SetTooltip( skillsbase[ k ].Name .."\nUP Cost: ".. skillsbase[ k ].cost )
+                                skillbutton:SetTooltip( skillsbase[ k ].Name .."\nUP Cost: ".. skillsbase[ k ].cost .."\nCooldown: ".. skillsbase[ k ].cd .." turns" )
                                 skillbutton.DoClick = function()
                                     if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
                                         skill_id = k
@@ -728,19 +728,45 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                         DefineDMG()
                                         clickframeskill_Init()
                                         clickframe_skill:Show()
-                                    else
-                                        PlaceholderFunction()
+
+                                        bhud_skills_tip:Show()
+                                        bhud_skills_tip1:SetText( skillsbase[ k ].Name )
+                                        bhud_skills_tip1:SizeToContents()
+                                        bhud_skills_tip1:Center()
+                                        bhud_skills_tip1:SetPos( bhud_skills_tip1:GetX() + 40, 0 )
+                                        bhud_skills_tip2:SetText( skillsbase[ k ].Description .."\nUP Cost: ".. skillsbase[ k ].cost .."\nCooldown: ".. skillsbase[ k ].cd .." turns" )
+                                        bhud_skills_tip3:SetImage( "skills/entourage_".. k ..".png" )
+                                        tosia = k
                                     end
                                 end
                                 skillbutton.DoRightClick = function()
-                                    bhud_skills_tip:ToggleVisible()
-                                    bhud_skills_tip1:SetText( skillsbase[ k ].Name )
-                                    bhud_skills_tip2:SetText( skillsbase[ k ].Description .."\nUP Cost: ".. skillsbase[ k ].cost .."\nCooldown: ".. skillsbase[ k ].cd .." turns" )
+                                    if tosia == k and bhud_skills_tip:IsVisible() then
+                                        bhud_skills_tip:Hide()
+                                    else
+                                        bhud_skills_tip:Show()
+                                        bhud_skills_tip1:SetText( skillsbase[ k ].Name )
+                                        bhud_skills_tip1:SizeToContents()
+                                        bhud_skills_tip1:Center()
+                                        bhud_skills_tip1:SetPos( bhud_skills_tip1:GetX() + 80 , 0 )
+                                        bhud_skills_tip2:SetText( skillsbase[ k ].Description .."\nUP Cost: ".. skillsbase[ k ].cost .."\nCooldown: ".. skillsbase[ k ].cd .." turns" )
+                                        bhud_skills_tip3:SetImage( "skills/entourage_".. k ..".png" )
+                                        tosia = k
+                                    end
                                 end
+                                local skillbuttoncd = vgui.Create( "DImage", skillbutton )
+                                    skillbuttoncd:SetSize( 25, 25 )
+                                    skillbuttoncd:SetPos( 0, 0 )
+                                    skillbuttoncd:Hide()
                                 function skillbutton:Think()
                                     if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
+                                        skillbuttoncd:Hide()
                                         self:SetColor( Color( 255, 255, 255, 255 ) )
+                                    elseif skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) then
+                                        skillbuttoncd:SetImage( "hud/numba".. LocalPlayer():GetNWInt( k .."_cd" ) + 1 ..".png" )
+                                        skillbuttoncd:Show()
+                                        self:SetColor( Color( 255, 255, 255, 100 ) )
                                     else
+                                        skillbuttoncd:Hide()
                                         self:SetColor( Color( 255, 255, 255, 100 ) )
                                     end
                                 end
@@ -755,23 +781,27 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 bhud_skills_tip:SetDraggable( false )
                 bhud_skills_tip.Paint = function( self, w, h )
                     draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 50, 50, 50 ), false, false, true, true )
+                    surface.SetDrawColor( 20, 20, 20 )
+                    surface.DrawRect( 160, 0, 4, h )
                 end
-                bhud_skills_tip1 = vgui.Create( "RichText", bhud_skills_tip ) -- Skill name
+                bhud_skills_tip1 = vgui.Create( "DLabel", bhud_skills_tip ) -- Skill name
                     bhud_skills_tip1:SetPos( 0, 0 )
-                    bhud_skills_tip1:SetSize( 500, 30 )
+                    bhud_skills_tip1:SetSize( 200, 30 )
                     bhud_skills_tip1:SetVerticalScrollbarEnabled( false )
                     bhud_skills_tip1:InsertColorChange( 255, 255, 255, 255 )
-                    function bhud_skills_tip1:PerformLayout()
-                        self:SetFontInternal( "equipment_plname4" )
-                    end
+                    bhud_skills_tip1:SetMouseInputEnabled( false )
+                    bhud_skills_tip1:SetFont( "equipment_plname4" )
                 bhud_skills_tip2 = vgui.Create( "RichText", bhud_skills_tip ) -- other stuff
-                    bhud_skills_tip2:SetPos( 0, 50 )
-                    bhud_skills_tip2:SetSize( 500, 160 )
+                    bhud_skills_tip2:SetPos( 170, 40 )
+                    bhud_skills_tip2:SetSize( 338, 150 )
                     bhud_skills_tip2:SetVerticalScrollbarEnabled( false )
                     bhud_skills_tip2:InsertColorChange( 255, 255, 255, 255 )
                     function bhud_skills_tip2:PerformLayout()
                         self:SetFontInternal( "danger_font" )
                     end
+                bhud_skills_tip3 = vgui.Create( "DImage", bhud_skills_tip )
+                    bhud_skills_tip3:SetSize( 125, 125 )
+                    bhud_skills_tip3:SetPos( 20, 37 )
             bhud_skills_tip:Hide()
             bhud_skills_frame:Hide()
         -------------------------------------
@@ -793,10 +823,19 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             entdesc:SetTitle( "" )
             entdesc:ShowCloseButton( false )
             entdesc.Paint = function( self, w, h )
+                if targetnpc then
+                    plcol2 = plcol
+                elseif targetnpc == false then
+                    plcol2 = targetent:GetPlayerColor() * Vector( 255, 255, 255 )
+                end
                 draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 110, 110, 115, 240 ), true, true, true, true)
-                draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol, true, true, false, false)
+                draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol2, true, true, false, false)
                 draw.SimpleText( "Overview", "equipment_plname4", w/2, 10, color_white, a, a )
-                draw.SimpleText( desctrace.Entity:GetNWString( "nameNW" ), "equipment_plname", 45, 50, color_white, b, a )
+                if targetnpc then
+                    draw.SimpleText( targetent:GetNWString( "nameNW" ), "equipment_plname", 45, 50, color_white, b, a )
+                elseif targetnpc == false then
+                    draw.SimpleText( targetent:Name(), "encounter_font", w/2, 75, plcol2, a, a )
+                end
             end
         entdesc:SetDeleteOnClose( false )
         entdesc:Close()	
@@ -804,61 +843,72 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
 end)
 
 function entdesc_details()
-    local entdesc_m = vgui.Create( "DModelPanel", entdesc )
-        entdesc_m:SetSize( 300, 300 )
-        entdesc_m:SetPos( 5, 5 )
+    targetent = desctrace.Entity
+    targetnpc = desctrace.Entity:IsNPC()
+    entdesc_m = vgui.Create( "DModelPanel", entdesc )
         entdesc_m:SetMouseInputEnabled( false )
-        entdesc_m:SetFOV( 40 )
-        entdesc_m:SetModel( desctrace.Entity:GetModel() )
-        entdesc_m:GetEntity():SetSkin( desctrace.Entity:GetSkin() )
-        entdesc_m:GetEntity():SetModelScale( desctrace.Entity:GetNWFloat( "scaleNW", 1 ) )
+        
+        entdesc_m:SetModel( targetent:GetModel() )
         entdesc_m:SetAnimated( true )
-        entdesc_m:GetEntity():SetSequence( desctrace.Entity:GetSequence() )
+
+        if targetnpc then
+            -- NPC mode
+            entdesc_m:SetSize( 300, 300 )
+            entdesc_m:SetPos( 5, 5 )
+            entdesc_m:SetCamPos( Vector( 165, -50, 10 ) )
+            entdesc_m:GetEntity():SetSkin( targetent:GetSkin() )
+            entdesc_m:GetEntity():SetModelScale( targetent:GetNWFloat( "scaleNW", 1 ) )
+            entdesc_m:GetEntity():SetSequence( targetent:GetSequence() )
+            entdesc_m:SetFOV( 40 )
+            entdesc_desc = vgui.Create( "RichText", entdesc )
+                entdesc_desc:SetSize( 470, 180 )
+                entdesc_desc:SetPos( 325, 65 )
+                entdesc_desc:SetVerticalScrollbarEnabled( false )
+                entdesc_desc:InsertColorChange( 255, 255, 255, 255 )
+                entdesc_desc:AppendText( enemies_table[ targetent:GetNWString( "nameNW" ) ].Description  )
+            entdesc_desc2 = vgui.Create( "RichText", entdesc )
+                entdesc_desc2:SetSize( 800, 520 )
+                entdesc_desc2:SetPos( 45, 300 )
+                entdesc_desc2:SetVerticalScrollbarEnabled( false )
+                entdesc_desc2:InsertColorChange( 255, 255, 255, 255 )
+                entdesc_desc2:AppendText( "Health: ".. targetent:Health() .." / ".. targetent:GetMaxHealth() .."\n")
+                entdesc_desc2:AppendText( "Defence: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DEF .."\n")
+                entdesc_desc2:AppendText( "Flex Defence: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DFX .."\n")
+                entdesc_desc2:AppendText( "Damage: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMG .." ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGT .."\n")
+                if IsValid( enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGP ) then
+                    entdesc_desc2:AppendText( "Armour Penetration: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGP .."\n" )
+                end
+                if IsValid( enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGC ) then
+                    entdesc_desc2:AppendText( "Crit Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGC .."%" .."\n" )
+                end
+                if IsValid( enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGS ) then
+                    entdesc_desc2:AppendText( "Base Stun Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGS .."%\n" )
+                end
+                entdesc_desc2:AppendText( "Base Miss Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].MISS .."%" .."\n" )
+                entdesc_desc2:AppendText( "Base Dodge Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DDG .."%" .."\n" )
+                entdesc_desc2:AppendText( "\n" )
+                entdesc_desc2:AppendText( "Debug ID: ".. targetent:EntIndex() ) -- MIKOŁAJ TO DEBIL
+                function entdesc_desc2:PerformLayout()
+                    self:SetFontInternal( "equipment_plname2" )
+                end
+            function entdesc_desc:PerformLayout()
+                self:SetFontInternal( "equipment_plname2" )
+            end
+        else
+            -- Player mode
+            entdesc_m:SetSize( 700, 700 )
+            entdesc_m:Center( 700, 700 )
+            entdesc_m:SetCamPos( Vector( 75, 0, 50 ) )
+            function entdesc_m.Entity:GetPlayerColor() return targetent:GetPlayerColor() end
+            entdesc_m:SetFOV( 70 )
+        end
+        
         function entdesc_m:LayoutEntity( ent )
             if ( self.bAnimated ) then
                 self:RunAnimation()
             end
             entdesc_m:GetEntity():SetAngles( Angle( 0, RealTime() * 0 % 360, 0 ) ) -- Clever modification of this function prevents it from spinning whilst still allowing animations to run. I know, I know.
         end
-        entdesc_m:SetCamPos( Vector( 165, -50, 10 ) )
-
-    entdesc_desc = vgui.Create( "RichText", entdesc )
-		entdesc_desc:SetSize( 470, 180 )
-		entdesc_desc:SetPos( 325, 65 )
-		entdesc_desc:SetVerticalScrollbarEnabled( false )
-		entdesc_desc:InsertColorChange( 255, 255, 255, 255 )
-        entdesc_desc:AppendText( enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].Description  )
-		function entdesc_desc:PerformLayout()
-			self:SetFontInternal( "equipment_plname2" )
-		end
-
-    entdesc_desc2 = vgui.Create( "RichText", entdesc )
-		entdesc_desc2:SetSize( 800, 520 )
-		entdesc_desc2:SetPos( 45, 300 )
-		entdesc_desc2:SetVerticalScrollbarEnabled( false )
-		entdesc_desc2:InsertColorChange( 255, 255, 255, 255 )
-        entdesc_desc2:AppendText( "Health: ".. desctrace.Entity:Health() .." / ".. desctrace.Entity:GetMaxHealth() .."\n")
-        entdesc_desc2:AppendText( "Defence: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DEF .."\n")
-        entdesc_desc2:AppendText( "Flex Defence: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DFX .."\n")
-        entdesc_desc2:AppendText( "Damage: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMG .." ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGT .."\n")
-        if IsValid( enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGP ) then
-            entdesc_desc2:AppendText( "Armour Penetration: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGP .."\n" )
-        end
-        if IsValid( enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGC ) then
-            entdesc_desc2:AppendText( "Crit Chance: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGC .."%" .."\n" )
-        end
-        if IsValid( enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGS ) then
-            entdesc_desc2:AppendText( "Base Stun Chance: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DMGS .."%\n" )
-        end
-        entdesc_desc2:AppendText( "Base Miss Chance: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].MISS .."%" .."\n" )
-        entdesc_desc2:AppendText( "Base Dodge Chance: ".. enemies_table[ desctrace.Entity:GetNWString( "nameNW" ) ].DDG .."%" .."\n" )
-        entdesc_desc2:AppendText( "\n" )
-        -- entdesc_desc2:AppendText( "Abilities:\n" )
-        -- entdesc_desc2:AppendText( "None" )
-        entdesc_desc2:AppendText( "Debug ID: ".. desctrace.Entity:EntIndex() ) -- MIKOŁAJ TO DEBIL
-		function entdesc_desc2:PerformLayout()
-			self:SetFontInternal( "equipment_plname2" )
-		end
 
     local closebutton = vgui.Create( "DImageButton", entdesc )
         closebutton:SetImage( "icon16/cross.png" )
@@ -867,8 +917,12 @@ function entdesc_details()
         closebutton.DoClick = function()
             entdesc:Close()
             entdesc_m:Remove()
-            entdesc_desc:Remove()
-            entdesc_desc2:Remove()
+            if IsValid( entdesc_desc ) then
+                entdesc_desc:Remove()
+            end
+            if IsValid( entdesc_desc2 ) then
+                entdesc_desc2:Remove()
+            end
         end
 end
 
