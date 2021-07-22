@@ -490,8 +490,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 LookPos()
                 desctrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
                 if desctrace.Entity:IsNPC() or desctrace.Entity:IsPlayer() then
-                    if entdesc:IsVisible() == false then
-                        entdesc:Show()
+                    if IsValid(entdesc) == false then
                         entdesc_details()
                     end
                 end
@@ -815,34 +814,24 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
 
         -------------------------------------------------------------------------------------
         -- Right-click Enemy description.
-        entdesc = vgui.Create( "DFrame", bhud_frame )
-            entdesc:MakePopup()
-            entdesc:SetDraggable( true )
-            entdesc:SetSize( 800, 800 )
-            entdesc:Center()
-            entdesc:SetTitle( "" )
-            entdesc:ShowCloseButton( false )
-            entdesc.Paint = function( self, w, h )
-                if targetnpc then
-                    plcol2 = plcol
-                elseif targetnpc == false then
-                    plcol2 = targetent:GetPlayerColor() * Vector( 255, 255, 255 )
-                end
-                draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 110, 110, 115, 240 ), true, true, true, true)
-                draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol2, true, true, false, false)
-                draw.SimpleText( "Overview", "equipment_plname4", w/2, 10, color_white, a, a )
-                if targetnpc then
-                    draw.SimpleText( targetent:GetNWString( "nameNW" ), "equipment_plname", 45, 50, color_white, b, a )
-                elseif targetnpc == false then
-                    draw.SimpleText( targetent:Name(), "encounter_font", w/2, 75, plcol2, a, a )
-                end
-            end
-        entdesc:SetDeleteOnClose( false )
-        entdesc:Close()	
     end)
 end)
 
 function entdesc_details()
+    entdesc = vgui.Create( "DFrame", bhud_frame )
+    entdesc:MakePopup()
+    entdesc:SetDraggable( true )
+    entdesc:SetSize( 800, 800 )
+    entdesc:Center()
+    entdesc:SetTitle( "" )
+    entdesc:ShowCloseButton( false )
+    entdesc.Paint = function( self, w, h )
+        draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 110, 110, 115, 240 ), true, true, true, true)
+        draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol, true, true, false, false)
+        draw.SimpleText( "Overview", "equipment_plname4", w/2, 10, color_white, a, a )
+        draw.SimpleText( targetent:GetNWString( "nameNW" ), "equipment_plname", 45, 50, color_white, b, a )
+    end
+
     targetent = desctrace.Entity
     targetnpc = desctrace.Entity:IsNPC()
     entdesc_m = vgui.Create( "DModelPanel", entdesc )
@@ -901,6 +890,77 @@ function entdesc_details()
             entdesc_m:SetCamPos( Vector( 75, 0, 50 ) )
             function entdesc_m.Entity:GetPlayerColor() return targetent:GetPlayerColor() end
             entdesc_m:SetFOV( 70 )
+            plcol2 = targetent:GetPlayerColor() * Vector( 255, 255, 255 )
+            -- https://cdn.discordapp.com/attachments/471302316734283776/867731331243966503/mods.png
+            entdesc.Paint = function( self, w, h )
+                draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 110, 110, 115, 240 ), true, true, true, true)
+                draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol2, true, true, false, false)
+                draw.SimpleText( targetent:Name(), "encounter_font", w/2, 75, plcol, a, a )
+                draw.SimpleText( "Overview", "equipment_plname4", w/2, 10, color_white, a, a )
+                draw.SimpleText( "Level ".. playerstats_a["LVL3"] .." ".. tag, "equipment_plname4", w/2, 130, color_white, a, a )
+                draw.SimpleText( playerstats_a["LVL1"] .."/".. playerstats_a["LVL2"], "equipment_plname4", w/2, 165, color_white, a, a )
+                draw.SimpleText( LocalPlayer():Health() .."/".. playerstats_a["HP2"], "equipment_plname2", w/2 - 32, 690, color_white, b, a )
+                draw.SimpleText( weaponlist[ playerstats_a["currentweapon"] ].Name, "equipment_plname2", w/2 - 35, 730, color_white, b, a )
+                draw.SimpleText( weaponlist[ playerstats_a["currentarmour"] ].Name, "equipment_plname2", w/2 - 35, 770, color_white, b, a )
+                draw.SimpleText( playerstats_a["MGT"], "equipment_plname2", 545, 250, color_white, b, a )
+                draw.SimpleText( playerstats_a["VIT"], "equipment_plname2", 545, 303, color_white, b, a )
+                draw.SimpleText( playerstats_a["AGI"], "equipment_plname2", 545, 355, color_white, b, a )
+                draw.SimpleText( playerstats_a["SDL"], "equipment_plname2", 545, 410, color_white, b, a )
+                draw.SimpleText( playerstats_a["FCS"], "equipment_plname2", 545, 465, color_white, b, a )
+                draw.SimpleText( playerstats_a["DEF"], "equipment_plname2", 545, 520, color_white, b, a )
+                draw.SimpleText( playerstats_a["DFX"], "equipment_plname2", 545, 575, color_white, b, a )
+            end
+
+        local mf_hpic = vgui.Create( "DImage", entdesc )
+			mf_hpic:SetImage( "hud/entourage_hpicon.png")
+			mf_hpic:SetPos( 325, 675)
+			mf_hpic:SetSize( 30, 30 )
+
+		local mf_wpic = vgui.Create( "DImage", entdesc )
+			mf_wpic:SetImage( "hud/entourage_wpicon.png")
+			mf_wpic:SetPos( 325, 708)
+			mf_wpic:SetSize( 30, 30 )
+
+		local mf_amic = vgui.Create( "DImage", entdesc )
+			mf_amic:SetImage( "hud/entourage_armouricon.png")
+			mf_amic:SetPos( 325, 750)
+			mf_amic:SetSize( 30, 30 )
+
+		local mf_mgt = vgui.Create( "DImage", entdesc )
+			mf_mgt:SetImage( "hud/entourage_might.png")
+			mf_mgt:SetPos( 490, 230 )
+			mf_mgt:SetSize( 35, 35 )
+
+		local mf_vit = vgui.Create( "DImage", entdesc )
+			mf_vit:SetImage( "hud/entourage_defiance.png")
+			mf_vit:SetPos( 490, 285 )
+			mf_vit:SetSize( 35, 35 )
+
+		local mf_cty = vgui.Create( "DImage", entdesc )
+			mf_cty:SetImage( "hud/entourage_celerity.png")
+			mf_cty:SetPos( 490, 340 )
+			mf_cty:SetSize( 35, 35 )
+
+		local mf_sdl = vgui.Create( "DImage", entdesc )
+			mf_sdl:SetImage( "hud/entourage_sidle.png")
+			mf_sdl:SetPos( 490, 385 )
+			mf_sdl:SetSize( 35, 35 )
+
+		local mf_fcs = vgui.Create( "DImage", entdesc )
+			mf_fcs:SetImage( "hud/entourage_focus.png")
+			mf_fcs:SetPos( 490, 450 )
+			mf_fcs:SetSize( 35, 35 )
+
+		local mf_def = vgui.Create( "DImage", entdesc )
+			mf_def:SetImage( "hud/entourage_defence.png")
+			mf_def:SetPos( 490, 505 )
+			mf_def:SetSize( 35, 35 )
+
+		local mf_dfx = vgui.Create( "DImage", entdesc )
+			mf_dfx:SetImage( "hud/entourage_flexdefence.png")
+			mf_dfx:SetPos( 490, 560 )
+			mf_dfx:SetSize( 35, 35 )
+
         end
         
         function entdesc_m:LayoutEntity( ent )
@@ -915,16 +975,29 @@ function entdesc_details()
         closebutton:SetSize( 20, 20 )
         closebutton:SetPos( 2, 2 )
         closebutton.DoClick = function()
-            entdesc:Close()
-            entdesc_m:Remove()
-            if IsValid( entdesc_desc ) then
-                entdesc_desc:Remove()
-            end
-            if IsValid( entdesc_desc2 ) then
-                entdesc_desc2:Remove()
-            end
+            entdesc:Remove()
         end
+
+    -- Display all target effects
+    net.Start("getbufftbl")
+        net.WriteEntity( targetent )
+    net.SendToServer()
+    timer.Simple( 0.1, function()
+        for k, v in pairs( ovbufftbl ) do
+            local bufficon = vgui.Create( "DImage", entdesc )
+                bufficon:SetSize( 25, 25 )
+                bufficon:SetPos( 10, 35 + 35 * k - 35 )
+                bufficon:SetImage( "hud/entourage_placeholder.png" )
+        end
+    end)
 end
+-- entdesc:SetDeleteOnClose( false )
+-- entdesc:Close()	
+
+net.Receive( "sendbufftbl", function()
+    print("YEAH")
+    ovbufftbl = net.ReadTable()
+end)
 
 function DefineDMG()
     local a = weaponlist[ playerstats_a["currentweapon"] ].dmgtype
