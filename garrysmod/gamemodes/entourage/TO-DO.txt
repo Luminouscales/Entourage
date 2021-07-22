@@ -19,3 +19,5 @@
 - Add tips for menus
 - Rework AoE
 - Fix player overview
+- Remove arov
+- Move tables to shared.lua
