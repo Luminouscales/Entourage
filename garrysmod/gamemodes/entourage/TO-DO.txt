@@ -1,6 +1,5 @@
 - Add more sounds in battle
 - Change Basic Attack UI
-- Fix skills not applying damage multipliers properly
 - Convert FE addon for gamemode
 - Add buff mechanics
 - Add debuff mechanics (different)
@@ -12,10 +11,11 @@
 - Code stats menu
 - Code all other skills
 - Code proper skill upgrade order
-- Add healing function and vanity
+- Add healing vanity
 - Add data clearing after battle
-- Add game over screen
 - Make hitsounds louder
 - Make sure skill cooldowns work properly
 - Add class names
 - Add tips for menus
+- Rework AoE
+- Fix player overview
