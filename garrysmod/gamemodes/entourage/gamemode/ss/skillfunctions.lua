@@ -145,6 +145,20 @@ function s_Retract2( bonus )
     end)
 end
 
+function DoCooldown( player, id, turns )
+    local plid = player:UserID()
+    local skcdid = "s_".. id .."_cd"
+    player:SetNWBool( "s_".. id .."_oncd", true )
+    player:SetNWInt( skcdid, turns )
+    hook.Add( "EnemyTurnEnd", plid .."_".. id, function()
+        player:SetNWInt( skcdid, player:GetNWInt( skcdid ) - 1 )
+        if player:GetNWInt( skcdid ) <= -1 then
+            player:SetNWBool( "s_".. id .."_oncd", false )
+            hook.Remove( "EnemyTurnEnd", plid .."_".. id )
+        end
+    end)
+end
+
 -- SLASH
 function s_precstrike()
     -- Precision Strike
@@ -153,8 +167,7 @@ function s_precstrike()
     entourage_AddUP( -10, 25 )
 
     -- First, check whether the weapon type is appropriate - if not, deduct damage and accuracy. Define level variables.
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.1
+    local bonus1 = skill_lvl * 0.1
 
     if pltype == "Slash" or "Multiple" then
         dmg_modifier = 1 + bonus1
@@ -166,25 +179,9 @@ function s_precstrike()
     -- Deal damage and stuffs, leave it to the weapon functions.
     s_Retract()
 
-    -- Cooldown
-    mgbplayer:SetNWBool( "s_precstrike_oncd", true )
-
-    -- Other effects.
-    -- Add Focus for 3 turns.
-    pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS + 2 + lvl
-    -- Remove focus after 3 turns.
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    local hookv2 = lvl
-    hook.Add( "EnemyTurnEnd", pl_id .."precstrikehook", function()
-        cd = cd + 1
-        if cd >= 3 then
-            pl_stats_tbl[ mgbplayer:UserID() ].FCS = pl_stats_tbl[ mgbplayer:UserID() ].FCS - 2 - hookv2
-            hookv1:SetNWBool( "s_precstrike_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."precstrikehook" )
-        end
-    end)
+    -- Cooldown, buffs, skillnote
+    entourage_AddBuff( mgbplayer, s_precstrike, 3, skill_lvl )
+    DoCooldown( mgbplayer, "precstrike", 3 )
     SendSkillNote( "Precision Strike" )
 end
 
@@ -193,41 +190,18 @@ function s_defmano()
 
     entourage_AddUP( -15, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
-
     if pltype == "Slash" then
-        dmg_modifier = 0.4 + bonus1 * 2
+        dmg_modifier = 0.4 + lvl * 0.1
         acc_modifier = 1
     else
-        dmg_modifier = 0.25 + bonus1 * 2
+        dmg_modifier = 0.25 + lvl * 0.1
         acc_modifier = 0.75
     end
 
     s_Retract()
 
-    mgbplayer:SetNWBool( "s_defmano_oncd", true )
-
-    -- Other effects.
-
-    local calc1 = 2 + 3 * lvl + pl_stats_tbl[ mgbplayer:UserID() ].DEF / 10
-    local calc2 = 20 + 2 * lvl
-    pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF + calc1
-    pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX + calc2
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    local hookv2 = lvl
-    hook.Add( "EnemyTurnEnd", pl_id .."defmanohook", function()
-        cd = cd + 1
-        if cd >= 3 then
-            pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF - calc1
-            pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX - calc2
-            hookv1:SetNWBool( "s_defmano_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."defmanohook" )
-        end
-    end)
+    entourage_AddBuff( mgbplayer, s_defmano, 3, skill_lvl )
+    DoCooldown( mgbplayer, "defmano", 3 )
     SendSkillNote( "Defensive Manoeuvre" )
 end
 
@@ -236,35 +210,15 @@ function s_firstaid()
 
     entourage_AddUP( -15, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05 -- raw
-    local bonus2 = lvl * 0.05 -- scaling
-
     local target = turntargets[1]
 
     timer.Simple( 0.5, function()
-        local heal = math.Round( 20 + 10 * lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * lvl ) ), 0 )
+        local heal = math.Round( 20 + 10 * skill_lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * skill_lvl ) ), 0 )
         entourage_AddHealth( target, heal )
     end)
 
-    mgbplayer:SetNWBool( "s_firstaid_oncd", true )
-
-    -- Other effects.
-
-    pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT + lvl
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    local hookv2 = lvl
-    hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
-        cd = cd + 1
-        if cd >= 3 then
-            pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT - lvl
-            hookv1:SetNWBool( "s_firstaid_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."firstaidhook" )
-        end
-    end)
+    entourage_AddBuff( mgbplayer, s_firstaid, 3, skill_lvl )
+    DoCooldown( mgbplayer, "firstaid", 3 )
     SendSkillNote( "First Aid" )
 end
 
@@ -273,31 +227,17 @@ function s_broadswing()
 
     entourage_AddUP( -10, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
-
     if pltype == "Slash" then
-        dmg_modifier = 0.40 + bonus1
+        dmg_modifier = 0.40 + skill_lvl * 0.05
         acc_modifier = 1.1
     else
-        dmg_modifier = 0.1 + bonus1
+        dmg_modifier = 0.1 + skill_lvl * 0.05
         acc_modifier = 0.6
     end
 
     s_Retract()
 
-    mgbplayer:SetNWBool( "s_broadswing_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    hook.Add( "EnemyTurnEnd", pl_id .."broadswinghook", function()
-        cd = cd + 1
-        if cd >= 2 then
-            hookv1:SetNWBool( "s_broadswing_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."broadswinghook" )
-        end
-    end)
+    DoCooldown( mgbplayer, "broadswing", 2 )
     SendSkillNote( "Broad Swing" )
 end
 
@@ -306,31 +246,17 @@ function s_fragmentation()
 
     entourage_AddUP( -20, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
-
     if pltype == "Slash" then
-        dmg_modifier = 0.6 + bonus1
+        dmg_modifier = 0.6 + skill_lvl * 0.05
         acc_modifier = 0.85
     else
-        dmg_modifier = 0.3 + bonus1
+        dmg_modifier = 0.3 + skill_lvl * 0.05
         acc_modifier = 0.55
     end
 
     s_Retract()
 
-    mgbplayer:SetNWBool( "s_fragmentation_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    hook.Add( "EnemyTurnEnd", pl_id .."fragmentationhook", function()
-        cd = cd + 1
-        if cd >= 4 then
-            hookv1:SetNWBool( "s_fragmentation_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."fragmentationhook" )
-        end
-    end)
+    DoCooldown( mgbplayer, "fragmentation", 4 )
     SendSkillNote( "Fragmentation" )
 end
 
@@ -339,27 +265,14 @@ function s_medicsupplies()
 
     entourage_AddUP( -20, 25 )
 
-    local lvl = skill_lvl
-
     local target = turntargets[1]
 
     timer.Simple( 0.5, function()
-        local heal = math.Round( 40 + 10 * lvl, 0 )
+        local heal = math.Round( 40 + 10 * skill_lvl, 0 )
         entourage_AddHealth( target, heal )
     end)
 
-    mgbplayer:SetNWBool( "s_medicsupplies_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook", function()
-        cd = cd + 1
-        if cd >= 3 then
-            hookv1:SetNWBool( "s_medicsupplies_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."medicsupplieshook" )
-        end
-    end)
+    DoCooldown( mgbplayer, "medicsupplies", 4 )
     SendSkillNote( "Medical Supplies" )
 end
 
@@ -368,8 +281,7 @@ function s_moraleslash()
 
     entourage_AddUP( -15, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
+    local bonus1 = skill_lvl * 0.05
 
     if pltype == "Slash" then
         dmg_modifier = 1.1 + bonus1
@@ -381,30 +293,19 @@ function s_moraleslash()
 
     s_Retract( bonus1 )
 
-    mgbplayer:SetNWBool( "s_moraleslash_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    hook.Add( "EnemyTurnEnd", pl_id .."moraleslashhook", function()
-        cd = cd + 1
-        if cd >= 3 then
-            hookv1:SetNWBool( "s_moraleslash_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."moraleslashhook" )
-        end
-    end)
-
     hook.Add( "EntityTakeDamage", "moraleslash_oh", function( target, dmg )
         local playa = dmg:GetAttacker()
-        if target:IsNPC() and playa == hookv1 then
-            pl_stats_tbl[ pl_id ].AGI = pl_stats_tbl[ pl_id ].AGI + 1
-            entourage_AddHealth( playa, 5 * lvl + playa:GetMaxHealth() * 0.05 )
+        if target:IsNPC() and playa == mgbplayer then
+            print( "hit ")
+            pl_stats_tbl[ mgbplayer:UserID() ].AGI = pl_stats_tbl[ mgbplayer:UserID() ].AGI + 1
+            entourage_AddHealth( playa, 5 * skill_lvl + playa:GetMaxHealth() * 0.05 )
             hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
         end
     end)
     timer.Simple( 1.25, function()
         hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
     end)
+    DoCooldown( mgbplayer, "moraleslash", 4 )
     SendSkillNote( "Morale Slash" )
 end
 
@@ -413,36 +314,17 @@ function s_acrobatics()
 
     entourage_AddUP( -10, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
-
     if pltype == "Slash" then
-        dmg_modifier = 0.2 + bonus1
+        dmg_modifier = 0.2 + skill_lvl * 0.05
         acc_modifier = 1.5
     else
-        dmg_modifier = 0.05 + bonus1
+        dmg_modifier = 0.05 + skill_lvl * 0.05
         acc_modifier = 0.75
     end
 
     s_Retract()
 
-    mgbplayer:SetNWBool( "s_acrobatics_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-
-    pl_stats_tbl[ pl_id ].DDG_OV = pl_stats_tbl[ pl_id ].DDG_OV + 50 + bonus1
-
-    hook.Add( "EnemyTurnEnd", pl_id .."acrobaticshook", function()
-        cd = cd + 1
-        if cd == 1 then
-            pl_stats_tbl[ pl_id ].DDG_OV = pl_stats_tbl[ pl_id ].DDG_OV - 50 - bonus1
-        elseif cd >= 5 then
-            hookv1:SetNWBool( "s_acrobatics_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."acrobaticshook" )
-        end
-    end) 
+    DoCooldown( mgbplayer, "acrobatics", 5 )
     SendSkillNote( "Acrobatics" )
 end
 
@@ -451,31 +333,17 @@ function s_distraction()
 
     entourage_AddUP( -20, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
-
     if pltype == "Slash" then
-        dmg_modifier = 1.15 + bonus1
+        dmg_modifier = 1.15 + skill_lvl * 0.05
         acc_modifier = 1
     else
-        dmg_modifier = 0.55 + bonus1
+        dmg_modifier = 0.55 + skill_lvl * 0.05
         acc_modifier = 0.5
     end
 
-    s_Retract2( lvl )
+    s_Retract2( skill_lvl )
 
-    mgbplayer:SetNWBool( "s_distraction_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    hook.Add( "EnemyTurnEnd", pl_id .."distractionhook", function()
-        cd = cd + 1
-        if cd >= 4 then
-            hookv1:SetNWBool( "s_distraction_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."distractionhook" )
-        end
-    end)
+    DoCooldown( mgbplayer, "distraction", 5 )
     SendSkillNote( "Distraction" )
 end
 
@@ -501,18 +369,7 @@ function s_performance()
         entourage_AddHealth( v, 5 + 5 * lvl )
     end
 
-    mgbplayer:SetNWBool( "s_performance_oncd", true )
-
-    local pl_id = mgbplayer:UserID()
-    local cd = 0
-    local hookv1 = mgbplayer
-    hook.Add( "EnemyTurnEnd", pl_id .."performancehook", function()
-        cd = cd + 1
-        if cd >= 2 then
-            hookv1:SetNWBool( "s_performance_oncd", false )
-            hook.Remove( "EnemyTurnEnd", pl_id .."performancehook" )
-        end
-    end)
+    DoCooldown( mgbplayer, "performance", 2 )
     SendSkillNote( "Performance" )
 end
 -- Enemy-only functions
