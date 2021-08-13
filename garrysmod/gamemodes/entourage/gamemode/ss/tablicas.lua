@@ -25,7 +25,8 @@ enemies_table = {
 		["LVL"] = 1,
 		["EXP"] = 10,
         ["idletbl"] = antlion_idle,
-        ["StunAnim"] = "AntlionStun()"
+        ["StunAnim"] = "AntlionStun()",
+        ["actionvar"] = 3
 	},
 	["Frostlion Skinner"] = {
 		["Name"] = "Frostlion Skinner",
@@ -43,7 +44,8 @@ enemies_table = {
 		["LVL"] = 3,
 		["EXP"] = 20,
         ["idletbl"] = antlion_idle,
-        ["StunAnim"] = "AntlionStun()"
+        ["StunAnim"] = "AntlionStun()",
+        ["actionvar"] = 1
 	},
 	["Frostlion Miner"] = {
 		["Name"]= "Frostlion Miner",
@@ -61,7 +63,8 @@ enemies_table = {
 		["EXP"] = 30,
         ["idletbl"] = antlion_idle,
         ["sound_att"] = "npc/antlion/attack_double3.wav",
-        ["StunAnim"] = "AntlionStun()"
+        ["StunAnim"] = "AntlionStun()",
+        ["actionvar"] = 1
 	},
 
     -- FROSTLION GUARDIAN
@@ -82,7 +85,8 @@ enemies_table = {
         ["idletbl"] = guardian_idle,
         ["sound_att"] = "npc/antlion/attack_double3.wav",
         ["StunAnim"] = "GuardianStun()",
-        ["PainAnim"] = "GuardianPain()"
+        ["PainAnim"] = "GuardianPain()",
+        ["actionvar"] = 1
 	},
     ["Frostlion Prince"] = {
 		["Name"] = "Frostlion Prince",
@@ -100,7 +104,8 @@ enemies_table = {
 		["LVL"] = 6,
 		["EXP"] = 100,
         ["idletbl"] = antlion_idle,
-        ["StunAnim"] = "AntlionStun()"
+        ["StunAnim"] = "AntlionStun()",
+        ["actionvar"] = 1
 	}
 }
 

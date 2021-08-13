@@ -30,6 +30,7 @@ ss_inbattle = 0
 global_value = 0
 up_int = 0
 up_open = true
+enemy_choices = 0
 -------------------
 
 -- UP stuff -------------------------------------------------------------------------
@@ -61,11 +62,11 @@ end
 hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 	-- Make sure it doesn't somehow run when outside of battle.
 	if ss_inbattle then 
+		local dmg_ov = dmg:GetDamage()
 		-- If a player dealt damage TO NPC
 		if dmg:GetAttacker():IsPlayer() and target:IsNPC() then
 			entourage_AddUP( math.Clamp( dmg:GetDamage() / target:GetMaxHealth() * 30, 1, 25 ), 25 )
 			-- This function manages damage resistance for enemies like the Guardian. It sucks, I know, but it has to be done.
-			local dmg_ov = dmg:GetDamage()
 			if target:GetClass() == "npc_antlionguard" then
 				-- MODS
 				dmg_ov = math.floor( dmg_ov * 0.75 )
@@ -107,6 +108,21 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 				net.WriteInt( dmg_ov, 32 )
 				net.WriteBool( false ) -- heal? true or false
 			net.Broadcast()
+			if table.IsEmpty( battle_enemies ) then
+				timer.Simple( 2, function()
+					EndBattle()
+				end)
+			end
+		-- If damage to player
+		elseif target:IsPlayer() then
+			-- Brace if possible
+			local id = target:UserID()
+			local endurevar2 = pl_stats_tbl[ id ].endurevar
+			if dmg_ov >= target:Health() and endurevar2 > 0 then
+				dmg:SetDamage( math.Clamp( dmg:GetDamage(), 0, target:Health() - 1 ) )
+				pl_stats_tbl[ id ].endurevar = math.Clamp( endurevar2 - 1, 0, 100 )
+				PrintMessage( HUD_PRINTTALK, target:GetName() .." endured a fatal blow!" )
+			end
 		end
 	end
 end)
@@ -219,6 +235,22 @@ function EncounterRun1()
 	
 			timer.Simple( 3, function()
 				EncounterAntlion( zone1_1 ) 
+
+				buffs_tbl_enemy = {}
+
+				timer.Simple( 1, function()
+					for k, v in pairs( battle_enemies ) do 
+						buffs_tbl_enemy[v:EntIndex()] = {}
+					end
+					sexy_int = 0
+					for k, v in pairs( battle_enemies ) do 
+						print( enemies_table[ v:GetName() ].actionvar )
+						sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
+					end
+					print( sexy_int )
+					actions = sexy_int
+					print( actions )
+				end)
 			end)
 end
 
@@ -244,6 +276,7 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
     slash_acc = net.ReadInt( 32 ) * 0.05 
 	mgbplayer = ply
 	vis_int = 0
+	local proceed = net.ReadBool()
 
 	-- basic attack multi-target damage management and calculation
 	timer.Simple( 0.5, function()
@@ -265,16 +298,17 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 				end)
 		end
 	end)
-	
-	timer.Simple( 2, function() 
-		EnemyAttack()
-		dmg_modifier = 1
-	end)
 
 	local note = c_type2 .." Attack"
 	SendSkillNote( note )
 
-	hook.Call( "PlayerTurnEnd" )
+	if proceed then 
+		hook.Call( "PlayerTurnEnd" )
+		timer.Simple( 2, function() 
+			EnemyAttack()
+			dmg_modifier = 1
+		end)
+	end
 end)
 
 net.Receive( "player_brace", function( len, ply )
@@ -304,51 +338,73 @@ net.Receive( "player_wait", function( len, ply )
 	hook.Call( "PlayerTurnEnd" )
 end)
 
-function EnemyAttack()
-	if table.IsEmpty( battle_enemies ) then
-		PrintMessage( HUD_PRINTTALK, "_____________________" )
-		PrintMessage( HUD_PRINTTALK, "Battle over." )
-		Entity(1):RemoveFlags( 128 )
-		timer.Simple(2, function()
-			for k, v in ipairs( ents.GetAll() ) do -- clean ragdolls
-				if v:IsRagdoll() then
-					v:Remove()
-				end
+function EndBattle()
+	PrintMessage( HUD_PRINTTALK, "_____________________" )
+	PrintMessage( HUD_PRINTTALK, "Battle over." )
+	Entity(1):RemoveFlags( 128 )
+	timer.Simple(2, function()
+		for k, v in ipairs( ents.GetAll() ) do -- clean ragdolls
+			if v:IsRagdoll() then
+				v:Remove()
 			end
-			net.Start( "encounter_outro" ) -- goodbye!
-			net.Broadcast()
-			Entity(1):SetViewEntity( Entity(1) )
-			Entity(1):ScreenFade( 2, color_white, 1.5, 0.6 )
-			lives = 0
-			deaths = 0
-			ss_inbattle = false
-			EncounterReset()
-			EncounterReset2() -- reset encounter mechanic
+		end
+		net.Start( "encounter_outro" ) -- goodbye!
+		net.Broadcast()
+		Entity(1):SetViewEntity( Entity(1) )
+		Entity(1):ScreenFade( 2, color_white, 1.5, 0.6 )
+		lives = 0
+		deaths = 0
+		ss_inbattle = false
+		EncounterReset()
+		EncounterReset2() -- reset encounter mechanic
 
-			timer.Simple(2, function() -- put people back in their places
-				for i, v in ipairs( allplayers ) do
-					v:ScreenFade( 1, color_white, 1.5, 0.6 )
-					v:SetPos( v:GetNWVector( "vectornw" ) )
-					v:SetAngles( v:GetNWAngle( "anglenw" ) )
-				end
-			end)
-
-			-- Reset resistances
-			for k, v in ipairs( player.GetAll() ) do
-				v:SetNWInt( "dmgresistance", 0 )
+		timer.Simple(2, function() -- put people back in their places
+			for i, v in ipairs( allplayers ) do
+				v:ScreenFade( 1, color_white, 1.5, 0.6 )
+				v:SetPos( v:GetNWVector( "vectornw" ) )
+				v:SetAngles( v:GetNWAngle( "anglenw" ) )
 			end
 		end)
-	elseif actions > 0 and next( battle_enemies, previous_enemya ) == nil then
-		current_enemy = battle_enemies[1]
-		previous_enemy = current_enemy
-		previous_enemya = 1
-		EnemyAttack1()
-	elseif actions > 0 then 
-		current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
-		previous_enemy = current_enemy
-		previous_enemya = previous_enemya + 1
-		EnemyAttack1()
+
+		-- Reset resistances
+		for k, v in ipairs( player.GetAll() ) do
+			v:SetNWInt( "dmgresistance", 0 )
+		end
+	end)
+end
+
+function EnemyAttack()
+	if actions > 0 then 
+		
+		if IsValid( current_enemy ) then
+			if enemies_table[ current_enemy:GetName() ].actionvar > enemy_choices then
+				print( "1; the enemy still gets to attack")
+				enemy_choices = enemy_choices + 1
+				print( "actions: ".. actions .."; enemy_choices: ".. enemy_choices .."; previous_enemya: ".. previous_enemya)
+				EnemyAttack1()
+			else
+				previous_enemya = previous_enemya + 1
+				print( "2; another enemy gets to attack" )
+				current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
+				--previous_enemy = current_enemy
+				enemy_choices = 1
+				print( "actions: ".. actions .."; enemy_choices: ".. enemy_choices .."; previous_enemya: ".. previous_enemya)
+				EnemyAttack1()
+			end
+		else
+			print( "3; current_enemy isn't valid; resorting to first enemy, resetting structure")
+			--enemy_choices = enemy_choices + 1
+			current_enemy = battle_enemies[1]
+			previous_enemya = 0
+			print( "actions: ".. actions .."; enemy_choices: ".. enemy_choices .."; previous_enemya: ".. previous_enemya)
+			EnemyAttack()
+		end
 	else
+		print( "4; return")
+		print( "actions: ".. actions .."; enemy_choices: ".. enemy_choices .."; previous_enemya: ".. previous_enemya)
+		previous_enemya = 0
+		current_enemy = nil
+		enemy_choices = 0
 		playerturn()
 	end
 end
@@ -391,7 +447,7 @@ function playerturn() -- let the player attack
 	hook.Call( "EnemyTurnEnd" )
 	sexy_int = 0
 	for k, v in pairs( battle_enemies ) do 
-		sexy_int = sexy_int + 1
+		sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
 	end
 	actions = sexy_int
 
@@ -403,6 +459,7 @@ function playerturn() -- let the player attack
 end
 
 function EndGame()
+	-- Death is not a hunter unbeknownst to its prey
 	PrintMessage( HUD_PRINTTALK, "The party has been wiped... " )
 	net.Start( "endgame" )
 	net.Broadcast()
@@ -423,7 +480,7 @@ net.Receive( "player_removestunturns", function( len, ply )
 	end)
 end)
 
--- This manages skill tooltips that you see on the battle hud.
+-- This manages attack names that you see on the screen
 function SendSkillNote( skillnote )
 	net.Start( "sendskillnote" )
 		net.WriteString( skillnote )

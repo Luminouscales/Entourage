@@ -15,16 +15,19 @@ net.Receive( "player_makeskill", function( len, ply )
     slash_dfx = net.ReadInt( 32 ) * 0.03
     slash_acc = net.ReadInt( 32 ) * 0.05 
 
+    local proceed = net.ReadBool()
+
 	mgbplayer = ply
     vis_int = 0
 
     RunString( skill_id .."()" )
 
-    timer.Simple( 2, function()
-        EnemyAttack()
-    end)
-
-    hook.Call( "PlayerTurnEnd" )
+    if proceed then
+        hook.Call( "PlayerTurnEnd" )
+        timer.Simple( 2, function()
+            EnemyAttack()
+        end)
+    end
 end)
 
 -- Utility
@@ -444,9 +447,9 @@ function CalcAttack()
             DoCrit2a()
         end
 
-        attacktarget:TakeDamageInfo( calc_info )
         local ah = math.Round( calc_info:GetDamage(), 0 )
         PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt ".. ah .." ".. c_type2 .." damage to ".. attacktarget:GetName() )
+        attacktarget:TakeDamageInfo( calc_info )
         net.Start( "DISPLAY_PAIN" )
             net.WriteEntity( attacktarget )
             net.WriteInt( ah, 32 )

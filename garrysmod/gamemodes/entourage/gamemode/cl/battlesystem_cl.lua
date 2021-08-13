@@ -4,6 +4,8 @@ up_int2 = 0
 hp_int2 = 0
 skillnote_show = false
 tosia = "no"
+choices = 0 
+
 
 net.Receive( "up_hudshow", function()
     -- I'm going to kiss myself on the lips.
@@ -323,6 +325,7 @@ function BasicAttackPlayer()
 		net.WriteTable( player.GetAll() )
 		net.WriteString( playerstats_a["currentweapon"] )
         uhhVariablesTest()
+        net.WriteBool( choicesb )
 	net.SendToServer()
 end -- after enemy turns, do function below
 
@@ -337,10 +340,14 @@ function SkillPlayer()
         net.WriteString( skill_id )
         net.WriteInt( skill_lvl, 32 )
         uhhVariablesTest()
+        net.WriteBool( choicesb )
 	net.SendToServer()
 end -- after enemy turns, do function below
 
 net.Receive( "player_doturn", function()
+    choices = 0
+    choicesb = false
+    actions_lbl:SetText( playerstats_a.actionvar - choices )
     if LocalPlayer():GetNWInt( "stunturns" ) == 0 then
         bhud_frame:Show()
         bhud_attbbasic:Hide()
@@ -397,10 +404,15 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                         cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
 
                         if cl_s_int == cl_s_targets then
-                            BasicAttackPlayer()
+                            choices = choices + 1
+                            actions_lbl:SetText( playerstats_a.actionvar - choices )
                             clickframe:Close()
-                            bhud_frame:Hide()
                             bhud_frame2:Hide()
+                            if choices == playerstats_a.actionvar then
+                                choicesb = true
+                                bhud_frame:Hide()
+                            end
+                            BasicAttackPlayer()
                         end
                     end
             elseif keycode == 108 then
@@ -457,10 +469,15 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                             
                             -- Run and end once all targets are set
                             if cl_s_int == cl_s_targets then
-                                SkillPlayer()
+                                choices = choices + 1
+                                actions_lbl:SetText( playerstats_a.actionvar - choices )
                                 clickframe_skill:Close()
-                                bhud_frame:Hide()
                                 bhud_frame2:Hide()
+                                if choices == playerstats_a.actionvar then
+                                    choicesb = true
+                                    bhud_frame:Hide()
+                                end
+                                SkillPlayer()
                             end
                         end
                 end
@@ -518,7 +535,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         -- Frame for camera buttons
         bhud_frame3 = vgui.Create( "DFrame" )
         bhud_frame3:SetDraggable( false )
-        bhud_frame3:SetSize( 70, 290 ) 
+        bhud_frame3:SetSize( 70, 600 ) 
         bhud_frame3:SetPos( ScrW()-70, 250 )
         bhud_frame3:SetTitle( "" ) 
         bhud_frame3:ShowCloseButton( false )
@@ -544,7 +561,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_slash:Hide()
             bhud_pierce:Hide()
             bhud_blunt:Hide()
-            -- This function can be optimized but this needs to be ran three times or else multi-type weapons will not function correctly.
+            -- This function can be optimized but this needs to be ran three times or else multi-type weapons will not function correctly. Ich weiss.
             if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG1 ) then
                 bhud_slash:Show()
             end
@@ -591,8 +608,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
             plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
             pltype = "Blunt"
-            clickframe_Init()
-            clickframe:Show()
+            clickframe_Init():Show()
         end
         bhud_brace = vgui.Create( "DImageButton", bhud_frame )
             bhud_brace:SetPos( ScrW()-100, ScrH()-100 )
@@ -610,12 +626,27 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_wait:SetSize( 70, 50 )
             bhud_wait:SetImage( "hud/entourage_defiance.png" )
             bhud_wait.DoClick = function()
-                net.Start( "player_wait" )
-                    net.WriteTable( player.GetAll() )
-                net.SendToServer()
-                bhud_frame:Hide()
-                bhud_frame2:Hide()
+                if playerstats_a.actionvar - choices == 1 then
+                    net.Start( "player_wait" )
+                        net.WriteTable( player.GetAll() )
+                    net.SendToServer()
+                    bhud_frame:Hide()
+                    bhud_frame2:Hide()
+                else
+                    choices = choices + 1
+                    actions_lbl:SetText( playerstats_a.actionvar - choices )
+                end
             end
+        bhud_frame.Think = function()
+            -- im too tired and lazy to make this optimized
+            if playerstats_a.actionvar - choices ~= 1 then
+                bhud_brace:SetColor( Color( 255, 255, 255, 100 ) )
+                bhud_brace:SetMouseInputEnabled( false )
+            else
+                bhud_brace:SetColor( Color( 255, 255, 255, 255 ) )
+                bhud_brace:SetMouseInputEnabled( true )
+            end
+        end
         -- Buttons for changing perspectives
         bhud_cam1 = vgui.Create( "DImageButton", bhud_frame3 )
             bhud_cam1:SetSize( 40, 40 )
@@ -671,7 +702,15 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                     net.WriteInt( 0, 32 )
                 net.SendToServer()
             end
-
+        actions_icon = vgui.Create( "DImage", bhud_frame3 )
+            actions_icon:SetSize( 40, 40 )
+            actions_icon:SetPos( 0, 350 )
+            actions_icon:SetImage( "hud/entourage_wpicon.png" )
+        actions_lbl = vgui.Create( "DLabel", bhud_frame3 )
+            actions_lbl:SetSize( 40, 40 )
+            actions_lbl:SetPos( 10, 350 )
+            actions_lbl:SetText( playerstats_a.actionvar - choices )
+            actions_lbl:SetFont( "equipment_plname" )
         ------------------------------------------------------------------
         -- Skills battle frame
 
@@ -1045,14 +1084,19 @@ function clickframe_Init()
     cl_s_targets_tbl = {}
 end
 
--- Skill note management
-net.Receive( "sendskillnote", function()
-    skillnote = net.ReadString()
+function SkillNoteCL( skillnote2 )
+    skillnote = skillnote2
     skillnote_show = true
     show_x = SysTime()
     timer.Simple( 1.75, function()
         skillnote_show = false
     end)
+end
+
+-- Skill note management
+net.Receive( "sendskillnote", function()
+    skillnote = net.ReadString()
+    SkillNoteCL( skillnote )
 end)
 
 net.Receive( "endgame", function()
