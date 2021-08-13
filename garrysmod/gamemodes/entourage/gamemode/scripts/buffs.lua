@@ -25,7 +25,12 @@ end)
 net.Receive( "getbufftbl", function( len, ply )
     local buffent = net.ReadEntity()
     net.Start( "sendbufftbl" )
-        net.WriteTable( buffs_tbl[ buffent:UserID() ] )
+        if buffent:IsPlayer() then
+            net.WriteTable( buffs_tbl[ buffent:UserID() ] )
+        else
+            PrintTable( buffs_tbl_enemy )
+            net.WriteTable( buffs_tbl_enemy[ buffent:EntIndex() ] )
+        end
     net.Send( ply )
 end)
 
