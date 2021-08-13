@@ -62,7 +62,9 @@ function DoTBLFirstInit()
         ["LVL_POINTS"] = 0,
         ["SLASH_POINTS"] = 20,
         ["BLUNT_POINTS"] = 20,
-        ["PIERCE_POINTS"] = 20
+        ["PIERCE_POINTS"] = 20,
+        ["endurevar"] = 1,
+        ["actionvar"] = 2
     }
 
     -- Equipment tables
