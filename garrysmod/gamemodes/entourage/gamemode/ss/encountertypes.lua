@@ -145,7 +145,7 @@ function EncounterAntlion( zone ) -- Function for spawning antlions.
 
 	
     timer.Simple( 0.5, function()
-        if math.random( 1, 2 ) == 2 then -- 50% chance, right antlion
+        if math.random( 2, 2 ) == 2 then -- 50% chance, right antlion
             enemypos_placeholder = Vector( 60, -234, -982 )
             RunString( table.Random( zone ) )
             enemy2 = necessity
@@ -153,7 +153,7 @@ function EncounterAntlion( zone ) -- Function for spawning antlions.
     end)
 
     timer.Simple( 1, function()
-        if math.random( 1, 4 ) == 1 then -- 25% chance, left antlion
+        if math.random( 1, 1 ) == 1 then -- 25% chance, left antlion
             enemypos_placeholder = Vector( -225, -234, -982 )
             RunString( table.Random( zone ) )
             enemy3 = necessity
@@ -261,10 +261,10 @@ function sendIDs()
         net.WriteEntity( enemy3 )
     net.Broadcast()
     sexy_int = 0
-	for k, v in pairs( battle_enemies ) do 
-		sexy_int = sexy_int + 1
-	end
-	actions = sexy_int
+	-- for k, v in pairs( battle_enemies ) do 
+	-- 	sexy_int = sexy_int + 1
+	-- end
+	-- actions = sexy_int
     if previous_enemya == nil then
         previous_enemya = 0
     end
