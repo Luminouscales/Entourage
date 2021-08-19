@@ -231,7 +231,7 @@ function draw.Circle( x, y, radius, seg, override )
 		} )
 	end
 
-	local a = math.rad( 0 ) -- This is needed for non absolute segment counts
+	local a = math.rad( 0 )
 	table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
 
 	surface.DrawPoly( cir )
