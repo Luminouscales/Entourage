@@ -96,35 +96,35 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
     -- Here comes the big one.
     for k, v in pairs( plweapons ) do -- my dearest creation
 		local weaponbutton = vgui.Create( "DImageButton", weapons_frame ) 
-			weaponbutton:SetImage( weaponlist[ v["Item"] ].Icon )
+			weaponbutton:SetImage( items_table[ v["Item"] ].Icon )
 			weaponbutton:SetSize( 100, 100 )
 			weaponbutton.DoClick = function( self ) -- set weapon and stats
-				menuwep = weaponlist[ v["Item"] ].Name
-				menuwep2 = weaponlist[ v["Item"] ].Desc
-				menuwep4 = weaponlist[ v["Item"] ].Desc2
-				menuwep5 = weaponlist[ v["Item"] ].Desc3
-				if weaponlist[ v["Item"] ].dmgtype == "Slash" then
-					menuwep3 = weaponlist[ v["Item"] ].DMG1.. "-".. weaponlist[ v["Item"] ].DMG2 .." Slash damage"
-				elseif weaponlist[ v["Item"] ].dmgtype == "Pierce" then
-					menuwep3 = weaponlist[ v["Item"] ].DMG3 .." Pierce damage"
-				elseif weaponlist[ v["Item"] ].dmgtype == "Blunt" then
-					menuwep3 = weaponlist[ v["Item"] ].DMG4.. "-".. weaponlist[ v["Item"] ].DMG5 .." Blunt damage"
+				menuwep = items_table[ v["Item"] ].Name
+				menuwep2 = items_table[ v["Item"] ].Desc
+				menuwep4 = items_table[ v["Item"] ].Desc2
+				menuwep5 = items_table[ v["Item"] ].Desc3
+				if items_table[ v["Item"] ].dmgtype == "Slash" then
+					menuwep3 = items_table[ v["Item"] ].DMG1.. "-".. items_table[ v["Item"] ].DMG2 .." Slash damage"
+				elseif items_table[ v["Item"] ].dmgtype == "Pierce" then
+					menuwep3 = items_table[ v["Item"] ].DMG3 .." Pierce damage"
+				elseif items_table[ v["Item"] ].dmgtype == "Blunt" then
+					menuwep3 = items_table[ v["Item"] ].DMG4.. "-".. items_table[ v["Item"] ].DMG5 .." Blunt damage"
 				else
-					menuwep3 = weaponlist[ v["Item"] ].DMG1.. "-".. weaponlist[ v["Item"] ].DMG2 .." Slash damage, ".. weaponlist[ v["Item"] ].DMG3 .." Pierce damage, ".. weaponlist[ v["Item"] ].DMG4.. "-".. weaponlist[ v["Item"] ].DMG5 .." Blunt damage"
+					menuwep3 = items_table[ v["Item"] ].DMG1.. "-".. items_table[ v["Item"] ].DMG2 .." Slash damage, ".. items_table[ v["Item"] ].DMG3 .." Pierce damage, ".. items_table[ v["Item"] ].DMG4.. "-".. items_table[ v["Item"] ].DMG5 .." Blunt damage"
 				end
 				image_check1:SetParent( weapons_frame )
 				image_check1:SetPos( self:GetPos() )
 
 				
-				playerstats_a["DEF"] = playerstats_a["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats_a["currentweapon"] ].PDEF -- defence
-				playerstats["DEF"] = playerstats["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats["currentweapon"] ].PDEF -- defence
-					--playerstats["arov_def2"] = weaponlist[ v["Item"] ].PDEF
-				playerstats_a["SDL"] = playerstats_a["SDL"] + weaponlist[ v["Item"] ].PSDL - weaponlist[ playerstats_a["currentweapon"] ].PSDL -- sidle
-				playerstats["SDL"] = playerstats["SDL"] + weaponlist[ v["Item"] ].PSDL - weaponlist[ playerstats["currentweapon"] ].PSDL -- sidle
-					--playerstats["arov_sdl2"] = weaponlist[ v["Item"] ].PSDL
-				playerstats_a["AGI"] = playerstats_a["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats_a["currentweapon"] ].PAGI
-				playerstats["AGI"] = playerstats["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats["currentweapon"] ].PAGI
-					--playerstats["arov_pagi2"] = weaponlist[ v["Item"] ].PAGI
+				playerstats_a["DEF"] = playerstats_a["DEF"] + items_table[ v["Item"] ].PDEF - items_table[ playerstats_a["currentweapon"] ].PDEF -- defence
+				playerstats["DEF"] = playerstats["DEF"] + items_table[ v["Item"] ].PDEF - items_table[ playerstats["currentweapon"] ].PDEF -- defence
+					--playerstats["arov_def2"] = items_table[ v["Item"] ].PDEF
+				playerstats_a["SDL"] = playerstats_a["SDL"] + items_table[ v["Item"] ].PSDL - items_table[ playerstats_a["currentweapon"] ].PSDL -- sidle
+				playerstats["SDL"] = playerstats["SDL"] + items_table[ v["Item"] ].PSDL - items_table[ playerstats["currentweapon"] ].PSDL -- sidle
+					--playerstats["arov_sdl2"] = items_table[ v["Item"] ].PSDL
+				playerstats_a["AGI"] = playerstats_a["AGI"] + items_table[ v["Item"] ].PAGI - items_table[ playerstats_a["currentweapon"] ].PAGI
+				playerstats["AGI"] = playerstats["AGI"] + items_table[ v["Item"] ].PAGI - items_table[ playerstats["currentweapon"] ].PAGI
+					--playerstats["arov_pagi2"] = items_table[ v["Item"] ].PAGI
 				
 				playerstats_a["currentweapon"] = v["Item"]
 				playerstats["currentweapon"] = v["Item"]
@@ -134,18 +134,18 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 			end
 
 			weaponbutton.DoRightClick = function( self ) -- set weapon preview
-				menuwep = weaponlist[ v["Item"] ].Name
-				menuwep2 = weaponlist[ v["Item"] ].Desc
-				menuwep4 = weaponlist[ v["Item"] ].Desc2
-				menuwep5 = weaponlist[ v["Item"] ].Desc3
-				if weaponlist[ v["Item"] ].dmgtype == "Slash" then
-					menuwep3 = weaponlist[ v["Item"] ].DMG1.. "-".. weaponlist[ v["Item"] ].DMG2.. " Slash damage"
-				elseif weaponlist[ v["Item"] ].dmgtype == "Pierce" then
-					menuwep3 = weaponlist[ v["Item"] ].DMG3 .." Pierce damage"
-				elseif weaponlist[ v["Item"] ].dmgtype == "Blunt" then
-					menuwep3 = weaponlist[ v["Item"] ].DMG4.. "-".. weaponlist[ v["Item"] ].DMG5.. " Blunt damage"
+				menuwep = items_table[ v["Item"] ].Name
+				menuwep2 = items_table[ v["Item"] ].Desc
+				menuwep4 = items_table[ v["Item"] ].Desc2
+				menuwep5 = items_table[ v["Item"] ].Desc3
+				if items_table[ v["Item"] ].dmgtype == "Slash" then
+					menuwep3 = items_table[ v["Item"] ].DMG1.. "-".. items_table[ v["Item"] ].DMG2.. " Slash damage"
+				elseif items_table[ v["Item"] ].dmgtype == "Pierce" then
+					menuwep3 = items_table[ v["Item"] ].DMG3 .." Pierce damage"
+				elseif items_table[ v["Item"] ].dmgtype == "Blunt" then
+					menuwep3 = items_table[ v["Item"] ].DMG4.. "-".. items_table[ v["Item"] ].DMG5.. " Blunt damage"
 				else
-					menuwep3 = weaponlist[ v["Item"] ].DMG1.. "-".. weaponlist[ v["Item"] ].DMG2.. " Slash damage, ".. weaponlist[ v["Item"] ].DMG3 .." Pierce damage, ".. weaponlist[ v["Item"] ].DMG4.. "-".. weaponlist[ v["Item"] ].DMG5 .." Blunt damage"
+					menuwep3 = items_table[ v["Item"] ].DMG1.. "-".. items_table[ v["Item"] ].DMG2.. " Slash damage, ".. items_table[ v["Item"] ].DMG3 .." Pierce damage, ".. items_table[ v["Item"] ].DMG4.. "-".. items_table[ v["Item"] ].DMG5 .." Blunt damage"
 				end
 			end
 			if k < 7 then
@@ -158,30 +158,30 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 
 	for k, v in pairs( plarmours ) do
 		local armourbutton = vgui.Create( "DImageButton", weapons_frame )
-			armourbutton:SetImage( weaponlist[ v["Item"] ].Icon )
+			armourbutton:SetImage( items_table[ v["Item"] ].Icon )
 			armourbutton:SetSize( 100, 100 )
 			armourbutton.DoClick = function( self )
-				menuarm = weaponlist[ v["Item"] ].Name
-				menuarm2 = weaponlist[ v["Item"] ].Desc
-				menuarm3 = weaponlist[ v["Item"] ].PDEF
-				menuarm4 = weaponlist[ v["Item"] ].PDFX
-				menuarm5 = weaponlist[ v["Item"] ].Desc2
+				menuarm = items_table[ v["Item"] ].Name
+				menuarm2 = items_table[ v["Item"] ].Desc
+				menuarm3 = items_table[ v["Item"] ].PDEF
+				menuarm4 = items_table[ v["Item"] ].PDFX
+				menuarm5 = items_table[ v["Item"] ].Desc2
 
 				image_check2:SetParent( weapons_frame )
 				image_check2:SetPos( self:GetPos() )
 				
-				playerstats_a["DEF"] = playerstats_a["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats_a["currentarmour"] ].PDEF -- what else do I do and not spam?
-				playerstats["DEF"] = playerstats["DEF"] + weaponlist[ v["Item"] ].PDEF - weaponlist[ playerstats["currentarmour"] ].PDEF
-				--playerstats["arov_def"] = weaponlist[ v["Item"] ].PDEF
-				playerstats_a["DFX"] = playerstats_a["DFX"] + weaponlist[ v["Item"] ].PDFX - weaponlist[ playerstats_a["currentarmour"] ].PDFX
-				playerstats["DFX"] = playerstats["DFX"] + weaponlist[ v["Item"] ].PDFX - weaponlist[ playerstats["currentarmour"] ].PDFX
-				--playerstats["arov_dfx"] = weaponlist[ v["Item"] ].PDFX
-				playerstats_a["DDG"] = playerstats_a["DDG"] + weaponlist[ v["Item"] ].PDG - weaponlist[ playerstats_a["currentarmour"] ].PDG
-				playerstats["DDG"] = playerstats["DDG"] + weaponlist[ v["Item"] ].PDG - weaponlist[ playerstats["currentarmour"] ].PDG
-				--playerstats["arov_ddg"] = weaponlist[ v["Item"] ].PDG
-				playerstats_a["AGI"] = playerstats_a["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats_a["currentarmour"] ].PAGI
-				playerstats["AGI"] = playerstats["AGI"] + weaponlist[ v["Item"] ].PAGI - weaponlist[ playerstats["currentarmour"] ].PAGI
-				--playerstats["arov_pagi"] = weaponlist[ v["Item"] ].PAGI
+				playerstats_a["DEF"] = playerstats_a["DEF"] + items_table[ v["Item"] ].PDEF - items_table[ playerstats_a["currentarmour"] ].PDEF -- what else do I do and not spam?
+				playerstats["DEF"] = playerstats["DEF"] + items_table[ v["Item"] ].PDEF - items_table[ playerstats["currentarmour"] ].PDEF
+				--playerstats["arov_def"] = items_table[ v["Item"] ].PDEF
+				playerstats_a["DFX"] = playerstats_a["DFX"] + items_table[ v["Item"] ].PDFX - items_table[ playerstats_a["currentarmour"] ].PDFX
+				playerstats["DFX"] = playerstats["DFX"] + items_table[ v["Item"] ].PDFX - items_table[ playerstats["currentarmour"] ].PDFX
+				--playerstats["arov_dfx"] = items_table[ v["Item"] ].PDFX
+				playerstats_a["DDG"] = playerstats_a["DDG"] + items_table[ v["Item"] ].PDG - items_table[ playerstats_a["currentarmour"] ].PDG
+				playerstats["DDG"] = playerstats["DDG"] + items_table[ v["Item"] ].PDG - items_table[ playerstats["currentarmour"] ].PDG
+				--playerstats["arov_ddg"] = items_table[ v["Item"] ].PDG
+				playerstats_a["AGI"] = playerstats_a["AGI"] + items_table[ v["Item"] ].PAGI - items_table[ playerstats_a["currentarmour"] ].PAGI
+				playerstats["AGI"] = playerstats["AGI"] + items_table[ v["Item"] ].PAGI - items_table[ playerstats["currentarmour"] ].PAGI
+				--playerstats["arov_pagi"] = items_table[ v["Item"] ].PAGI
 
 				playerstats_a["currentarmour"] = v["Item"]
 				playerstats["currentarmour"] = v["Item"]
@@ -190,11 +190,11 @@ hook.Add( "InitPostEntity", "weaponsframeinit", function()
 				rt_armour()
 			end
 			armourbutton.DoRightClick = function( self )
-				menuarm = weaponlist[ v["Item"] ].Name
-				menuarm2 = weaponlist[ v["Item"] ].Desc
-				menuarm3 = weaponlist[ v["Item"] ].PDEF
-				menuarm4 = weaponlist[ v["Item"] ].PDFX
-				menuarm5 = weaponlist[ v["Item"] ].Desc2
+				menuarm = items_table[ v["Item"] ].Name
+				menuarm2 = items_table[ v["Item"] ].Desc
+				menuarm3 = items_table[ v["Item"] ].PDEF
+				menuarm4 = items_table[ v["Item"] ].PDFX
+				menuarm5 = items_table[ v["Item"] ].Desc2
 			end
 			if k < 7 then
 				armourbutton:SetPos( ( k * 100 - 100 + k * 5 - 5 ) + 250, 455 )
