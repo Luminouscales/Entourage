@@ -4,6 +4,7 @@
 - Add buff mechanics
 - Add debuff mechanics (different)
 - Add items
+- Add trinkets
 - Add effects
 - Add music
 - Add delays for battle hud appearing
@@ -14,10 +15,15 @@
 - Add healing vanity
 - Add data clearing after battle
 - Make hitsounds louder
-- Make sure skill cooldowns work properly
 - Add class names
 - Add tips for menus
 - Rework AoE
-- Fix player overview
-- Remove arov
-- Move tables to shared.lua
+- Fix player overview for buffs (elaborate) 
+- Big level up exp lvl up screen glitch
+- dmgresistance?
+- switch def and dfx
+- singleplayer game warning
+- add start screen (stilbruch)
+- fix overview for large enemies
+- make overview prettier
+- add debug mode
