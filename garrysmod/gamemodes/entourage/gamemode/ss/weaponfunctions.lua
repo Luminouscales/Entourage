@@ -139,6 +139,10 @@ function KillerSword()
 end
 
 function SalvagedBlade()
+	print( pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE )
+	print( acc_modifier )
+	print( slash_acc )
+	print( enemies_table[ turntargetsave ].DDG )
 	if math.random( 1, 100 ) <= pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE * ( acc_modifier + slash_acc ) - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) +  pl_stats_tbl[ mgbplayer:UserID() ].MGT + pl_stats_tbl[ mgbplayer:UserID() ].FCS * 0.75 ) * ( dmg_modifier + slash_dmg )
 		DoDamage()
