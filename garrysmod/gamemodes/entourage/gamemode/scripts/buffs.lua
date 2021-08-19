@@ -6,15 +6,6 @@ util.AddNetworkString( "sendbufftbl" )
 -- Table for managing every player's buffs
 -- REWORK FOR MULTIPLAYER
 
--- buff table for properties
-buffs_id_tbl = {
-    ["precstrike"] = {
-        ["id"] = 1,
-        ["icon"] = "hud/lyx_buff_PH.png",
-        ["desc"] = "Player FCS is increased temporarily.\nSource: Precision Strike" 
-    }
-
-}
 
 hook.Add("PlayerInitialSpawn", "placeholderfunco", function()
     buffs_tbl = {
