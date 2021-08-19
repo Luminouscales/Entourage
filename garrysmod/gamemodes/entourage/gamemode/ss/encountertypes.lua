@@ -166,6 +166,56 @@ function EncounterAntlion( zone ) -- Function for spawning antlions.
 
 end
 
+function EncounterGuardian()
+    doom = Color( 255, 40, 40 )
+    stakes = 2
+    EncounterInit( 0 )
+
+    timer.Simple( 3, function()
+        FrostlionGuardian()
+        BattleSetup()
+    end)
+    
+    timer.Simple( 4.25, function()
+        sendIDs()
+    end)
+end
+
+function EncounterPrince()
+    doom = Color( 255, 40, 40 )
+    stakes = 2
+    EncounterInit( 0 )
+
+    timer.Simple( 3, function()
+        timer.Simple( 1, function()
+            enemypos_placeholder = Vector( 60, -234, -982 ) 
+            SnowtlionMiner()
+            enemy2 = necessity
+
+            enemypos_placeholder = Vector( -225, -234, -982 )
+            SnowtlionMiner()
+            enemy3 = necessity
+            BattleSetup()
+        end)
+
+        --timer.Simple( 3, function()
+            FrostlionPrince()
+            enemy1 = necessity
+        --end)
+        
+        timer.Simple( 2, function()
+            sendIDs()
+        end)
+    end)
+
+    timer.Simple( 7, function() 
+        local x = battle_enemies[1]
+        local y = battle_enemies[3]
+        battle_enemies[1] = y
+        battle_enemies[3] = x
+    end)
+end
+
 
 -- Unique: Chapter 1 Boss
 function FrostlionGuardian()
@@ -197,61 +247,13 @@ function FrostlionPrince()
         necessity:SetNWString( "nwhudname", "Frostlion Prince" )
         necessity:Spawn()
         necessity:SetSkin( 3 )
-        necessity:SetMaxHealth( health )
-        necessity:SetHealth( health )
+        necessity:SetMaxHealth( 110 )
+        necessity:SetHealth( 110 )
         necessity:SetModelScale( 1.6, 0 )
         necessity:SetNWFloat( "scaleNW", 1.6 )
 
         lives = lives + 1
         battle_enemies[lives] = necessity
-end
-
-function EncounterGuardian()
-    doom = Color( 255, 40, 40 )
-    stakes = 2
-    EncounterInit( 0 )
-
-    timer.Simple( 3, function()
-        FrostlionGuardian()
-    end)
-    
-    timer.Simple( 4.25, function()
-        sendIDs()
-    end)
-end
-
-function EncounterPrince()
-    doom = Color( 255, 40, 40 )
-    stakes = 2
-    EncounterInit( 0 )
-
-    timer.Simple( 3, function()
-        timer.Simple( 1, function()
-            enemypos_placeholder = Vector( 60, -234, -982 ) 
-            SnowtlionMiner()
-            enemy2 = necessity
-
-            enemypos_placeholder = Vector( -225, -234, -982 )
-            SnowtlionMiner()
-            enemy3 = necessity
-        end)
-
-        --timer.Simple( 3, function()
-            FrostlionPrince()
-            enemy1 = necessity
-        --end)
-        
-        timer.Simple( 2, function()
-            sendIDs()
-        end)
-    end)
-
-    timer.Simple( 7, function() 
-        local x = battle_enemies[1]
-        local y = battle_enemies[3]
-        battle_enemies[1] = y
-        battle_enemies[3] = x
-    end)
 end
 
 function sendIDs()
@@ -261,10 +263,7 @@ function sendIDs()
         net.WriteEntity( enemy3 )
     net.Broadcast()
     sexy_int = 0
-	-- for k, v in pairs( battle_enemies ) do 
-	-- 	sexy_int = sexy_int + 1
-	-- end
-	-- actions = sexy_int
+
     if previous_enemya == nil then
         previous_enemya = 0
     end

@@ -308,7 +308,7 @@ function s_moraleslash()
     timer.Simple( 1.25, function()
         hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
     end)
-    DoCooldown( mgbplayer, "moraleslash", 4 )
+    DoCooldown( mgbplayer, "moraleslash", 3 )
     SendSkillNote( "Morale Slash" )
 end
 
@@ -377,6 +377,10 @@ function s_performance()
 end
 -- Enemy-only functions
 
+-- Strike positions
+
+-------------------
+
 function SlashAttack()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.9, 1.1 )
     attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.005 )
@@ -442,6 +446,8 @@ function CalcAttack()
         calc_info:SetAttacker( current_enemy )
         calc_info:SetDamageType( c_type )
         calc_info:SetDamage( attackdmg )
+        calc_info:SetDamagePosition( strikepos )
+        calc_info:SetDamageForce( strikevel * ( attackdmg / ( attacktarget:GetMaxHealth() * 0.5 ) ) )
 
         if c_type2 == "Pierce" then
             DoCrit2a()

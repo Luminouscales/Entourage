@@ -31,6 +31,7 @@ global_value = 0
 up_int = 0
 up_open = true
 enemy_choices = 0
+players_alive = true
 -------------------
 
 -- UP stuff -------------------------------------------------------------------------
@@ -73,6 +74,7 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			end
 			---------------------------------------------------------
 			PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." dealt ".. dmg_ov .." ".. c_type2 .." damage to ".. target:GetName() .."!" )
+			-- If fatal
 			if dmg_ov >= target:Health() and target:Health() > 0 then
 				-- Ugly, yes, but necessary. 
 				if target == enemy1 then
@@ -100,6 +102,14 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 						net.WriteInt( enemies_table[ target:GetName() ].EXP, 32 )
 					net.Broadcast()
 				end)
+				for k, v in ipairs( battle_enemies ) do
+					v:SetNWInt( "tbl_deaths", k )
+				end
+				if table.IsEmpty( battle_enemies ) then
+					timer.Simple( 2, function()
+						EndBattle()
+					end)
+				end
 			elseif enemies_table[ target:GetName() ].PainAnim ~= nil then
 				RunString( enemies_table[ target:GetName() ].PainAnim )
 			end
@@ -108,11 +118,7 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 				net.WriteInt( dmg_ov, 32 )
 				net.WriteBool( false ) -- heal? true or false
 			net.Broadcast()
-			if table.IsEmpty( battle_enemies ) then
-				timer.Simple( 2, function()
-					EndBattle()
-				end)
-			end
+
 		-- If damage to player
 		elseif target:IsPlayer() then
 			-- Brace if possible
@@ -147,7 +153,22 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 		entourage_AddUP( -25, 25 )
 	end
 	-- Set spectate mode
-	victim:Spectate(OBS_MODE_CHASE)
+	timer.Simple( 0.01, function()
+		victim:Spectate(OBS_MODE_CHASE)
+	end)
+	
+	local hot = 0
+	for _, ply in ipairs( player.GetAll() ) do 
+		if ply:Alive() then
+			hot = hot + 1
+		return end
+	end
+	if hot == 0 then
+		players_alive = false
+		timer.Simple( 2.5, function()
+			EndGame()
+		end)	
+	end
 end)
 
 function Calculatum()
@@ -234,24 +255,24 @@ function EncounterRun1()
 			-----------------------
 	
 			timer.Simple( 3, function()
-				EncounterAntlion( zone1_1 ) 
-
-				buffs_tbl_enemy = {}
-
-				timer.Simple( 1, function()
-					for k, v in pairs( battle_enemies ) do 
-						buffs_tbl_enemy[v:EntIndex()] = {}
-					end
-					sexy_int = 0
-					for k, v in pairs( battle_enemies ) do 
-						print( enemies_table[ v:GetName() ].actionvar )
-						sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
-					end
-					print( sexy_int )
-					actions = sexy_int
-					print( actions )
-				end)
+				EncounterAntlion( zone1_1 )
+				BattleSetup() 
 			end)
+end
+
+function BattleSetup() -- BATTLE STARTS HERE
+	buffs_tbl_enemy = {}
+	players_alive = true
+	timer.Simple( 1, function()
+		for k, v in pairs( battle_enemies ) do 
+			buffs_tbl_enemy[v:EntIndex()] = {}
+		end
+		sexy_int = 0
+		for k, v in pairs( battle_enemies ) do 
+			sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
+		end
+		actions = sexy_int
+	end)
 end
 
 net.Receive( "getmycordsyoufuckingcunt", function( len, ply ) -- reset cords setup
@@ -374,6 +395,7 @@ function EndBattle()
 end
 
 function EnemyAttack()
+	print( "actions at start: ".. actions)
 	if actions > 0 then 
 		
 		if IsValid( current_enemy ) then
@@ -382,10 +404,13 @@ function EnemyAttack()
 				enemy_choices = enemy_choices + 1
 				print( "actions: ".. actions .."; enemy_choices: ".. enemy_choices .."; previous_enemya: ".. previous_enemya)
 				EnemyAttack1()
+				print( "actions: ".. actions )
 			else
 				previous_enemya = previous_enemya + 1
 				print( "2; another enemy gets to attack" )
 				current_enemy = battle_enemies[next( battle_enemies, previous_enemya)]
+				print( previous_enemya )
+				print( current_enemy )
 				--previous_enemy = current_enemy
 				enemy_choices = 1
 				print( "actions: ".. actions .."; enemy_choices: ".. enemy_choices .."; previous_enemya: ".. previous_enemya)
@@ -431,35 +456,40 @@ function EnemyAttack1()
 				end
 			return end
 		end
-		if hot == 0 then
-			timer.Simple( 2, EndGame )
-		end
 	end)
 end
 
 function playerturn() -- let the player attack
-	net.Start( "player_doturn" )
-	net.Broadcast()
-	turn = turn + 1
-	PrintMessage( HUD_PRINTTALK, "_____________________" )
-	PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
-	-- Levitus:TakeDamage( 1 ) -- turnholder. I shall present what I am capable of. The chains are great, but my fortitude is beyond anything. Now suffer!
-	hook.Call( "EnemyTurnEnd" )
-	sexy_int = 0
-	for k, v in pairs( battle_enemies ) do 
-		sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
-	end
-	actions = sexy_int
+	if players_alive then
+		net.Start( "player_doturn" )
+		net.Broadcast()
+		turn = turn + 1
+		PrintMessage( HUD_PRINTTALK, "_____________________" )
+		PrintMessage( HUD_PRINTTALK, "Turn ".. turn )
+		-- Levitus:TakeDamage( 1 ) -- turnholder. I shall present what I am capable of. The chains are great, but my fortitude is beyond anything. Now suffer!
+		hook.Call( "EnemyTurnEnd" )
+		sexy_int = 0
+		print( "---" )
+		print( "Counting actions...:" )
+		for k, v in pairs( battle_enemies ) do 
+			sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
+			print( v:GetName() .." / + ".. enemies_table[ v:GetName() ].actionvar )
+		end
+		actions = sexy_int
+		print( "Enemy actions: ".. actions )
+		print( "---" )
 
-	entourage_AddUP( 5, 25 )
+		entourage_AddUP( 5, 25 )
 
-	for k, v in ipairs( battle_enemies ) do
-		v:SetNWInt( "tbl_deaths", k )
+		for k, v in ipairs( battle_enemies ) do
+			v:SetNWInt( "tbl_deaths", k )
+		end
 	end
 end
 
 function EndGame()
 	-- Death is not a hunter unbeknownst to its prey
+	players_alive = false
 	PrintMessage( HUD_PRINTTALK, "The party has been wiped... " )
 	net.Start( "endgame" )
 	net.Broadcast()
