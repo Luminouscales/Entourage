@@ -1,0 +1,56 @@
+[
+	{
+		"Item": "ClothArmour"
+	},
+	{
+		"Item": "SlimArmour"
+	},
+	{
+		"Item": "PrecisionArmour"
+	},
+	{
+		"Item": "PaddedArmour"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	}
+]

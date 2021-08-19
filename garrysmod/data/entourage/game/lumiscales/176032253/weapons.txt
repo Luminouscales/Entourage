@@ -1,0 +1,56 @@
+[
+	{
+		"Item": "OldCrowbar"
+	},
+	{
+		"Item": "RopeSpear"
+	},
+	{
+		"Item": "SalvagedBlade"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	},
+	{
+		"Item": "EmptySlot"
+	}
+]
