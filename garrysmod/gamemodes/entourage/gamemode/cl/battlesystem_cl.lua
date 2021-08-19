@@ -108,7 +108,7 @@ net.Receive( "encounter_intro", function()
 
 		EncounterNormalText1()
         -- This has to be fixed once I add weapons with only 2 damage types.
-        if weaponlist[ playerstats_a["currentweapon"] ].dmgtype == "Multiple" then
+        if items_table[ playerstats_a["currentweapon"] ].dmgtype == "Multiple" then
             pltype = table.Random( {"Slash", "Blunt", "Pierce"} )
             DefineDMGA()
         end
@@ -327,7 +327,7 @@ function BasicAttackPlayer()
         uhhVariablesTest()
         net.WriteBool( choicesb )
 	net.SendToServer()
-end -- after enemy turns, do function below
+end
 
 function SkillPlayer()
 	net.Start( "player_makeskill" )
@@ -342,7 +342,7 @@ function SkillPlayer()
         uhhVariablesTest()
         net.WriteBool( choicesb )
 	net.SendToServer()
-end -- after enemy turns, do function below
+end
 
 net.Receive( "player_doturn", function()
     choices = 0
@@ -462,9 +462,10 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 -- otherwise do it normally
                 else
                     LookPos()
-                    local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                    local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), { LocalPlayer() } )
                         if rtrace.Entity:Health() > 0 then
                             cl_s_int = cl_s_int + 1
+                            print( rtrace.Entity )
                             cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
                             
                             -- Run and end once all targets are set
@@ -505,7 +506,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         function bhud_frame:OnMousePressed( keycode )
             if keycode == 108 then
                 LookPos()
-                desctrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ) )
+                desctrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), { LocalPlayer() } )
                 if desctrace.Entity:IsNPC() or desctrace.Entity:IsPlayer() then
                     if IsValid(entdesc) == false then
                         entdesc_details()
@@ -562,13 +563,13 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_pierce:Hide()
             bhud_blunt:Hide()
             -- This function can be optimized but this needs to be ran three times or else multi-type weapons will not function correctly. Ich weiss.
-            if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG1 ) then
+            if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG1 ) then
                 bhud_slash:Show()
             end
-            if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG3 ) then
+            if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG3 ) then
                 bhud_pierce:Show()
             end
-            if isnumber( weaponlist[ playerstats_a["currentweapon"] ].DMG4 ) then
+            if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG4 ) then
                 bhud_blunt:Show()
             end
         end
@@ -583,8 +584,8 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_slash:SetSize( 253, 110 )
             bhud_slash:SetImage( "hud/slash1.png" )
         bhud_slash.DoClick = function()
-            plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
-            plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
+            plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG1
+            plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG2
             pltype = "Slash"
             clickframe_Init()
             clickframe:Show()
@@ -594,8 +595,8 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_pierce:SetSize( 253, 110 )
             bhud_pierce:SetImage( "hud/pierce1.png" )
         bhud_pierce.DoClick = function()
-            plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
-            plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
+            plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG3
+            plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG3
             pltype = "Pierce"
             clickframe_Init()
             clickframe:Show()
@@ -605,10 +606,11 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_blunt:SetSize( 253, 110 )
             bhud_blunt:SetImage( "hud/blunt1.png" )
         bhud_blunt.DoClick = function()
-            plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
-            plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
+            plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG4
+            plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG5
             pltype = "Blunt"
-            clickframe_Init():Show()
+            clickframe_Init()
+            clickframe:Show()
         end
         bhud_brace = vgui.Create( "DImageButton", bhud_frame )
             bhud_brace:SetPos( ScrW()-100, ScrH()-100 )
@@ -632,10 +634,9 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                     net.SendToServer()
                     bhud_frame:Hide()
                     bhud_frame2:Hide()
-                else
-                    choices = choices + 1
-                    actions_lbl:SetText( playerstats_a.actionvar - choices )
                 end
+                choices = choices + 1
+                actions_lbl:SetText( playerstats_a.actionvar - choices )
             end
         bhud_frame.Think = function()
             -- im too tired and lazy to make this optimized
@@ -799,7 +800,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                     if skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) == false then
                                         skillbuttoncd:Hide()
                                         self:SetColor( Color( 255, 255, 255, 255 ) )
-                                    elseif skillsbase[ k ].cost <= cl_Levitus:GetNWInt( "team_UP" ) and LocalPlayer():GetNWBool( k .."_oncd" ) then
+                                    elseif LocalPlayer():GetNWBool( k .."_oncd" ) then
                                         skillbuttoncd:SetImage( "hud/numba".. LocalPlayer():GetNWInt( k .."_cd" ) + 1 ..".png" )
                                         skillbuttoncd:Show()
                                         self:SetColor( Color( 255, 255, 255, 100 ) )
@@ -903,13 +904,14 @@ function entdesc_details()
                 entdesc_desc2:AppendText( "Defence: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DEF .."\n")
                 entdesc_desc2:AppendText( "Flex Defence: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DFX .."\n")
                 entdesc_desc2:AppendText( "Damage: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMG .." ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGT .."\n")
-                if IsValid( enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGP ) then
+                print( targetent )
+                if enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGP ~= nil then
                     entdesc_desc2:AppendText( "Armour Penetration: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGP .."\n" )
                 end
-                if IsValid( enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGC ) then
+                if enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGC ~= nil then
                     entdesc_desc2:AppendText( "Crit Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGC .."%" .."\n" )
                 end
-                if IsValid( enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGS ) then
+                if enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGS ~= nil then
                     entdesc_desc2:AppendText( "Base Stun Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].DMGS .."%\n" )
                 end
                 entdesc_desc2:AppendText( "Base Miss Chance: ".. enemies_table[ targetent:GetNWString( "nameNW" ) ].MISS .."%" .."\n" )
@@ -939,8 +941,8 @@ function entdesc_details()
                 draw.SimpleText( "Level ".. playerstats_a["LVL3"] .." ".. tag, "equipment_plname4", w/2, 130, color_white, a, a )
                 draw.SimpleText( playerstats_a["LVL1"] .."/".. playerstats_a["LVL2"], "equipment_plname4", w/2, 165, color_white, a, a )
                 draw.SimpleText( LocalPlayer():Health() .."/".. playerstats_a["HP2"], "equipment_plname2", w/2 - 32, 690, color_white, b, a )
-                draw.SimpleText( weaponlist[ playerstats_a["currentweapon"] ].Name, "equipment_plname2", w/2 - 35, 730, color_white, b, a )
-                draw.SimpleText( weaponlist[ playerstats_a["currentarmour"] ].Name, "equipment_plname2", w/2 - 35, 770, color_white, b, a )
+                draw.SimpleText( items_table[ playerstats_a["currentweapon"] ].Name, "equipment_plname2", w/2 - 35, 730, color_white, b, a )
+                draw.SimpleText( items_table[ playerstats_a["currentarmour"] ].Name, "equipment_plname2", w/2 - 35, 770, color_white, b, a )
                 draw.SimpleText( playerstats_a["MGT"], "equipment_plname2", 545, 250, color_white, b, a )
                 draw.SimpleText( playerstats_a["VIT"], "equipment_plname2", 545, 303, color_white, b, a )
                 draw.SimpleText( playerstats_a["AGI"], "equipment_plname2", 545, 355, color_white, b, a )
@@ -1027,6 +1029,8 @@ function entdesc_details()
                 bufficon:SetSize( 25, 25 )
                 bufficon:SetPos( 10, 35 + 35 * k - 35 )
                 bufficon:SetImage( "hud/entourage_placeholder.png" )
+                bufficon:SetMouseInputEnabled( true )
+                bufficon:SetTooltip( buffs_id_tbl[ v ].desc )
         end
     end)
 end
@@ -1039,34 +1043,34 @@ net.Receive( "sendbufftbl", function()
 end)
 
 function DefineDMG()
-    local a = weaponlist[ playerstats_a["currentweapon"] ].dmgtype
+    local a = items_table[ playerstats_a["currentweapon"] ].dmgtype
     if a == "Slash" then
-        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
-        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
+        plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG1
+        plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG2
         pltype = "Slash"
     elseif a == "Blunt" then
-        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
-        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
+        plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG4
+        plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG5
         pltype = "Blunt"
     elseif a == "Pierce" then
-        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
-        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
+        plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG3
+        plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG3
         pltype = "Pierce"
     end
 end
 -- Defining stuff if battle is started and you have a multi-type weapon
 function DefineDMGA()
     if pltype == "Slash" then
-        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG1
-        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG2
+        plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG1
+        plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG2
         pltype = "Slash"
     elseif pltype == "Blunt" then
-        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG4
-        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG5
+        plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG4
+        plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG5
         pltype = "Blunt"
     elseif pltype == "Pierce" then
-        plattack1 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
-        plattack2 = weaponlist[ playerstats_a["currentweapon"] ].DMG3
+        plattack1 = items_table[ playerstats_a["currentweapon"] ].DMG3
+        plattack2 = items_table[ playerstats_a["currentweapon"] ].DMG3
         pltype = "Pierce"
     end
 end
@@ -1080,7 +1084,7 @@ end
 
 function clickframe_Init()
     cl_s_int = 0
-    cl_s_targets =  weaponlist[ playerstats_a["currentweapon"] ].targets
+    cl_s_targets =  items_table[ playerstats_a["currentweapon"] ].targets
     cl_s_targets_tbl = {}
 end
 

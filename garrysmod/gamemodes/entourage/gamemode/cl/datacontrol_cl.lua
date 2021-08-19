@@ -34,12 +34,10 @@ end
 function DoTBLFirstInit()
     statsbase = { -- base stats
         ["LVL1"] = 0.0,
-        ["arov_pagi"] = 0.0,
         ["FCS"] = 0.0,
         ["VIT"] = 0,
         ["MGT"] = 0,
         ["FA"] = 0.0,
-        ["arov_dfx"] = 0.0,
         ["DDG"] = 15,
         ["currentweapon"] = "OldCrowbar",
         ["DEF"] = 5,
@@ -53,12 +51,7 @@ function DoTBLFirstInit()
         ["LVL2"] = 100.0,
         ["LVL3"] = 1.0,
         ["WA"] = 0.0,
-        ["arov_def"] = 5,
         ["DFX"] = 0.0,
-        ["arov_def2"] = 5,
-        ["arov_sdl2"] = 0,
-        ["arov_pagi2"] = 0,
-        ["arov_ddg"] = 5,
         ["LVL_POINTS"] = 0,
         ["SLASH_POINTS"] = 20,
         ["BLUNT_POINTS"] = 20,
@@ -150,325 +143,6 @@ function DoTBLFirstInit()
 
 end
 
-function weaponlistTBL()
-    weaponlist = {
-        ["OldCrowbar"] = {
-            ["Name"] = "Old Crowbar",
-            ["Desc"] = "Standard-issue. Dull, but has withstood the test of time.",
-            ["Desc2"] = "No bonus effects.",
-            ["Desc3"] = "+25% MGT, +25% DFE, +25% CEL",
-            ["dmgtype"] = "Slash",
-            ["BaseAcc"] = 75,
-            ["DMG1"] = 13,
-            ["DMG2"] = 17,
-            ["SCS1"] = 15,
-            ["SCS2"] = 15,
-            ["SCS3"] = 15,
-            ["Icon"] = "items/entourage_oldcrowbar.png",
-            ["Type"] = "Weapon",
-            ["PDEF"] = "0",
-            ["PSDL"] = 0,
-            ["PAGI"] = 0,
-            ["func"] = "OldCrowbar()",
-            ["targets"] = 1
-        },
-        ["RustyKnife"] = {
-            ["Name"] = "Rusty Knife",
-            ["Desc"] = "Only good for thrusting; half-digested.",
-            ["Desc2"] = "+2 Celerity",
-            ["Desc3"] = "+75% CLE, +25% FCS, 25% armour penetration",
-            ["dmgtype"] = "Pierce",
-            ["BaseAcc"] = 95,
-            ["DMG3"] = 4,
-            ["Icon"] = "items/entourage_rustyknife.png",
-            ["Type"] = "Weapon",
-            ["PDEF"] = "0",
-           ["PSDL"] = 0,
-            ["PAGI"] = 2,
-            ["func"] = "RustyKnife()",
-            ["targets"] = 1
-        },
-        ["WoodenClub"] = {
-            ["Name"] = "Wooden Club",
-            ["Desc"] = "Desperate attempt at a bash weapon. Heavy, unwieldy.",
-            ["Desc2"] = "No bonus effects.",
-            ["Desc3"] = "+15% MGT, +10% damage per 1 CST",
-            ["dmgtype"] = "Blunt",
-            ["BaseAcc"] = 40,
-            ["DMG4"] = 22,
-            ["DMG5"] = 28,
-            ["Icon"] = "items/entourage_woodenclub.png",
-            ["Type"] = "Weapon",
-            ["PDEF"] = "0",
-            ["PSDL"] = 0,
-            ["PAGI"] = 0,
-            ["func"] = "WoodenClub()",
-            ["targets"] = 1
-        },
-        ["EmptySlot"] = {
-            ["Name"] = "Fists",
-            ["Type"] = "Weapon",
-            ["Icon"] = "items/entourage_emptyslot.png",
-            ["DMG4"] = 1,
-           ["DMG5"] = 3,
-            ["dmgtype"] = "Blunt",
-            ["BaseAcc"] = 95,
-            ["Desc"] = "Conquer the world as nature intended.",
-            ["Desc2"] = "-5 Defence, +2 Celerity",
-            ["Desc3"] = "+100% DFE, +25% damage per 1 MGT",
-            ["PDEF"] = "-5",
-            ["PSDL"] = 0,
-            ["PAGI"] = 2,
-            ["func"] = "Fists()",
-            ["targets"] = 1
-        },
-        ["RopeSpear"] = {
-            ["Name"] = "Rope Spear",
-            ["Type"] = "Weapon",
-            ["Icon"] = "items/entourage_ropespear.png",
-            ["DMG1"] = 10,
-            ["DMG2"] = 14,
-            ["DMG3"] = 7,
-            ["DMG4"] = 4,
-           ["DMG5"] = 20,
-            ["dmgtype"] = "Multiple",
-            ["BaseAcc"] = 95,
-            ["Desc"] = "Knife on a long stick, reinforced with rope. Multi-purpose.",
-           ["Desc2"] = "-1 Celerity, +1 Defence",
-            ["Desc3"] = "+75% MGT / 75% CLE, 50% armour pen. / No scaling",
-            ["PDEF"] = 0,
-            ["PSDL"] = 0,
-            ["PAGI"] = -1,
-            ["func"] = "RopeSpear()",
-            ["targets"] = 1
-        },
-        ["SalvagedBlade"] = {
-            ["Name"] = "Salvaged Blade",
-            ["Type"] = "Weapon",
-            ["Icon"] = "items/entourage_salvagedblade.png",
-            ["DMG1"] = 15,
-            ["DMG2"] = 18,
-            ["dmgtype"] = "Slash",
-            ["BaseAcc"] = 65,
-            ["Desc"] = "Crude metal marks this weapon's sharp edge.",
-           ["Desc2"] = "None",
-            ["Desc3"] = "+100% MGT, +75% FCS",
-            ["PDEF"] = 0,
-            ["PSDL"] = 0,
-            ["PAGI"] = 0,
-            ["func"] = "SalvagedBlade()",
-            ["targets"] = 1
-        },
-        ["ClothArmour"] = {
-            ["Name"] = "Cloth Armour",
-            ["Type"] = "Armour",
-            ["Icon"] = "items/entourage_clotharmour.png",
-            ["Desc"] = "Standard-issue clothes for scouts.",
-           ["Desc2"] = "+5 Dodge",
-            ["PDEF"] = 5,
-            ["PDFX"] = 0,
-            ["PDG"] = 5,
-            ["PAGI"] = 0
-        },
-        ["SlimArmour"] = {
-            ["Name"] = "Slim Armour",
-            ["Type"] = "Armour",
-            ["Icon"] = "items/entourage_slimarmour.png",
-            ["Desc"] = "Slim clothes with a premise on light weight.",
-           ["Desc2"] = "+12 Dodge, +2 Celerity",
-            ["PDEF"] = 2,
-            ["PDFX"] = 0,
-            ["PDG"] = 12,
-            ["PAGI"] = 2
-        },
-        ["PaddedArmour"] = {
-            ["Name"] = "Padded Armour",
-            ["Type"] = "Armour",
-            ["Icon"] = "items/entourage_paddedarmour.png",
-            ["Desc"] = "Reinforced standard armour. Heavier, sturdier.",
-           ["Desc2"] = "No bonus effects.",
-            ["PDEF"] = 15,
-            ["PDFX"] = 0,
-            ["PDG"] = 0,
-            ["PAGI"] = 0
-        },
-        ["PrecisionArmour"] = {
-            ["Name"] = "Precision Armour",
-            ["Type"] = "Armour",
-            ["Icon"] = "items/entourage_precisionarmour.png",
-            ["Desc"] = "Unique set of protection that covers only vital body parts.",
-           ["Desc2"] = "+7 Dodge",
-            ["PDEF"] = 2,
-            ["PDFX"] = 8,
-            ["PDG"] = 7,
-            ["PAGI"] = 0
-        },
-        ["ImpracticalArmour"] = {
-            ["Name"] = "Impractical Armour",
-            ["Type"] = "Armour",
-            ["Icon"] = "items/entourage_impracticalarmour.png",
-            ["Desc"] = "A shoddy attempt at plate armour.",
-           ["Desc2"] = "-50 Dodge, -3 Celerity",
-            ["PDEF"] = 0,
-            ["PDFX"] = 60,
-            ["PDG"] = -50,
-            ["PAGI"] = -5
-        },
-        ["EmptySlot2"] = {
-            ["Name"] = "None",
-            ["Type"] = "Empty",
-            ["Icon"] = "items/entourage_emptyslot.png",
-            ["Desc"] = "Light as a feather - as feeble as one.",
-           ["Desc2"] = "+30 Dodge, +3 Celerity.",
-            ["PDEF"] = -35,
-            ["PDFX"] = 0,
-            ["PDG"] = 30,
-            ["PAGI"] = 3
-        },
-        ["KillerSword"] = {
-            ["Name"] = "Lynxsie's Greatsword",
-            ["Desc"] = "Used by the legendary Lynxsie to conquer Calradia.",
-           ["Desc2"] = "Where'd my rapier go?",
-            ["Desc3"] = "No scaling",
-            ["dmgtype"] = "Slash",
-            ["BaseAcc"] = 200,
-            ["DMG1"] = 100,
-            ["DMG2"] = 100,
-            ["Icon"] = "items/entourage_killersword.png",
-            ["Type"] = "Weapon",
-            ["PDEF"] = 0,
-            ["PSDL"] = 0,
-            ["PAGI"] = 0,
-            ["func"] = "KillerSword()",
-            ["targets"] = 1
-        }
-    }
-    skillsbase = {
-        ["s_precstrike"] = {
-            ["Name"] = "Precision Strike",
-            ["Description"] = "Deal damage to one target equal to bonus slash weapon strength with bonus accuracy. Gain Focus for 3 turns.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 10,
-            ["targets"] = 1,
-            ["cd"] = 3
-        },
-        ["s_defmano"] = {
-            ["Name"] = "Defensive Manoeuvre",
-            ["Description"] = "Deal damage to one target, gain defensive stats for one turn.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 20,
-            ["targets"] = 1,
-            ["cd"] = 3
-        },
-        ["s_firstaid"] = {
-            ["Name"] = "First Aid",
-            ["Description"] = "Heal target for a value plus a % of its max HP. Grants MGT for 3 turns.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 15,
-            ["targets"] = 1,
-            ["cd"] = 3
-        },
-        ["s_slasher"] = {
-            ["Name"] = "Slasher",
-            ["Description"] = "Levi, my beloved.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 20,
-            ["cost"] = -1
-        },
-        ["s_slicer"] = {
-            ["Name"] = "Slicer",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 20,
-            ["cost"] = -1
-        },
-        ["s_dicer"] = {
-            ["Name"] = "Dicer",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 20,
-            ["cost"] = -1
-        },
-        ["s_broadswing"] = {
-            ["Name"] = "Broad Swing",
-            ["Description"] = "Slash all targets for a part of your damage and accuracy.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 10,
-            ["targets"] = 10,
-            ["cd"] = 2
-        },
-        ["s_fragmentation"] = {
-            ["Name"] = "Fragmentation",
-            ["Description"] = "Slash two targets for a part of your damage.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 20,
-            ["targets"] = 2,
-            ["cd"] = 4
-        },
-        ["s_medicsupplies"] = {
-            ["Name"] = "Medical Supplies",
-            ["Description"] = "Heal party - healing decreases for amount healed.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 25,
-            ["targets"] = 11,
-            ["cd"] = 3
-        },
-        ["s_moraleslash"] = {
-            ["Name"] = "Morale Slash",
-            ["Description"] = "Strike a target; gain Celerity and recover HP on hit.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 15,
-            ["targets"] = 1,
-            ["cd"] = 3
-        },
-        ["s_acrobatics"] = {
-            ["Name"] = "Acrobatics",
-            ["Description"] = "Strike all targets, gaining a very high dodge chance for 1 turn.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 10,
-            ["targets"] = 10,
-            ["cd"] = 4
-        },
-        ["s_distraction"] = {
-            ["Name"] = "Distraction",
-            ["Description"] = "Choose two targets; the first becomes stunned, the other takes damage.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 25,
-            ["targets"] = 2,
-            ["cd"] = 4
-        },
-        ["s_performance"] = {
-            ["Name"] = "Performance",
-            ["Description"] = "Strike all targets for low damage, heal allies.",
-            ["tier"] = 1,
-            ["min"] = 1,
-            ["max"] = 10,
-            ["cost"] = 15,
-            ["targets"] = 10,
-            ["cd"] = 2
-        }
-    }
-end
-
 hook.Add( "InitPostEntity", "datacontrolinit", function()
    
     gameid = GetConVar( "rpgmod_gameid" ):GetString()
@@ -479,7 +153,6 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
     -- It WILL break if the player removes a save other than stats.txt, but that's not my problem any more.
     file.CreateDir( "entourage/game/".. gameid .."/".. playerid)
 
-    weaponlistTBL()
     if file.Exists( "entourage/game/".. gameid .."/".. playerid .."/stats.txt", "DATA" ) == false then -- if the save is fresh
         DoTBLFirstInit()
         file.Write( "entourage/game/".. gameid .."/".. playerid .."/stats.txt", statsbase )
@@ -529,7 +202,6 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
 end)
 
 net.Receive( "sharetable", function()
-	enemies_table = net.ReadTable()
 	-- levi; UP purposes
 	levi = net.ReadInt( 32 )
 
