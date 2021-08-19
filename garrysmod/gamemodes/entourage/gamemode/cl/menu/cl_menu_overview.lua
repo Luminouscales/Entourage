@@ -25,26 +25,26 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 	timer.Simple( 0.25, function()
 
     menuwepalt = playerstats["currentweapon"]
-    menuwep = weaponlist[ playerstats[ "currentweapon" ] ].Name
-	menuwep2 = weaponlist[ playerstats[ "currentweapon" ] ].Desc
-	menuwep4 = weaponlist[ playerstats[ "currentweapon" ] ].Desc2
-	menuwep5 = weaponlist[ playerstats[ "currentweapon" ] ].Desc3
+    menuwep = items_table[ playerstats[ "currentweapon" ] ].Name
+	menuwep2 = items_table[ playerstats[ "currentweapon" ] ].Desc
+	menuwep4 = items_table[ playerstats[ "currentweapon" ] ].Desc2
+	menuwep5 = items_table[ playerstats[ "currentweapon" ] ].Desc3
 
-	menuarm = weaponlist[ playerstats[ "currentarmour" ] ].Name
-	menuarm2 = weaponlist[ playerstats[ "currentarmour" ] ].Desc
-	menuarm3 = weaponlist[ playerstats[ "currentarmour" ] ].PDEF
-	menuarm4 = weaponlist[ playerstats[ "currentarmour" ] ].PDFX
-	menuarm5 = weaponlist[ playerstats[ "currentarmour" ] ].Desc2
+	menuarm = items_table[ playerstats[ "currentarmour" ] ].Name
+	menuarm2 = items_table[ playerstats[ "currentarmour" ] ].Desc
+	menuarm3 = items_table[ playerstats[ "currentarmour" ] ].PDEF
+	menuarm4 = items_table[ playerstats[ "currentarmour" ] ].PDFX
+	menuarm5 = items_table[ playerstats[ "currentarmour" ] ].Desc2
 
 	-- Everything here presets variables to be used in the overview screen and elsewhere.
-	if weaponlist[ menuwepalt ].dmgtype == "Slash" then
-		menuwep3 = weaponlist[ menuwepalt ].DMG1.. "-".. weaponlist[ menuwepalt ].DMG2.. " Slash damage"
-	elseif weaponlist[ menuwepalt ].dmgtype == "Pierce" then
-		menuwep3 = weaponlist[ menuwepalt ].DMG3 .." Pierce damage"
-	elseif weaponlist[ menuwepalt ].dmgtype == "Blunt" then
-		menuwep3 = weaponlist[ menuwepalt ].DMG4.. "-".. weaponlist[ menuwepalt ].DMG5.. " Blunt damage"
+	if items_table[ menuwepalt ].dmgtype == "Slash" then
+		menuwep3 = items_table[ menuwepalt ].DMG1.. "-".. items_table[ menuwepalt ].DMG2.. " Slash damage"
+	elseif items_table[ menuwepalt ].dmgtype == "Pierce" then
+		menuwep3 = items_table[ menuwepalt ].DMG3 .." Pierce damage"
+	elseif items_table[ menuwepalt ].dmgtype == "Blunt" then
+		menuwep3 = items_table[ menuwepalt ].DMG4.. "-".. items_table[ menuwepalt ].DMG5.. " Blunt damage"
 	else
-		menuwep3 = weaponlist[ menuwepalt ].DMG1.. "-".. weaponlist[ menuwepalt ].DMG2.. " Slash damage, ".. weaponlist[ menuwepalt ].DMG3 .." Pierce damage, ".. weaponlist[ menuwepalt ].DMG4.. "-".. weaponlist[ menuwepalt ].DMG5 .." Blunt damage"
+		menuwep3 = items_table[ menuwepalt ].DMG1.. "-".. items_table[ menuwepalt ].DMG2.. " Slash damage, ".. items_table[ menuwepalt ].DMG3 .." Pierce damage, ".. items_table[ menuwepalt ].DMG4.. "-".. items_table[ menuwepalt ].DMG5 .." Blunt damage"
 	end
 
 	end)
@@ -81,8 +81,8 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 			draw.SimpleText( "Level ".. playerstats_a["LVL3"] .." ".. tag, "equipment_plname4", w/2, 130, color_white, a, a )
 			draw.SimpleText( playerstats_a["LVL1"] .."/".. playerstats_a["LVL2"], "equipment_plname4", w/2, 165, color_white, a, a )
 			draw.SimpleText( LocalPlayer():Health() .."/".. playerstats_a["HP2"], "equipment_plname2", w/2 - 32, 690, color_white, b, a )
-			draw.SimpleText( weaponlist[ playerstats_a["currentweapon"] ].Name, "equipment_plname2", w/2 - 35, 730, color_white, b, a )
-			draw.SimpleText( weaponlist[ playerstats_a["currentarmour"] ].Name, "equipment_plname2", w/2 - 35, 770, color_white, b, a )
+			draw.SimpleText( items_table[ playerstats_a["currentweapon"] ].Name, "equipment_plname2", w/2 - 35, 730, color_white, b, a )
+			draw.SimpleText( items_table[ playerstats_a["currentarmour"] ].Name, "equipment_plname2", w/2 - 35, 770, color_white, b, a )
 			draw.SimpleText( playerstats_a["MGT"], "equipment_plname2", 545, 275, color_white, b, a )
 			draw.SimpleText( playerstats_a["VIT"], "equipment_plname2", 545, 328, color_white, b, a )
 			draw.SimpleText( playerstats_a["AGI"], "equipment_plname2", 545, 380, color_white, b, a )
