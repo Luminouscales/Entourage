@@ -19,6 +19,8 @@ function FrostlionScoutAI()
     SendSkillNote( "Slash Attack" )
 
     timer.Simple( 0.5, function()
+        strikepos = Entity(1):EyePos( ) + Vector( -25, 0, -25 )
+        strikevel = Vector( -3500, 3500, 1000 )
         SlashAttack()
     end)
 
@@ -40,6 +42,8 @@ function AntlionStun()
     turntarget:ResetSequence( "Flip1" )
 
     timer.Simple( 2.25, function()
-        turntarget:ResetSequence( table.Random( antlion_idle ) )
+        if turntarget:Health() > 0 then
+            turntarget:ResetSequence( table.Random( antlion_idle ) )
+        end
     end)
 end
