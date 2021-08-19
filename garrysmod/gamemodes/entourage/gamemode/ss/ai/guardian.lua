@@ -38,6 +38,8 @@ function Guardian_Bash()
     enemy1:ResetSequence( "shove" )
 
     timer.Simple( 0.5, function()
+        strikepos = Entity(1):EyePos( ) + Vector( 0, -15, -15 )
+        strikevel = Vector( math.random( 7500, -7500 ), 10000, 7500 )
         Bash()
     end)
 
@@ -47,7 +49,7 @@ function Guardian_Bash()
     
     timer.Simple(2.5, function()
         hook.Remove( "EntityTakeDamage", "widestagger" )
-        playerturn()
+        EnemyAttack()
     end)
 
     hook.Add( "EntityTakeDamage", "widestagger", function( target, dmg )
@@ -67,6 +69,8 @@ function Guardian_Stagger()
     enemy1:EmitSound( "widestagger_1.wav", 150, 100, 1, CHAN_BODY )
 
     timer.Simple( 0.8, function()
+        strikepos = Entity(1):EyePos( ) + Vector( 0, -15, -15 )
+        strikevel = Vector( math.random( 7500, -7500 ), 7500, 4000 )
         WideStagger()
     end)
 
@@ -76,7 +80,7 @@ function Guardian_Stagger()
     
     timer.Simple( 3, function()
         hook.Remove( "EntityTakeDamage", "widestagger" )
-        playerturn()
+        EnemyAttack()
     end)
 
     -- This manages sound appropriately.
@@ -103,7 +107,7 @@ function Guardian_AllyCall()
         end)
         
         timer.Simple( 5, function()
-            playerturn()
+            EnemyAttack()
         end)
     else
         -- Refresh if enemies are full
@@ -124,7 +128,7 @@ function BattleCry()
     end)
     
     timer.Simple( 5, function()
-        playerturn()
+        EnemyAttack()
     end)
 
     g_stampede = true
@@ -137,6 +141,8 @@ function Stampede()
     enemy1:ResetSequence( "charge_startfast" )
 
     timer.Simple( 1, function()
+        strikepos = Entity(1):EyePos( ) + Vector( 0, -15, -15 )
+        strikevel = Vector( 0, 15000, -2000 )
         enemy1:ResetSequence( "charge_crash" )
         G_Stampede()
     end)
@@ -144,7 +150,7 @@ function Stampede()
     timer.Simple( 4.5, function()
         enemy1:ResetSequence( table.Random( guardian_idle ) )
         hook.Remove( "EntityTakeDamage", "widestagger" )
-        playerturn()
+        EnemyAttack()
     end)
 
     g_stampede = false
@@ -172,7 +178,7 @@ function Sudety()
     end)
     
     timer.Simple( 2.5, function()
-        playerturn()
+        EnemyAttack()
     end)
 end
 
