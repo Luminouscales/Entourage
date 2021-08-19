@@ -39,6 +39,8 @@ function Prince_Basic()
     enemy1:ResetSequence( "attack1" )
 
     timer.Simple( 0.5, function()
+        strikepos = Entity(1):EyePos( ) + Vector( 0, 0, -15 )
+        strikevel = Vector( math.random( 1500, -1500 ), 2500, -7500 )
         PierceAttack()
     end)
 
@@ -77,6 +79,8 @@ function Prince_Eviscerate()
     enemy1:ResetSequence( "attack6" )
 
     timer.Simple( 0.75, function()
+        strikepos = Entity(1):EyePos( ) + Vector( 0, 0, -15 )
+        strikevel = Vector( math.random( 1500, -1500 ), 2500, -7500 ) * 1.5
         P_Eviscerate()
     end)
 

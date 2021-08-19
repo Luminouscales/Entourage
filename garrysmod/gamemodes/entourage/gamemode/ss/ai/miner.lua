@@ -24,7 +24,9 @@ function FrostlionMinerAI()
         current_enemy:ResetSequenceInfo()
         current_enemy:ResetSequence( "ragdoll" )
         current_enemy:ResetSequence( "charge_end" )
-        
+
+        strikepos = Entity(1):EyePos( ) + Vector( 0, -15, -15 )
+        strikevel = Vector( math.random( 1500, -1500 ), 4000, 4000 )
         BluntAttack()
         timer.Simple( 1.3, function()
             current_enemy:ResetSequence( table.Random( antlion_idle ) )

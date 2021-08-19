@@ -13,6 +13,8 @@ function FrostlionSkinnerAI()
     SendSkillNote( "Pierce Attack" )
 
     timer.Simple( 0.6, function()
+        strikepos = Entity(1):EyePos( ) + Vector( 0, 0, -15 )
+        strikevel = Vector( math.random( 1500, -1500 ), 2500, -7500 )
         PierceAttack()
     end)
 
