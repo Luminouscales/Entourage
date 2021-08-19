@@ -91,7 +91,7 @@ end)
 
 hook.Add( "PlayerInitialSpawn", "startvar", function() 
 
-	encounter_rate = math.random( 100, 100 )
+	encounter_rate = math.random( 999999, 999999 )
 	encounter_rate2 = 0
 
 	net.Start( "encounter_var" )
@@ -127,7 +127,6 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 		ent_cam_override5:SetSolid( 0 )
 
 		net.Start( "sharetable" )
-			net.WriteTable( enemies_table )
 			-- convenience
 			net.WriteInt( ents.GetMapCreatedEntity( 1263 ):EntIndex(), 32 )
 		net.Broadcast()
@@ -138,11 +137,13 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 
 	battle_enemies = {}
 
-
-
-
-
 end)
 
 -- Variable for managing uniqueness.
 mathilda = 0
+
+hook.Add( "Tick", "LMAO", function()
+	if turntargetsave ~= nil then
+		--print( turntargetsave )
+	end
+end)
