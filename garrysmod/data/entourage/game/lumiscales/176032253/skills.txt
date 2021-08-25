@@ -3,11 +3,11 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_firstaid": {
+	"s_scrutiny": {
 		"Level": 0.0,
-		"equipped": 0.0
+		"equipped": 2.0
 	},
-	"s_defmano": {
+	"s_firstaid": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
@@ -15,13 +15,9 @@
 		"Level": 0.0,
 		"equipped": 2.0
 	},
-	"s_performance": {
-		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_acrobatics": {
-		"Level": 0.0,
-		"equipped": 0.0
+	"s_moderato": {
+		"Level": 1.0,
+		"equipped": 1.0
 	},
 	"s_fragmentation": {
 		"Level": 0.0,
@@ -31,11 +27,7 @@
 		"Level": 0.0,
 		"equipped": 2.0
 	},
-	"s_slicer": {
-		"Level": 0.0,
-		"equipped": 2.0
-	},
-	"s_distraction": {
+	"s_defmano": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
@@ -43,12 +35,44 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
+	"s_dedications": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_acrobatics": {
+		"Level": 0.0,
+		"equipped": 0.0
+	},
 	"s_moraleslash": {
+		"Level": 0.0,
+		"equipped": 0.0
+	},
+	"s_vprecision": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
 	"s_broadswing": {
 		"Level": 0.0,
 		"equipped": 0.0
+	},
+	"s_immaculate": {
+		"Level": 0.0,
+		"equipped": 2.0
+	},
+	"s_distraction": {
+		"Level": 0.0,
+		"equipped": 0.0
+	},
+	"s_slicer": {
+		"Level": 0.0,
+		"equipped": 2.0
+	},
+	"s_performance": {
+		"Level": 1.0,
+		"equipped": 1.0
+	},
+	"s_sharpcare": {
+		"Level": 0.0,
+		"equipped": 2.0
 	}
 }
