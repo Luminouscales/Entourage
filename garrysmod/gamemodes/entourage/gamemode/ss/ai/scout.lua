@@ -38,12 +38,13 @@ end
 -- Stun animation. Used for all antlions
 
 function AntlionStun()
-    turntarget:ResetSequence( "ragdoll" )
-    turntarget:ResetSequence( "Flip1" )
+    local save = turntarget
+    save:ResetSequence( "ragdoll" )
+    save:ResetSequence( "Flip1" )
 
-    timer.Simple( 2.25, function()
-        if turntarget:Health() > 0 then
-            turntarget:ResetSequence( table.Random( antlion_idle ) )
+    timer.Simple( 1.5, function()
+        if IsValid( save ) then
+            save:ResetSequence( table.Random( antlion_idle ) )
         end
     end)
 end
