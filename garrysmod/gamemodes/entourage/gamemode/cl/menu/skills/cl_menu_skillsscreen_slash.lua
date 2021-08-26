@@ -7,31 +7,6 @@ col_tier1 = Color( 255, 255, 255, 255 )
 skpic_a = "skills/entourage_precstrike.png"
 local madechanges = false
 
-function DefineColour()
-    if skillsbase[ define_col ].tier == 1 then
-        sk_name:InsertColorChange( 255, 255, 255, 255 )
-    end 
-end
-
-function DefineText()
-    -- For longer names:
-        -- Needs more experimentation.
-        -- Size 19 fits PERFECTLY with plname0
-    -- Base size is plname3
-    -- Shorter names cause issues
-    local len1 = string.len( define_text )
-    if len1 >= 19 then
-        function sk_name:PerformLayout()
-            self:SetFontInternal( "equipment_plname" )
-        end
-    end
-    -- Clawmade center function. Isn't it beautiful?
-    sk_name:SetSize( 21.5 * len1, 60 )
-    sk_name:SetPos( 1350 + ( 385 - 17.18 * len1 ) / 2, 270 )
-    -----------------------------------------------------------------------------
-    sk_name:Show()
-end
-
 hook.Add( "InitPostEntity", "fuck_slash", function()
     timer.Simple( 0.5, function()
         -- Passive Skills
@@ -48,11 +23,11 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_slasher"
                 define_text = "Slasher"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
+                
                 DefineText()
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -68,14 +43,8 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "/20" )
 
-                sk_desc1:SetSize( 380, 200 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
 
-                if plskills_a[define_col].equipped < 1 then
-                    s_precstrike:SetColor( sk_unavailable )
-                end
             end 
 
         local s_slicer = vgui.Create( "DImageButton", skills_frame_slash )
@@ -91,11 +60,10 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_slicer"
                 define_text = "Slicer"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -111,14 +79,8 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "/20" )
 
-                sk_desc1:SetSize( 380, 200 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
 
-                if plskills_a[define_col].equipped < 1 then
-                    s_slicer:SetColor( sk_unavailable )
-                end
             end
 
         local s_dicer = vgui.Create( "DImageButton", skills_frame_slash )
@@ -134,11 +96,10 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_dicer"
                 define_text = "Dicer"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -154,14 +115,8 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "/20" )
 
-                sk_desc1:SetSize( 380, 200 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
 
-                if plskills_a[define_col].equipped < 1 then
-                    s_dicer:SetColor( sk_unavailable )
-                end
             end
         ------------------------
         -- Main skills
@@ -184,12 +139,11 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_precstrike"
                 define_text = "Precision Strike"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 -- ...and use colour function...
                 DefineColour()
                 -- ...then manage the name stuff and use center function which also shows the name.
-                sk_name:AppendText( define_text )
                 DefineText()
                 -- Then realize you must do the same for the description. Fuck me.
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -223,10 +177,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
                 -- Holy shit.
             end
             if plskills_a["s_precstrike"].equipped < 1 then
@@ -246,11 +197,10 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_defmano"
                 define_text = "Defensive Manoeuvre"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -279,10 +229,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
 
             end
             if plskills_a["s_defmano"].equipped < 1 then
@@ -302,13 +249,12 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_firstaid"
                 define_text = "First Aid"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
-                sk_name:SetX( sk_name:GetX() + 3 )
+                --sk_name:SetX( sk_name:GetX() + 3 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Heal target for " )
@@ -340,10 +286,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
             end
             if plskills_a["s_firstaid"].equipped < 1 then
                 s_firstaid:SetColor( sk_unavailable )
@@ -362,15 +305,14 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_broadswing"
                 define_text = "Broad Swing"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
                 -- This is stupid but the functions refuse to work properly and I do NOT have the sanity to fix them.
                 -- If RichTEXT IS SUCH A FUCKING DIVERSE FUNCTION WHY DOES IT NOT HAVE CENTERING
-                sk_name:SetX( sk_name:GetX() - 16 )
+                --sk_name:SetX( sk_name:GetX() - 16 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Slash all targets for " )
@@ -397,10 +339,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
 
             end
             if plskills_a["s_broadswing"].equipped < 1 then
@@ -420,11 +359,10 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_fragmentation"
                 define_text = "Fragmentation"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
@@ -452,10 +390,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
             end
             if plskills_a["s_fragmentation"].equipped < 1 then
                 s_fragmentation:SetColor( sk_unavailable )
@@ -474,13 +409,12 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_medicsupplies"
                 define_text = "Medical Supplies"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
-                sk_name:SetX( sk_name:GetX() - 12 )
+                --sk_name:SetX( sk_name:GetX() - 12 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Heal each player for " )
@@ -503,10 +437,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
             end
             if plskills_a["s_medicsupplies"].equipped < 1 then
                 s_medicsupplies:SetColor( sk_unavailable )
@@ -526,12 +457,11 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_moraleslash"
                 define_text = "Morale Slash"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
-                sk_name:SetX( sk_name:GetX() - 12 )
+                --sk_name:SetX( sk_name:GetX() - 12 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Deal " )
@@ -550,65 +480,48 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
             end
             if plskills_a["s_moraleslash"].equipped < 1 then
                 s_moraleslash:SetColor( sk_unavailable )
             end
 
-        local s_distraction = vgui.Create( "DImageButton", skills_frame_slash )
-            s_distraction:SetSize( 50, 50 )
-            s_distraction:SetPos( 325, 705 + 12 )
-            s_distraction:SetImage( "skills/entourage_s_distraction.png" )
-            s_distraction.DoClick = function()
-                skpic_a = s_distraction:GetImage()
+        local s_vprecision = vgui.Create( "DImageButton", skills_frame_slash )
+            s_vprecision:SetSize( 50, 50 )
+            s_vprecision:SetPos( 325, 705 + 12 )
+            s_vprecision:SetImage( "skills/entourage_s_vprecision.png" )
+            s_vprecision.DoClick = function()
+                skpic_a = s_vprecision:GetImage()
                 skpic:Show()
 
-                aimed_skill2 = s_distraction
+                aimed_skill2 = s_vprecision
 
-                define_col = "s_distraction"
-                define_text = "Distraction"
+                define_col = "s_vprecision"
+                define_text = "Via Precision"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
-                sk_name:SetX( sk_name:GetX() - 12 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                sk_desc1:AppendText( "Pick two targets; the first takes " )
+                sk_desc1:AppendText( "Deal " )
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( 25 + 5 * plskills_a["s_distraction"].Level .."% " )
+                sk_desc1:AppendText( 50 + 5 * plskills_a["s_vprecision"].Level .."% " )
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                sk_desc1:AppendText( "base weapon damage with a base " )
-                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( 25 + 5 * plskills_a["s_distraction"].Level .."% " )
-                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                sk_desc1:AppendText( "chance to get stunned. The other takes " )
-                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( 115 + 5 * plskills_a["s_distraction"].Level .."% " )
-                sk_desc1:InsertColorChange( 255, 255, 255, 255)
-                sk_desc1:AppendText( "base weapon damage.\n")
-                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
-                sk_desc1:AppendText( "4 turn cooldown \n" )
+                sk_desc1:AppendText( "of Celerity and Focus as bonus damage. Gain 50% of Celerity and Focus as Defence.\n\n" )
+                sk_desc1:AppendText( "3 turn cooldown \n" )
                 sk_desc1:AppendText( "25 UP Cost \n" )
                 sk_desc1:AppendText( "Skill level: ")
                 sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
-                sk_desc1:AppendText( plskills_a["s_distraction"].Level )
+                sk_desc1:AppendText( plskills_a["s_vprecision"].Level )
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
             end
-            if plskills_a["s_distraction"].equipped < 1 then
-                s_distraction:SetColor( sk_unavailable )
+            if plskills_a["s_vprecision"].equipped < 1 then
+                s_vprecision:SetColor( sk_unavailable )
             end
 
         local s_acrobatics = vgui.Create( "DImageButton", skills_frame_slash )
@@ -624,12 +537,11 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 define_col = "s_acrobatics"
                 define_text = "Acrobatics"
 
-                DoDescs()
+                DoDescs( skills_frame_slash )
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
-                sk_name:SetX( sk_name:GetX() - 12 )
+                --sk_name:SetX( sk_name:GetX() - 12 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Deal " )
@@ -650,10 +562,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade:Show()
+                FuckMyLife()
             end
             if plskills_a["s_acrobatics"].equipped < 1 then
                 s_acrobatics:SetColor( sk_unavailable )
@@ -1100,7 +1009,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
             skpic:SetSize( 200, 200 )
             skpic:Hide()
         
-        DoDescs()
+        DoDescs( skills_frame_slash )
         
         -- Upgrade button
         skupgrade = vgui.Create( "DButton", skills_frame_slash ) 
@@ -1123,7 +1032,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 end
                 -- sk_name:Remove()
                 -- sk_desc1:Remove()
-                DoDescs()
+                DoDescs( skills_frame_slash )
                 aimed_skill2.DoClick()
                 madechanges = true
             end
@@ -1147,7 +1056,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 plskills = table.Copy( plskills_a )
                 playerstats = table.Copy( playerstats_a )
                 madechanges = false
-                DoDescs()
+                DoDescs( skills_frame_slash )
                 aimed_skill2.DoClick()
             end
         local sk_revert = vgui.Create( "DImageButton", skills_frame_slash )
@@ -1158,7 +1067,7 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 plskills_a = table.Copy( plskills )
                 playerstats_a = table.Copy( playerstats )
                 madechanges = false
-                DoDescs()
+                DoDescs( skills_frame_slash )
                 aimed_skill2.DoClick()
             end
         sk_save:Hide()
