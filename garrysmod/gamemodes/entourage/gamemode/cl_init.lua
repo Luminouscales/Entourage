@@ -36,7 +36,7 @@ function PlaceholderFunction()
 	print( "Debug message. Report this message to the developer." )
 end
 
-function DoDescs()
+function DoDescs( frame )
 	-- Check if skill icon should be transparent or not.
 	if IsValid( aimed_skill2 ) then 
 		if plskills_a[ define_col ].equipped < 1 then
@@ -49,19 +49,28 @@ function DoDescs()
 	if IsValid( sk_name ) then
 		sk_name:Remove()
 		sk_desc1:Remove()
+		starlight:Remove()
 	end
 
 	if IsValid( aimed_skill2 ) then
 		skpic:SetImage( skpic_a )
+		skpic2:SetImage( skpic2_a )
 	end
 
-	sk_name = vgui.Create( "RichText", skills_frame_slash )
-		sk_name:SetVerticalScrollbarEnabled( false )
-		sk_name:Hide()
-		function sk_name:PerformLayout()
-			self:SetFontInternal( "equipment_plname3" )
+	starlight = vgui.Create( "DFrame", frame )
+		starlight:SetPos( 1356, 0 )
+		starlight:SetSize( 384, 400 )
+		starlight:ShowCloseButton( false )
+		starlight.Paint = function( self, w, h )
 		end
-	sk_desc1 = vgui.Create( "RichText", skills_frame_slash )
+
+	sk_name = vgui.Create( "DLabel", starlight )
+		--sk_name:SetFont( "equipment_plname3" )
+		sk_name:SetColor( color_white )
+		sk_name:SetExpensiveShadow( 2, color_black )
+		sk_name:Hide()
+
+	sk_desc1 = vgui.Create( "RichText", frame )
 		sk_desc1:SetVerticalScrollbarEnabled( false )
 		sk_desc1:Hide()
 		function sk_desc1:PerformLayout()
