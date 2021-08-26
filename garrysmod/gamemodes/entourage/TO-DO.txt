@@ -8,15 +8,12 @@
 - Add effects
 - Add music
 - Add delays for battle hud appearing
-- Miner animation delays
 - Code stats menu
 - Code all other skills
 - Code proper skill upgrade order
 - Add healing vanity
 - Add data clearing after battle
 - Make hitsounds louder
-- Add class names
-- Add tips for menus
 - Rework AoE
 - Fix player overview for buffs (elaborate) 
 - Big level up exp lvl up screen glitch
@@ -27,3 +24,5 @@
 - fix overview for large enemies
 - make overview prettier
 - add debug mode
+- implement passive skills
+- add stat offsets; fix vprecision
