@@ -57,12 +57,11 @@ function Prince_Wait()
     SendSkillNote( "Evade" )
 
     -- Add some dodge
-    enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG + 25
+    enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG + 50
 
     hook.Add( "PlayerTurnEnd", "p_evade_remover", function()
         timer.Simple( 3, function()
-            enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG - 25
-            print( "Debug - prince dodge removed. ")
+            enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG - 50
             hook.Remove( "PlayerTurnEnd", "p_evade_remover" )
         end)
     end)
@@ -80,7 +79,7 @@ function Prince_Eviscerate()
 
     timer.Simple( 0.75, function()
         strikepos = Entity(1):EyePos( ) + Vector( 0, 0, -15 )
-        strikevel = Vector( math.random( 1500, -1500 ), 2500, -7500 ) * 1.5
+        strikevel = Vector( math.random( 1500, -1500 ), 3500, -7500 ) * 1.5
         P_Eviscerate()
     end)
 
