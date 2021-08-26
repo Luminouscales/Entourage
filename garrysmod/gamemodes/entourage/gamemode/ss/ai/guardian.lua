@@ -183,19 +183,25 @@ function Sudety()
 end
 
 function GuardianStun()
-    enemy1:ResetSequence( "ragdoll" )
-    enemy1:ResetSequence( "physhit_rl" )
+    local feher = turntarget
+    feher:ResetSequence( "ragdoll" )
+    feher:ResetSequence( "physhit_rl" )
 
     timer.Simple( 2, function()
-        enemy1:ResetSequence( table.Random( antlion_idle ) )
+        if IsValid( feher ) then
+            feher:ResetSequence( table.Random( antlion_idle ) )
+        end
     end)
 end
 
 function GuardianPain()
-    enemy1:ResetSequence( "ragdoll" )
-    enemy1:ResetSequence( "pain" )
+    if IsValid( turntarget ) then
+        local feher = turntarget
+        feher:ResetSequence( "ragdoll" )
+        feher:ResetSequence( "pain" )
 
-    timer.Simple( 1, function()
-        enemy1:ResetSequence( table.Random( antlion_idle ) )
-    end)
+        timer.Simple( 1, function()
+            feher:ResetSequence( table.Random( antlion_idle ) )
+        end)
+    end
 end
