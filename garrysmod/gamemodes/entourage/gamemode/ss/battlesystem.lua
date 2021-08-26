@@ -26,12 +26,13 @@ critmp = 1
 timer_delay = 0
 up_add = 0
 up_remove = 0
-ss_inbattle = 0
+ss_inbattle = false
 global_value = 0
 up_int = 0
 up_open = true
 enemy_choices = 0
 players_alive = true
+enemy_alive = true
 -------------------
 
 -- UP stuff -------------------------------------------------------------------------
@@ -106,6 +107,7 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 					v:SetNWInt( "tbl_deaths", k )
 				end
 				if table.IsEmpty( battle_enemies ) then
+					enemy_alive = false
 					timer.Simple( 2, function()
 						EndBattle()
 					end)
@@ -121,7 +123,7 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 
 		-- If damage to player
 		elseif target:IsPlayer() then
-			-- Brace if possible
+			-- Endure if possible
 			local id = target:UserID()
 			local endurevar2 = pl_stats_tbl[ id ].endurevar
 			if dmg_ov >= target:Health() and endurevar2 > 0 then
@@ -172,10 +174,24 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 end)
 
 function Calculatum()
-	local id = Entity(1):UserID()
-	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2 + pl_stats_tbl[ id ].DDG_OV
-	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5 + pl_stats_tbl[ id ].ACC_OV
+	print(" DONE")
+	for _, v in ipairs( player.GetAll() ) do 
+		local id = v:UserID()
+		local defbonus = ( pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE ) * ( 0.5 * pl_stats_tbl[ id ].vint ) -- via precision
+		pl_stats_tbl[ id ].FCS_TRUE = pl_stats_tbl[ id ].FCS + v:GetNWInt( "offset_fcs" )
+		pl_stats_tbl[ id ].MGT_TRUE = pl_stats_tbl[ id ].MGT + v:GetNWInt( "offset_mgt" )
+		pl_stats_tbl[ id ].AGI_TRUE = pl_stats_tbl[ id ].AGI + v:GetNWInt( "offset_cle" )
+		pl_stats_tbl[ id ].VIT_TRUE = pl_stats_tbl[ id ].VIT + v:GetNWInt( "offset_dfe" )
+		pl_stats_tbl[ id ].DFX_TRUE = pl_stats_tbl[ id ].DFX + v:GetNWInt( "offset_dfx" )
+		pl_stats_tbl[ id ].DEF_TRUE = pl_stats_tbl[ id ].DEF + v:GetNWInt( "offset_def" ) + defbonus
+		pl_stats_tbl[ id ].flatdmg_TRUE = pl_stats_tbl[ id ].flatdmg + v:GetNWInt( "offset_flatdmg" )
+
+
+		pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + v:GetNWInt( "offset_ddg" ) + pl_stats_tbl[ id ].AGI_TRUE * 3 + pl_stats_tbl[ id ].FCS_TRUE * 2 --+ pl_stats_tbl[ id ].DDG_OV
+		pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + v:GetNWInt( "offset_acc" ) + pl_stats_tbl[ id ].AGI_TRUE * 2 + pl_stats_tbl[ id ].FCS_TRUE * 5 --+ pl_stats_tbl[ id ].ACC_OV
+	end
 end
+
 -- True Accuracy and True Dodge calculation for players
 hook.Add( "EnemyTurnEnd", "accresets", Calculatum )
 hook.Add( "PlayerTurnEnd", "accresets2", Calculatum )
@@ -183,7 +199,7 @@ hook.Add( "PlayerTurnEnd", "accresets2", Calculatum )
 --------------------------------------------------------------------------------------
 
 -- This function is used in EVERY battle encounter and so shares functions.
--- However, every function must specify beforeclaw what colours to use. (this is the "doom" variable)
+-- However, every function must specify beforeclaw what colours to use (this is the "doom" variable).
 function EncounterInit( delay )
 
 	-- Start-up variables
@@ -332,15 +348,21 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 	end
 end)
 
+function SetOffset( ply, stat, amount )
+	local stat2 = "offset_".. stat
+	ply:SetNWInt( stat2, ply:GetNWInt( stat2 ) + amount )
+	Calculatum()
+end
+
 net.Receive( "player_brace", function( len, ply )
 	allplayers = net.ReadTable()
 	mgbplayer = ply
 	local braceidentifier = "bracerhook_".. ply:AccountID()
-	pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF + 3 + pl_stats_tbl[ mgbplayer:UserID() ].LVL3
-	pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX + 20
+	SetOffset( ply, "def", 3 + pl_stats_tbl[ ply:UserID() ].LVL3 ) 
+	SetOffset( ply, "dfx", 25 )
 	hook.Add( "EnemyTurnEnd", braceidentifier, function()
-		pl_stats_tbl[ mgbplayer:UserID() ].DEF = pl_stats_tbl[ mgbplayer:UserID() ].DEF - 3 - pl_stats_tbl[ mgbplayer:UserID() ].LVL3
-		pl_stats_tbl[ mgbplayer:UserID() ].DFX = pl_stats_tbl[ mgbplayer:UserID() ].DFX - 20
+		SetOffset( ply, "def", ( 3 + pl_stats_tbl[ ply:UserID() ].LVL3 ) * -1 ) 
+		SetOffset( ply, "dfx", -25 )
 		hook.Remove( "EnemyTurnEnd", braceidentifier )
 	end)
 	timer.Simple( 2, function() 
@@ -460,7 +482,8 @@ function EnemyAttack1()
 end
 
 function playerturn() -- let the player attack
-	if players_alive then
+	if players_alive and enemy_alive then
+		enemy_alive = true
 		net.Start( "player_doturn" )
 		net.Broadcast()
 		turn = turn + 1

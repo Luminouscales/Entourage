@@ -46,13 +46,13 @@ function s_Retract()
                 up_open = false
 
                 RunString( items_table[ wpn ].func )
-
             end
         end)
     end
     timer.Simple( 1.25, function()
         dmg_modifier = 1
         acc_modifier = 1
+        flatdmg = 0
     end)
 end
 
@@ -78,7 +78,7 @@ function DoStun()
     if stunbonus == nil then
 		stunbonus = 0
     end
-	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus + stunbonus_a - pl_stats_tbl[ attacktarget_id ].VIT * 2 - pl_stats_tbl[ attacktarget_id ].DFX * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 40 then 
+	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus + stunbonus_a - pl_stats_tbl[ attacktarget_id ].VIT_TRUE * 2 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 40 then 
 		attacktarget:SetNWInt( "stunturns", attacktarget:GetNWInt( "stunturns" ) + 1 )
 		attacktarget:SetNWInt( "stunturns_a", attacktarget:GetNWInt( "stunturns" ) + 1 )
         if attacktarget:GetNWInt( "stunturns" ) > 1 then
@@ -194,10 +194,10 @@ function s_defmano()
     entourage_AddUP( -15, 25 )
 
     if pltype == "Slash" then
-        dmg_modifier = 0.4 + lvl * 0.1
+        dmg_modifier = 0.4 + skill_lvl * 0.1
         acc_modifier = 1
     else
-        dmg_modifier = 0.25 + lvl * 0.1
+        dmg_modifier = 0.25 + skill_lvl * 0.1
         acc_modifier = 0.75
     end
 
@@ -299,8 +299,7 @@ function s_moraleslash()
     hook.Add( "EntityTakeDamage", "moraleslash_oh", function( target, dmg )
         local playa = dmg:GetAttacker()
         if target:IsNPC() and playa == mgbplayer then
-            print( "hit ")
-            pl_stats_tbl[ mgbplayer:UserID() ].AGI = pl_stats_tbl[ mgbplayer:UserID() ].AGI + 1
+            SetOffset( mgbplayer, "agi", 1 )
             entourage_AddHealth( playa, 5 * skill_lvl + playa:GetMaxHealth() * 0.05 )
             hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
         end
@@ -327,6 +326,7 @@ function s_acrobatics()
 
     s_Retract()
 
+    entourage_AddBuff( mgbplayer, "acrobatics", 1, skill_lvl )
     DoCooldown( mgbplayer, "acrobatics", 5 )
     SendSkillNote( "Acrobatics" )
 end
@@ -355,8 +355,7 @@ function s_performance()
 
     entourage_AddUP( -15, 25 )
 
-    local lvl = skill_lvl
-    local bonus1 = lvl * 0.05
+    local bonus1 = skill_lvl * 0.05
 
     if pltype == "Pierce" then
         dmg_modifier = 0.55 + bonus1
@@ -369,21 +368,69 @@ function s_performance()
     s_Retract()
 
     for _, v in ipairs( player.GetAll() ) do
-        entourage_AddHealth( v, 5 + 5 * lvl )
+        entourage_AddHealth( v, 5 + 5 * skill_lvl )
     end
 
     DoCooldown( mgbplayer, "performance", 2 )
     SendSkillNote( "Performance" )
 end
+
+function s_vprecision()
+    entourage_AddUP( -25, 25 )
+
+    local bonus1 = skill_lvl * 0.05 + 0.5
+    local save = ( pl_stats_tbl[ mgbplayer:UserID() ].AGI_TRUE + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE ) * bonus1
+    local dude = mgplayer
+
+    mgbplayer:SetNWInt( "flatdmg", mgplayer:GetNWInt( "flatdmg") + save )
+
+    if pltype == "Slash" or "Multiple" then
+        dmg_modifier = 1
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.5
+        acc_modifier = 0.75
+    end
+
+    hook.Add( "EnemyTurnEnd", mgplayer:UserID() .."COCKA", function()
+        mgplayer:SetNWInt( mgbplayer:GetNWInt( "flatdmg" ) - save )
+        hook.Remove( "EnemyTurnEnd", dude:UserID() .."COCKA" )
+    end)
+
+    s_Retract()
+
+    DoCooldown( mgbplayer, "vprecision", 3 )
+    SendSkillNote( "Via Precision" )
+end
+
+function s_dedications()
+    entourage_AddUP( -15, 25 )
+
+    for _, v in ipairs( player.GetAll() ) do
+        local id = v:UserID()
+        entourage_AddBuff( v, "dedications", 3, skill_lvl )
+    end
+
+    DoCooldown( mgbplayer, "dedications", 3 )
+    SendSkillNote( "Dedications" )
+end
+
+function s_moderato()
+    entourage_AddUP( -25, 25 )
+
+    for _, v in ipairs( player.GetAll() ) do
+        local id = v:UserID()
+        entourage_AddBuff( v, "moderato", 2, skill_lvl )
+    end
+
+    DoCooldown( mgbplayer, "moderato", 2 )
+    SendSkillNote( "Moderato" )
+end
 -- Enemy-only functions
-
--- Strike positions
-
--------------------
 
 function SlashAttack()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.9, 1.1 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.005 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.005 )
 
     c_miss = 0
     c_type = DMG_SLASH
@@ -394,7 +441,7 @@ end
 
 
 function PierceAttack()
-    attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG ) - ( pl_stats_tbl[ attacktarget_id ].DEF * enemies_table[ current_enemy:GetName() ].DMGP )
+    attackdmg = ( enemies_table[ current_enemy:GetName() ].DMG ) - ( pl_stats_tbl[ attacktarget_id ].DEF_TRUE * enemies_table[ current_enemy:GetName() ].DMGP )
 
     c_miss = 0
     c_type = DMG_SNIPER
@@ -405,7 +452,7 @@ end
 
 function BluntAttack()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.75, 1.25 )
-    attackdmg = ( attackdmg - ( pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015  )
+    attackdmg = ( attackdmg - ( pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 0.9 ) ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.015  )
 
     c_miss = 0
     c_type = DMG_CLUB
@@ -416,7 +463,7 @@ end
 
 function Bash()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.8, 1.2 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.65 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 0.65 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.015 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
@@ -427,7 +474,7 @@ end
 
 function WideStagger()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.4, 0.65 )
-    attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.015 )
+    attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.015 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
@@ -462,7 +509,7 @@ function CalcAttack()
             net.WriteBool( false ) -- heal? true or false
         net.Broadcast()
 
-        if c_type2 == "Blunt" then
+        if c_type2 == "Blunt" and attacktarget:Health() > 0 then
             DoStun()
         end
 
@@ -498,7 +545,7 @@ end
 
 function G_Stampede()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 2, 3 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF * 1.25 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX * 0.02 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 1.25 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.02 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
@@ -508,7 +555,7 @@ function G_Stampede()
 end
 
 function G_Sudety()
-    pl_stats_tbl[ attacktarget_id ].DEF = pl_stats_tbl[ attacktarget_id ].DEF - 7
+    SetOffset( attacktarget, "def", -7 )
 end
 
 function P_Eviscerate()

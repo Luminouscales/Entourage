@@ -15,18 +15,12 @@ function PlayerstatsSave()
     plskills_a = table.Copy( plskills )
     local plskills3 = util.TableToJSON( plskills, true )
     file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskills3 )
-
-    -- THIS HAS TO BE OPTIMIZED. in the future
-    -- SendStats()
-    -------------------------------------------
-	-- LocalPlayer():SetNWInt( "playerdef", playerstats[ "DEF" ] )
-	-- LocalPlayer():SetNWInt( "playerdfx", playerstats[ "DFX" ] )
-	-- LocalPlayer():SetNWFloat( "playerdef2", playerstats[ "DEF" ] )
 end
 
 function SendStats()
 	net.Start( "savetable" )
 		net.WriteTable( playerstats_a )
+        net.WriteInt( plskills_a["s_vprecision"].equipped, 32 )
 	net.SendToServer()
 end
 
@@ -57,7 +51,8 @@ function DoTBLFirstInit()
         ["BLUNT_POINTS"] = 20,
         ["PIERCE_POINTS"] = 20,
         ["endurevar"] = 1,
-        ["actionvar"] = 2
+        ["actionvar"] = 2,
+        ["flatdmg"] = 0
     }
 
     -- Equipment tables
@@ -138,6 +133,30 @@ function DoTBLFirstInit()
         ["s_performance"] = {
             ["Level"] = 0,
             ["equipped"] = 0
+        },
+        ["s_sharpcare"] = {
+            ["Level"] = 0,
+            ["equipped"] = 2
+        },
+        ["s_immaculate"] = {
+            ["Level"] = 0,
+            ["equipped"] = 2
+        },
+        ["s_scrutiny"] = {
+            ["Level"] = 0,
+            ["equipped"] = 2
+        },
+        ["s_vprecision"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_dedications"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_moderato"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
         }
     }
 
@@ -178,7 +197,6 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
     --------------------------------------------------------------------------------------------------
 
     net.Start( "maxhealth" ) -- set max health
-        --net.WriteEntity( LocalPlayer() )
         net.WriteDouble( playerstats["HP1"] )
         net.WriteDouble( playerstats["HP2"] )
     net.SendToServer()
@@ -204,6 +222,5 @@ end)
 net.Receive( "sharetable", function()
 	-- levi; UP purposes
 	levi = net.ReadInt( 32 )
-
     cl_Levitus = Entity( levi )
 end)

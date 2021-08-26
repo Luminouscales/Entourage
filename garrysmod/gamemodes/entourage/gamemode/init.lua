@@ -66,6 +66,7 @@ pl_stats_tbl = {}
 
 net.Receive( "savetable", function( len, ply )
 	local tableph = net.ReadTable()
+	local vprecision = net.ReadInt( 32 )
 	local id = ply:UserID()
 
 	if pl_stats_tbl[id] ~= nil then
@@ -75,18 +76,26 @@ net.Receive( "savetable", function( len, ply )
 	-- calculate some stats prematurely
 	pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + pl_stats_tbl[ id ].AGI * 3 + pl_stats_tbl[ id ].FCS * 2
 	pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + pl_stats_tbl[ id ].AGI * 2 + pl_stats_tbl[ id ].FCS * 5
-	pl_stats_tbl[ id ].DDG_OV = 0
-	pl_stats_tbl[ id ].ACC_OV = 0
+	pl_stats_tbl[ id ].DFX_TRUE = pl_stats_tbl[ id ].DFX
+	pl_stats_tbl[ id ].DEF_TRUE = pl_stats_tbl[ id ].DEF
+	pl_stats_tbl[ id ].FCS_TRUE = pl_stats_tbl[ id ].FCS
+	pl_stats_tbl[ id ].MGT_TRUE = pl_stats_tbl[ id ].MGT
+	pl_stats_tbl[ id ].AGI_TRUE = pl_stats_tbl[ id ].AGI
+	pl_stats_tbl[ id ].VIT_TRUE = pl_stats_tbl[ id ].VIT
+	pl_stats_tbl[ id ].vint = vprecision
+	pl_stats_tbl[ id ].flatdmg_TRUE = pl_stats_tbl[ id ].flatdmg
+	-- pl_stats_tbl[ id ].DDG_OV = 0
+	-- pl_stats_tbl[ id ].ACC_OV = 0
 end)
 
 net.Receive( "maxhealth", function( len, ply )
-	-- player = net.ReadEntity()
+
 	playerhealth = net.ReadDouble()
 	playerhealth2 = net.ReadDouble()
-	--timer.Simple(2, function()
-		ply:SetHealth( playerhealth2 )
-		ply:SetMaxHealth( playerhealth2 )
-	--end)
+
+	ply:SetHealth( playerhealth2 )
+	ply:SetMaxHealth( playerhealth2 )
+
 end)
 
 hook.Add( "PlayerInitialSpawn", "startvar", function() 
@@ -141,9 +150,3 @@ end)
 
 -- Variable for managing uniqueness.
 mathilda = 0
-
-hook.Add( "Tick", "LMAO", function()
-	if turntargetsave ~= nil then
-		--print( turntargetsave )
-	end
-end)

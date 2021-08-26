@@ -1,3 +1,29 @@
+function DefineColour()
+    if skillsbase[ define_col ].tier == 1 then
+        sk_name:InsertColorChange( 255, 255, 255, 255 )
+    end 
+end
+
+function DefineText()
+    sk_name:SetText( define_text )
+    if #define_text > 17 then
+        sk_name:SetFont( "equipment_plname" )
+    else
+        sk_name:SetFont( "equipment_plname3" )
+    end
+    sk_name:SizeToContents()
+    sk_name:SetPos( 0, 270 )
+    sk_name:CenterHorizontal()
+    sk_name:Show()
+end
+
+function FuckMyLife()
+    sk_desc1:SetSize( 380, 380 )
+    sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
+    sk_desc1:Show()
+    skupgrade:Show()
+end
+
 hook.Add( "InitPostEntity", "skillscreeninit", function()
     
     -- This skill frame lets you choose the damage type skillset.
@@ -133,6 +159,8 @@ hook.Add( "InitPostEntity", "skillscreeninit", function()
             draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol, true, true, false, false)
             draw.RoundedBoxEx( 0, 1350, 25, 6, h, Color( 90, 90, 95 ), false, false, false, false)
             draw.SimpleText( "Skills", "equipment_plname4", ( w - 380 ) /2, 11, color_white, a, a )
+            draw.SimpleText( playerstats_a["PIERCE_POINTS"], "equipment_plname3", 1430, h - 35, color_white, b, a )
+            draw.SimpleText( "LVL: ".. playerstats_a["LVL3"], "equipment_plname3", 1610, h - 35, color_white, b, a )
         end
 
         -- Base frame close button.
@@ -157,8 +185,9 @@ hook.Add( "InitPostEntity", "skillscreeninit", function()
             draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 110, 110, 115, 240 ), true, true, true, true)
             draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol, true, true, false, false)
             draw.RoundedBoxEx( 0, 1350, 25, 6, h, Color( 90, 90, 95 ), false, false, false, false)
-
             draw.SimpleText( "Skills", "equipment_plname4", ( w - 380 ) /2, 11, color_white, a, a )
+            draw.SimpleText( playerstats_a["PIERCE_POINTS"], "equipment_plname3", 1430, h - 35, color_white, b, a )
+            draw.SimpleText( "LVL: ".. playerstats_a["LVL3"], "equipment_plname3", 1610, h - 35, color_white, b, a )
         end
 
         -- Base frame close button.

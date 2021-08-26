@@ -533,4 +533,8 @@ hook.Add( "InitPostEntity", "fuck_blunt", function()
                 PlaceholderFunction()
             end
     end)
+    local skpoints = vgui.Create( "DImage", skills_frame_slash )
+    skpoints:SetImage( "menu/entourage_lvlpoint.png")
+    skpoints:SetPos( 1370, skills_frame_slash:GetTall() - 60 )
+    skpoints:SetSize( 50, 50 )
 end)

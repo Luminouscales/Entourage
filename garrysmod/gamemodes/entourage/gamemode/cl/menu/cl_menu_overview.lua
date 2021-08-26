@@ -88,7 +88,7 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 			draw.SimpleText( playerstats_a["AGI"], "equipment_plname2", 545, 380, color_white, b, a )
 			draw.SimpleText( playerstats_a["SDL"], "equipment_plname2", 545, 435, color_white, b, a )
 			draw.SimpleText( playerstats_a["FCS"], "equipment_plname2", 545, 490, color_white, b, a )
-			draw.SimpleText( playerstats_a["DEF"], "equipment_plname2", 545, 545, color_white, b, a )
+			draw.SimpleText( playerstats_a["DEF"] + ( playerstats_a["FCS"] + playerstats_a["AGI"] ) * ( 0.5 * plskills_a["s_vprecision"].equipped ), "equipment_plname2", 545, 545, color_white, b, a )
 			draw.SimpleText( playerstats_a["DFX"], "equipment_plname2", 545, 600, color_white, b, a )
 			draw.SimpleText( playerstats_a["LVL_POINTS"], "equipment_plname2", 545, 670, color_white, b, a )
 		end

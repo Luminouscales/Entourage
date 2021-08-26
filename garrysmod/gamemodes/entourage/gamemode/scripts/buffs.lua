@@ -17,9 +17,11 @@ net.Receive( "getbufftbl", function( len, ply )
     local buffent = net.ReadEntity()
     net.Start( "sendbufftbl" )
         if buffent:IsPlayer() then
+            net.WriteBool( true )
             net.WriteTable( buffs_tbl[ buffent:UserID() ] )
+            net.WriteTable( pl_stats_tbl[ buffent:UserID() ] )
         else
-            PrintTable( buffs_tbl_enemy )
+            net.WriteBool( false )
             net.WriteTable( buffs_tbl_enemy[ buffent:EntIndex() ] )
         end
     net.Send( ply )
@@ -30,7 +32,7 @@ function entourage_AddBuff( target, buff, turns, lvl )
     local sex = 0
     local valid = 0
     local buffid = buffs_id_tbl[ buff ].id
-    print( buffid )
+    local targetid = target:UserID()
 
     -- Proofcheck target
     if isstring( target ) then
@@ -93,35 +95,43 @@ function entourage_AddBuff( target, buff, turns, lvl )
             RunString( "b_".. buff .."()" )
             print( "Buff successfully applied." )
 
-            table.insert( buffs_tbl[ target2:UserID() ], buffid, buff ) -- add buff
+            print( "buffid: ".. buffid)
+            table.insert( buffs_tbl[ targetid ], buffid, { buff, turns2 } ) -- add buff
+            --buffs_tbl[ targetid ].buffid
             local cd = -1
-            hook.Add( "EnemyTurnEnd", "pestremoval", function() -- remove when necessary
+            hook.Add( "EnemyTurnEnd", targetid.. "pestremoval".. buffid, function() -- remove when necessary
                 cd = cd + 1
+                print( cd )
+                print( turns2 )
+                print( cd >= turns2 )
+                buffs_tbl[ targetid ][buffid][2] = turns2 - cd
+
                 if cd >= turns2 then
-                    table.remove( buffs_tbl[ target2:UserID() ], buffid )
+                    --table.remove( buffs_tbl[ targetid ], buffid ) -- fuck you, fuck all of you
+                    buffs_tbl[ targetid ][ buffid ] = nil
+                    hook.Remove( "EnemyTurnEnd", targetid.. "pestremoval".. buffid )
                 end
             end)
         else
             print( "Buff could not be applied: target is not a player.")
         end
-        
     end
-
 end
 
 function b_precstrike()
-    local lvl = lvl2 -- skill_lvl is defined in skillfunctions.lua. otherwise it is defined manually
+    local lvl = lvl2
     local id = target2:UserID()
     local cd = 0
     mathilda = mathilda + 1
-    local mathilda2 = mathilda + 1
+    local mathilda2 = mathilda
+    local turns3 = turns2
 
-    pl_stats_tbl[ id ].FCS = pl_stats_tbl[ id ].FCS + 2 + lvl 
+    SetOffset( target2, "fcs", 2 + lvl )
 
     hook.Add( "EnemyTurnEnd", id .."_b_precstrikehook".. mathilda2, function()
         cd = cd + 1
-        if cd >= turns2 then
-            pl_stats_tbl[ id ].FCS = pl_stats_tbl[ id ].FCS - 2 - lvl
+        if cd >= turns3 then
+            SetOffset( target2, "fcs", ( 2 + lvl ) * -1 )
             hook.Remove( "EnemyTurnEnd", id .."_b_precstrikehook".. mathilda2 )
         end
     end)
@@ -132,18 +142,19 @@ function b_defmano()
     local id = target2:UserID()
     local cd = 0
     mathilda = mathilda + 1
-    local mathilda2 = mathilda + 1
+    local mathilda2 = mathilda
+    local turns3 = turns2
 
     local calc1 = 2 + 3 * lvl + pl_stats_tbl[ id ].DEF / 10
     local calc2 = 20 + 2 * lvl
-    pl_stats_tbl[ id ].DEF = pl_stats_tbl[ id ].DEF + calc1
-    pl_stats_tbl[ id ].DFX = pl_stats_tbl[ id ].DFX + calc2
+    SetOffset( target2, "def", calc1 )
+    SetOffset( target2, "dfx", calc2 )
 
     hook.Add( "EnemyTurnEnd", id .."defmanohook".. mathilda2, function()
         cd = cd + 1
-        if cd >= turns2 then
-            pl_stats_tbl[ id ].DEF = pl_stats_tbl[ id ].DEF - calc1
-            pl_stats_tbl[ id ].DFX = pl_stats_tbl[ id ].DFX - calc2
+        if cd >= turns3 then
+            SetOffset( target2, "def", - calc1 )
+            SetOffset( target2, "dfx", - calc2 )
             hook.Remove( "EnemyTurnEnd", id .."defmanohook".. mathilda2 )
         end
     end)
@@ -154,15 +165,16 @@ function b_firstaid()
     local id = target2:UserID()
     local cd = 0
     mathilda = mathilda + 1
-    local mathilda2 = mathilda + 1
+    local mathilda2 = mathilda
+    local turns3 = turns2
 
-    pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT + lvl
+    SetOffset( target2, "mgt", lvl )
 
     hook.Add( "EnemyTurnEnd", pl_id .."firstaidhook".. mathilda2, function()
         cd = cd + 1
-        if cd >= turns2 then
-            pl_stats_tbl[ mgbplayer:UserID() ].MGT = pl_stats_tbl[ mgbplayer:UserID() ].MGT - lvl
-            hook.Remove( "EnemyTurnEnd", pl_id .."firstaidhook" .. mathilda2)
+        if cd >= turns3 then
+            SetOffset( target2, "mgt", - lvl )
+            hook.Remove( "EnemyTurnEnd", pl_id .."firstaidhook" .. mathilda2 )
         end
     end)
 end
@@ -176,15 +188,65 @@ function b_acrobatics()
     local id = target2:UserID()
     local cd = 0
     mathilda = mathilda + 1
-    local mathilda2 = mathilda + 1
+    local mathilda2 = mathilda
+    local turns3 = turns2
+    local bonus1 = lvl * 5
 
-    pl_stats_tbl[ pl_id ].DDG_OV = pl_stats_tbl[ pl_id ].DDG_OV + 50 + bonus1
+    pl_stats_tbl[ id ].DDG_OV = pl_stats_tbl[ id ].DDG_OV + 45 + bonus1
 
-    hook.Add( "EnemyTurnEnd", pl_id .."acrobaticshook".. mathilda2, function()
+    hook.Add( "EnemyTurnEnd", id .."acrobaticshook".. mathilda2, function()
         cd = cd + 1
-        if cd == 1 then
-            pl_stats_tbl[ pl_id ].DDG_OV = pl_stats_tbl[ pl_id ].DDG_OV - 50 - bonus1
-            hook.Remove( "EnemyTurnEnd", pl_id .."acrobaticshook".. mathilda2 )
+        if cd == turns3 then
+            pl_stats_tbl[ id ].DDG_OV = pl_stats_tbl[ id ].DDG_OV - 45 - bonus1
+            hook.Remove( "EnemyTurnEnd", id .."acrobaticshook".. mathilda2 )
         end
     end) 
+end
+
+function b_dedications()
+    local lvl = lvl2
+    local id = target2:UserID()
+    local cd = 0
+    mathilda = mathilda + 1
+    local mathilda2 = mathilda
+    local turns3 = turns2
+    local bonus1 = lvl * 2
+    local bonus2 = math.Clamp( bonus1 / 10, 1, 1000 )
+    local bonus3 = lvl * 2
+
+
+    SetOffset( target2, "def", 1 + bonus1 + bonus2 )
+    SetOffset( target2, "flatdmg", 1 + ( bonus1 + bonus2 ) * 2 )
+
+    hook.Add( "EnemyTurnEnd", id .."_b_dedicationshook".. mathilda2, function()
+        cd = cd + 1
+        if cd >= turns3 then
+            SetOffset( target2, "def", ( 1 + bonus1 ) * -1 )
+            SetOffset( target2, "flatdmg", ( 1 + bonus1  * 2 ) * -1 )
+            hook.Remove( "EnemyTurnEnd", id .."_b_dedicationshook".. mathilda2 )
+        end
+    end)
+end
+
+function b_moderato()
+    local lvl = lvl2
+    local id = target2:UserID()
+    local cd = 0
+    mathilda = mathilda + 1
+    local mathilda2 = mathilda
+    local turns3 = turns2
+    local bonus1 = lvl * 5
+
+
+    SetOffset( target2, "acc", 20 + bonus1 )
+    SetOffset( target2, "ddg", 10 + bonus1 )
+
+    hook.Add( "EnemyTurnEnd", id .."_b_moderatohook".. mathilda2, function()
+        cd = cd + 1
+        if cd >= turns3 then
+            SetOffset( target2, "acc", ( 20 + bonus1 ) * -1 )
+            SetOffset( target2, "ddg", ( 20 + bonus1 ) * -1 )
+            hook.Remove( "EnemyTurnEnd", id .."_b_moderatohook".. mathilda2 )
+        end
+    end)
 end

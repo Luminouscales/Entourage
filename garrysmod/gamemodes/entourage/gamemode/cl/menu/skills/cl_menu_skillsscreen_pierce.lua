@@ -1,14 +1,129 @@
 local unavailable = Color( 255, 255, 255, 50 )
 local col_tier1 = Color( 255, 255, 255, 255 )
-local skpic_a = "skills/entourage_precstrike.png"
+skpic2_a = "skills/entourage_s_precstrike.png"
 local madechanges = false
+
+function FuckMyLife2()
+    sk_desc1:SetSize( 380, 380 )
+    sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
+    sk_desc1:Show()
+    skupgrade2:Show()
+end
 
 hook.Add( "InitPostEntity", "fuck_pierce", function()
     timer.Simple( 0.5, function()
         -- Passive Skills
-        local s_performance = vgui.Create( "DImageButton", skills_frame_pierce )
-            s_performance:SetSize( 75, 75 )
-            s_performance:SetPos( 50, 167 )
+        local s_sharpcare = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_sharpcare:SetSize( 75, 75 )
+            s_sharpcare:SetPos( 50, 167 )
+            s_sharpcare:SetImage( "skills/entourage_s_slasher.png" )
+            s_sharpcare.DoClick = function()
+                skpic2_a = s_sharpcare:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_sharpcare
+
+                define_col = "s_sharpcare"
+                define_text = "Sharp Care"
+
+                DoDescs( skills_frame_pierce )
+
+                DefineColour()
+
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Increases all pierce damage by " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 5 * plskills_a["s_sharpcare"].Level .."% \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:AppendText( "Passive Skill \n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_sharpcare"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "/20" )
+
+                FuckMyLife2()
+            end
+            
+
+        local s_immaculate = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_immaculate:SetSize( 75, 75 )
+            s_immaculate:SetPos( 50, 435 )
+            s_immaculate:SetImage( "skills/entourage_s_immaculate.png" )
+            s_immaculate.DoClick = function()
+                skpic2_a = s_immaculate:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_immaculate
+
+                define_col = "s_immaculate"
+                define_text = "Immaculate Blades"
+
+                DoDescs( skills_frame_pierce )
+
+                DefineColour()
+
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Increases pierce armour penetration by " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 5 * plskills_a["s_immaculate"].Level .."% \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:AppendText( "Passive Skill \n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_immaculate"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "/20" )
+
+                FuckMyLife2()
+            end
+
+        local s_scrutiny = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_scrutiny:SetSize( 75, 75 )
+            s_scrutiny:SetPos( 50, 705 )
+            s_scrutiny:SetImage( "skills/entourage_s_scrutiny.png" )
+            s_scrutiny.DoClick = function()
+                skpic2_a = s_scrutiny:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_scrutiny
+
+                define_col = "s_scrutiny"
+                define_text = "Vile Scrutiny"
+
+                DoDescs( skills_frame_pierce )
+
+                DefineColour()
+
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Increases critical strike chance by " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 5 * plskills_a["s_scrutiny"].Level .."% \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:AppendText( "Passive Skill \n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_scrutiny"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "/20" )
+
+                FuckMyLife2()
+            end
+        ------------------------
+        -- Main skills
+        --- Row 1
+        local s_performance = vgui.Create( "DImageButton", skills_frame_pierce ) 
+            s_performance:SetSize( 50, 50 )
+            s_performance:SetPos( 225, 167 + 12 )
             s_performance:SetImage( "skills/entourage_s_performance.png" )
             s_performance.DoClick = function()
                 skpic2_a = s_performance:GetImage()
@@ -19,13 +134,11 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
                 define_col = "s_performance"
                 define_text = "Performance"
 
-                DoDescs()
+                DoDescs( skills_frame_pierce )
 
                 DefineColour()
 
-                sk_name:AppendText( define_text )
                 DefineText()
-                sk_name:SetX( sk_name:GetX() + 3 )
 
                 sk_desc1:InsertColorChange( 255, 255, 255, 255 )
                 sk_desc1:AppendText( "Strike all enemies for " )
@@ -50,56 +163,104 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
                 sk_desc1:InsertColorChange( 255, 255, 255, 255)
                 sk_desc1:AppendText( "/10")
 
-                sk_desc1:SetSize( 380, 370 )
-                sk_desc1:SetPos( 1365, sk_name:GetY() + sk_name:GetTall() )
-                sk_desc1:Show()
-                skupgrade2:Show()
+                FuckMyLife2()
             end
             if plskills_a["s_performance"].equipped < 1 then
                 s_performance:SetColor( unavailable )
             end 
 
-        local sk_p_p2 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_p2:SetSize( 75, 75 )
-            sk_p_p2:SetPos( 50, 460 - 25 )
-            sk_p_p2:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_p2.DoClick = function()
-                PlaceholderFunction() 
+        local s_dedications = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_dedications:SetSize( 50, 50 )
+            s_dedications:SetPos( 325, 167 + 12 )
+            s_dedications:SetImage( "skills/entourage_s_dedications.png" )
+            s_dedications.DoClick = function()
+                skpic2_a = s_dedications:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_dedications
+
+                define_col = "s_dedications"
+                define_text = "Dedications"
+
+                DoDescs( skills_frame_pierce )
+                DefineColour()
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Party gains " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 1 + 2 * plskills_a["s_dedications"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " flat damage and " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 1 + 4 * plskills_a["s_dedications"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " Defence for 4 turns; 10% of the bonus is retained permanently.\n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "4 turn cooldown \n" )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( "15 " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "UP cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_dedications"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                FuckMyLife2()
+            end
+            if plskills_a["s_dedications"].equipped < 1 then
+                s_dedications:SetColor( unavailable )
+            end 
+
+        local s_moderato = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_moderato:SetSize( 50, 50 )
+            s_moderato:SetPos( 425, 167 + 12 )
+            s_moderato:SetImage( "skills/entourage_s_moderato.png" )
+            s_moderato.DoClick = function()
+                skpic2_a = s_moderato:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_moderato
+
+                define_col = "s_moderato"
+                define_text = "Moderato"
+
+                DoDescs( skills_frame_pierce )
+                DefineColour()
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Party gains " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 20 + 5 * plskills_a["s_moderato"].Level .."%" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " accuracy and " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 10 + 5 * plskills_a["s_moderato"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " dodge chance for 2 turns. \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "2 turn cooldown \n" )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( "25 " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "UP cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_moderato"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                FuckMyLife2()
+            end
+            if plskills_a["s_moderato"].equipped < 1 then
+                s_moderato:SetColor( unavailable )
             end
 
-        local sk_p_p3 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_p3:SetSize( 75, 75 )
-            sk_p_p3:SetPos( 50, 705 )
-            sk_p_p3:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_p3.DoClick = function()
-                PlaceholderFunction()
-            end
-        ------------------------
-        -- Main skills
-        --- Row 1
-        local sk_p_m1_1 = vgui.Create( "DImageButton", skills_frame_pierce ) 
-            sk_p_m1_1:SetSize( 50, 50 )
-            sk_p_m1_1:SetPos( 225, 167 + 12 )
-            sk_p_m1_1:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m1_1.DoClick = function()
-                PlaceholderFunction()
-            end
-
-        local sk_p_m1_2 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_m1_2:SetSize( 50, 50 )
-            sk_p_m1_2:SetPos( 325, 167 + 12 )
-            sk_p_m1_2:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m1_2.DoClick = function()
-                PlaceholderFunction()
-            end
-
-        local sk_p_m1_3 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_m1_3:SetSize( 50, 50 )
-            sk_p_m1_3:SetPos( 425, 167 + 12 )
-            sk_p_m1_3:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m1_3.DoClick = function()
-                PlaceholderFunction()
-            end
         --- Row 2
         local sk_p_m2_1 = vgui.Create( "DImageButton", skills_frame_pierce )
             sk_p_m2_1:SetSize( 50, 50 )
@@ -585,13 +746,13 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
 
             -- Sidebar
         skpic2 = vgui.Create( "DImage", skills_frame_pierce )
-            skpic2:SetImage( skpic_a )
+            skpic2:SetImage( skpic2_a )
             skpic2:SetPos( skills_frame_pierce:GetWide() - 293, 68 )
             skpic2:SetSize( 200, 200 )
             skpic2:Hide()
         
         -- This function is defined in Slash already
-        DoDescs()
+        DoDescs( skills_frame_pierce )
     
     -- Upgrade button
         skupgrade2 = vgui.Create( "DButton", skills_frame_pierce ) 
@@ -612,7 +773,7 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
             if plskills_a[define_col].equipped ~= 2 then
                 plskills_a[define_col].equipped = 1
             end
-            DoDescs()
+            DoDescs( skills_frame_pierce )
             aimed_skill2.DoClick()
             madechanges = true
         end
@@ -636,7 +797,7 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
             plskills = table.Copy( plskills_a )
             playerstats = table.Copy( playerstats_a )
             madechanges = false
-            DoDescs()
+            DoDescs( skills_frame_pierce )
             aimed_skill2.DoClick()
         end
     local sk_revert = vgui.Create( "DImageButton", skills_frame_pierce )
@@ -647,7 +808,7 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
             plskills_a = table.Copy( plskills )
             playerstats_a = table.Copy( playerstats )
             madechanges = false
-            DoDescs()
+            DoDescs( skills_frame_pierce )
             aimed_skill2.DoClick()
         end
     sk_save:Hide()

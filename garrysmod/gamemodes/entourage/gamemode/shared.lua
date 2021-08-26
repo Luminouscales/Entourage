@@ -5,14 +5,37 @@ GM.Website = "blank"
 
 DeriveGamemode( "sandbox" )
 
---include("scripts/buffs.lua")
-
 -- buff table for properties
 buffs_id_tbl = {
     ["precstrike"] = {
         ["id"] = 1,
         ["icon"] = "hud/lyx_buff_PH.png",
-        ["desc"] = "Player FCS is increased temporarily.\nSource: Precision Strike" 
+        ["desc"] = "Focus is increased.\nSource: Precision Strike" 
+    },
+    ["defmano"] = {
+        ["id"] = 2,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Defensive stats are increased.\nSource: Defensive Manoeuvre" 
+    },
+    ["firstaid"] = {
+        ["id"] = 3,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Might is increased.\nSource: First Aid" 
+    },
+    ["acrobatics"] = {
+        ["id"] = 4,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Dodge is greatly increased.\nSource: Acrobatics" 
+    },
+    ["dedications"] = {
+        ["id"] = 5,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Flat damage and Defence is increased.\nSource: Dedications" 
+    },
+    ["moderato"] = {
+        ["id"] = 6,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Accuracy and dodge chance is increased.\nSource: Moderato" 
     }
 }
 
@@ -180,7 +203,7 @@ items_table = {
         ["BaseAcc"] = 95,
         ["Desc"] = "Conquer the world as nature intended.",
         ["Desc2"] = "-5 Defence, +2 Celerity",
-        ["Desc3"] = "+100% DFE, +25% damage per 1 MGT",
+        ["Desc3"] = "+100% DFE, +75% damage per 1 MGT",
         ["PDEF"] = "-5",
         ["PSDL"] = 0,
         ["PAGI"] = 2,
@@ -199,7 +222,7 @@ items_table = {
         ["dmgtype"] = "Multiple",
         ["BaseAcc"] = 95,
         ["Desc"] = "Knife on a long stick, reinforced with rope. Multi-purpose.",
-       ["Desc2"] = "-1 Celerity, +1 Defence",
+       ["Desc2"] = "-1 Celerity",
         ["Desc3"] = "+75% MGT / 75% CLE, 50% armour pen. / No scaling",
         ["PDEF"] = 0,
         ["PSDL"] = 0,
@@ -409,7 +432,7 @@ skillsbase = {
         ["max"] = 10,
         ["cost"] = 10,
         ["targets"] = 10,
-        ["cd"] = 4
+        ["cd"] = 5
     },
     ["s_distraction"] = {
         ["Name"] = "Distraction",
@@ -429,6 +452,57 @@ skillsbase = {
         ["max"] = 10,
         ["cost"] = 15,
         ["targets"] = 10,
+        ["cd"] = 2
+    },
+    ["s_sharpcare"] = {
+        ["Name"] = "Sharp Care",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 20,
+        ["cost"] = -1
+    },
+    ["s_immaculate"] = {
+        ["Name"] = "Immaculate Blades",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 20,
+        ["cost"] = -1
+    },
+    ["s_scrutiny"] = {
+        ["Name"] = "Vile Scrutiny",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 20,
+        ["cost"] = -1
+    },
+    ["s_vprecision"] = {
+        ["Name"] = "Via Precision",
+        ["Description"] = "Deal a portion of your CLE and FCS as bonus damage.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 25,
+        ["targets"] = 1,
+        ["cd"] = 3
+    },
+    ["s_dedications"] = {
+        ["Name"] = "Dedications",
+        ["Description"] = "Increase party flat damage and defence, plus a permanent bonus.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 15,
+        ["targets"] = 11,
+        ["cd"] = 3
+    },
+    ["s_moderato"] = {
+        ["Name"] = "Moderato",
+        ["Description"] = "Increase party hit chance and evasion.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 25,
+        ["targets"] = 11,
         ["cd"] = 2
     }
 }
