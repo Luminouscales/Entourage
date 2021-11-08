@@ -32,7 +32,7 @@ function DoTBLFirstInit()
         ["VIT"] = 0,
         ["MGT"] = 0,
         ["FA"] = 0.0,
-        ["DDG"] = 15,
+        ["DDG"] = 10,
         ["currentweapon"] = "OldCrowbar",
         ["DEF"] = 5,
         ["HP2"] = 100.0,
@@ -155,6 +155,22 @@ function DoTBLFirstInit()
             ["equipped"] = 0
         },
         ["s_moderato"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_zillionedge"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_tknives"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_qethics"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
+        },
+        ["s_heartcut"] = {
             ["Level"] = 0,
             ["equipped"] = 0
         }

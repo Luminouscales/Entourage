@@ -380,6 +380,9 @@ function LookPos()
     shitpos = shitpos2:GetPos()
     if shitpos2 == LocalPlayer() then
         shitpos = LocalPlayer():GetShootPos() -- + Vector( 0, 0, 20 )
+        fuckpos = { LocalPlayer() }
+    else
+        fuckpos = {}
     end
 end
 
@@ -398,7 +401,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
                 LookPos()
-                local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), { LocalPlayer() } )
+                local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), fuckpos )
                     if rtrace.Entity:Health() > 0 and rtrace.Entity:IsNPC() then
                         cl_s_int = cl_s_int + 1
                         cl_s_targets_tbl[ cl_s_int ] = rtrace.Entity
@@ -472,7 +475,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                 -- otherwise do it normally
                 else
                     LookPos()
-                    local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), { LocalPlayer() } )
+                    local rtrace = util.QuickTrace( shitpos, gui.ScreenToVector(input.GetCursorPos() ) * Vector( 1000, 1000, 1000 ), fuckpos )
                         if rtrace.Entity:Health() > 0 then
                             cl_s_int = cl_s_int + 1
                             print( rtrace.Entity )

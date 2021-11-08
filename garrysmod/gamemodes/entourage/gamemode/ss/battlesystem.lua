@@ -187,8 +187,8 @@ function Calculatum()
 		pl_stats_tbl[ id ].flatdmg_TRUE = pl_stats_tbl[ id ].flatdmg + v:GetNWInt( "offset_flatdmg" )
 
 
-		pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + v:GetNWInt( "offset_ddg" ) + pl_stats_tbl[ id ].AGI_TRUE * 3 + pl_stats_tbl[ id ].FCS_TRUE * 2 --+ pl_stats_tbl[ id ].DDG_OV
-		pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + v:GetNWInt( "offset_acc" ) + pl_stats_tbl[ id ].AGI_TRUE * 2 + pl_stats_tbl[ id ].FCS_TRUE * 5 --+ pl_stats_tbl[ id ].ACC_OV
+		pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + v:GetNWInt( "offset_ddg" ) + pl_stats_tbl[ id ].AGI_TRUE
+		pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + v:GetNWInt( "offset_acc" ) + pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE * 5 --+ pl_stats_tbl[ id ].ACC_OV
 	end
 end
 
@@ -288,6 +288,7 @@ function BattleSetup() -- BATTLE STARTS HERE
 			sexy_int = sexy_int + enemies_table[ v:GetName() ].actionvar
 		end
 		actions = sexy_int
+		Calculatum()
 	end)
 end
 
@@ -513,7 +514,26 @@ end
 function EndGame()
 	-- Death is not a hunter unbeknownst to its prey
 	players_alive = false
-	PrintMessage( HUD_PRINTTALK, "The party has been wiped... " )
+	if math.random( 1, 5 ) == 1 then
+		local feher = table.Random( {
+			"Eradicated",
+			"Obliterated",
+			"Don't give up!",
+			"Not yet!",
+			"Fin",
+			"Stand up!",
+			"The world needs you!",
+			"This can't be it",
+			"There is always another dawn",
+			"Kto wie, stary kolego Katz, czy nie najmądrzej postąpiłeś?",
+			"In honour of your will"
+		} )
+	elseif math.Random( 1, 100 ) == 1 then
+		local feher = "ggwp rep jgl"
+	else
+		local feher = "The party has been wiped"
+	end
+	PrintMessage( HUD_PRINTTALK, feher .."..." )
 	net.Start( "endgame" )
 	net.Broadcast()
 end

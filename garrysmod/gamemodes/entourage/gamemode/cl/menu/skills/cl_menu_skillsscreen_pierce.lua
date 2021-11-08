@@ -262,12 +262,50 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
             end
 
         --- Row 2
-        local sk_p_m2_1 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_m2_1:SetSize( 50, 50 )
-            sk_p_m2_1:SetPos( 225, 460 - 25 + 12 )
-            sk_p_m2_1:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m2_1.DoClick = function()
-                PlaceholderFunction()
+        local s_heartcut = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_heartcut:SetSize( 50, 50 )
+            s_heartcut:SetPos( 225, 460 - 25 + 12 )
+            s_heartcut:SetImage( "skills/entourage_s_heartcut.png" )
+            s_heartcut.DoClick = function()
+                skpic2_a = s_heartcut:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_heartcut
+
+                define_col = "s_heartcut"
+                define_text = "Heartful Cut"
+
+                DoDescs( skills_frame_pierce )
+                DefineColour()
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Party gains " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 20 + 5 * plskills_a["s_heartcut"].Level .."%" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " accuracy and " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 10 + 5 * plskills_a["s_heartcut"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " dodge chance for 2 turns. \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "2 turn cooldown \n" )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( "25 " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "UP cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_heartcut"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                FuckMyLife2()
+            end
+            if plskills_a["s_heartcut"].equipped < 1 then
+                s_heartcut:SetColor( unavailable )
             end
 
         local sk_p_m2_2 = vgui.Create( "DImageButton", skills_frame_pierce )
@@ -286,28 +324,124 @@ hook.Add( "InitPostEntity", "fuck_pierce", function()
                 PlaceholderFunction()
             end
         --- Row 3
-        local sk_p_m3_1 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_m3_1:SetSize( 50, 50 )
-            sk_p_m3_1:SetPos( 225, 705 + 12 )
-            sk_p_m3_1:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m3_1.DoClick = function()
-                PlaceholderFunction()
+        local s_zillionedge = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_zillionedge:SetSize( 50, 50 )
+            s_zillionedge:SetPos( 225, 705 + 12 )
+            s_zillionedge:SetImage( "skills/entourage_s_zillionedge.png" )
+            s_zillionedge.DoClick = function()
+                skpic2_a = s_zillionedge:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_zillionedge
+
+                define_col = "s_zillionedge"
+                define_text = "Zillion Edge"
+
+                DoDescs( skills_frame_pierce )
+                DefineColour()
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Deal " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 50 - 5 * plskills_a["s_zillionedge"].Level .."-".. 150 + 5 * plskills_a["s_zillionedge"].Level .."% ")
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "base weapon damage to one target. \n" )
+                sk_desc1:AppendText( "\n" )
+                sk_desc1:AppendText( "2 turn cooldown \n" )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( "15 " )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "UP cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_zillionedge"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                FuckMyLife2()
+            end
+            if plskills_a["s_zillionedge"].equipped < 1 then
+                s_zillionedge:SetColor( unavailable )
             end
 
-        local sk_p_m3_2 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_m3_2:SetSize( 50, 50 )
-            sk_p_m3_2:SetPos( 325, 705 + 12 )
-            sk_p_m3_2:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m3_2.DoClick = function()
-                PlaceholderFunction()
+        local s_tknives = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_tknives:SetSize( 50, 50 )
+            s_tknives:SetPos( 325, 705 + 12 )
+            s_tknives:SetImage( "skills/entourage_s_tknives.png" )
+            s_tknives.DoClick = function()
+                skpic2_a = s_tknives:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_tknives
+
+                define_col = "s_tknives"
+                define_text = "Throwing Knives"
+
+                DoDescs( skills_frame_pierce )
+                DefineColour()
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Strike a random target 1-6 times for " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 30 + 3 * plskills_a["s_tknives"].Level .."%" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " base weapon damage. Gain " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 7 + 2 * plskills_a["s_tknives"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " dodge chance per each hit for 1 turn. \n\n" )
+                sk_desc1:AppendText( "10 " )
+                sk_desc1:AppendText( "UP cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_tknives"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                FuckMyLife2()
+            end
+            if plskills_a["s_tknives"].equipped < 1 then
+                s_tknives:SetColor( unavailable )
             end
 
-        local sk_p_m3_3 = vgui.Create( "DImageButton", skills_frame_pierce )
-            sk_p_m3_3:SetSize( 50, 50 )
-            sk_p_m3_3:SetPos( 425, 705 + 12 )
-            sk_p_m3_3:SetImage( "skills/entourage_s_blank.png" )
-            sk_p_m3_3.DoClick = function()
-                PlaceholderFunction()
+        local s_qethics = vgui.Create( "DImageButton", skills_frame_pierce )
+            s_qethics:SetSize( 50, 50 )
+            s_qethics:SetPos( 425, 705 + 12 )
+            s_qethics:SetImage( "skills/entourage_s_qethics.png" )
+            s_qethics.DoClick = function()
+                skpic2_a = s_qethics:GetImage()
+                skpic2:Show()
+
+                aimed_skill2 = s_qethics
+
+                define_col = "s_qethics"
+                define_text = "Questionable Ethics"
+
+                DoDescs( skills_frame_pierce )
+                DefineColour()
+                DefineText()
+
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "Heal yourself for 1% - " )
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( 25 + ( 5 * plskills_a["s_qethics"].Level + 5 ) .."%" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( " of your maximum HP.\n\n" )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255 )
+                sk_desc1:AppendText( "20 " )
+                sk_desc1:AppendText( "UP cost \n" )
+                sk_desc1:AppendText( "Skill level: ")
+                sk_desc1:InsertColorChange( plcol.x, plcol.y, plcol.z, 255 )
+                sk_desc1:AppendText( plskills_a["s_qethics"].Level )
+                sk_desc1:InsertColorChange( 255, 255, 255, 255)
+                sk_desc1:AppendText( "/10")
+
+                FuckMyLife2()
+            end
+            if plskills_a["s_qethics"].equipped < 1 then
+                s_qethics:SetColor( unavailable )
             end
         ------------------------
         -- Subclass Skills

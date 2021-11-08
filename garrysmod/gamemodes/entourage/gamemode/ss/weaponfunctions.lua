@@ -1,5 +1,7 @@
 dmg_modifier = 1
 acc_modifier = 1
+critbonus = 0
+critdmg = 0
 
 -- This is for running stuff related to crits.
 function DoCrit()
@@ -73,11 +75,11 @@ function RustyKnife()
 	wp_pierce = 0.25 + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE * 0.02
 
 	if math.random( 1, 100 ) <= pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then
-		if math.random( 1, 100 ) <= 5 + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE * 3 then
-			critmp = 2.5
+		if math.random( 1, 100 ) <= 5 + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE * 3 + critbonus then
+			critmp = 2.5 + critdmg
 			DoCrit()
 		end
-		wpndmg3 = ( ( wpndmg1 + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE + pl_stats_tbl[ mgbplayer:UserID() ].AGI_TRUE ) * critmp ) * dmg_modifier
+		wpndmg3 = ( ( wpndmg1 + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE * 0.75 + pl_stats_tbl[ mgbplayer:UserID() ].AGI_TRUE * 0.75 ) * critmp ) * dmg_modifier
 		DoDamage()
 		critmp = 1
 	else

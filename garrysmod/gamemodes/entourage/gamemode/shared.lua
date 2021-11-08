@@ -36,6 +36,11 @@ buffs_id_tbl = {
         ["id"] = 6,
         ["icon"] = "hud/lyx_buff_PH.png",
         ["desc"] = "Accuracy and dodge chance is increased.\nSource: Moderato" 
+    },
+    ["tknives"] = {
+        ["id"] = 7,
+        ["icon"] = "hud/lyx_buff_PH.png",
+        ["desc"] = "Dodge is increased.\nSource: Throwing Knives" 
     }
 }
 
@@ -101,13 +106,13 @@ enemies_table = {
     ["Frostlion Guardian"] = {
 		["Name"]= "Frostlion Guardian",
 		["Description"] = "This ground-quaking beast roams the lands with a crazed thirst for vengeance.",
-		["DMG"] = 40,
+		["DMG"] = 70,
 		["DMGT"] = "Blunt",
-		["DMGS"] = 50,
+		["DMGS"] = 40,
 		["DEF"] = 0,
 		["DFX"] = 20,
 		["DDG"] = -20,
-		["MISS"] = 30,
+		["MISS"] = 15,
 		["AI"] = "GuardianAI()",
 		["AI2"] = "DefaultDMG()",
 		["LVL"] = 10,
@@ -120,7 +125,7 @@ enemies_table = {
 	},
     ["Frostlion Prince"] = {
 		["Name"] = "Frostlion Prince",
-		["Description"] = "Swift and of sharp senses, the Prince seeks out dazed targets and executes them.",
+		["Description"] = "Swift and of sharp senses, the Prince seeks out dazed targets to eviscerate.",
 		["DMG"] = 10,
 		["DMGT"] = "Pierce",
 		["DMGP"] = 0,
@@ -163,8 +168,8 @@ items_table = {
     ["RustyKnife"] = {
         ["Name"] = "Rusty Knife",
         ["Desc"] = "Only good for thrusting; half-digested.",
-        ["Desc2"] = "+2 Celerity",
-        ["Desc3"] = "+75% CLE, +25% FCS, 25% armour penetration",
+        ["Desc2"] = "+1 Celerity",
+        ["Desc3"] = "+75% CLE, +75% FCS, 25% armour penetration",
         ["dmgtype"] = "Pierce",
         ["BaseAcc"] = 95,
         ["DMG3"] = 4,
@@ -172,7 +177,7 @@ items_table = {
         ["Type"] = "Weapon",
         ["PDEF"] = "0",
        ["PSDL"] = 0,
-        ["PAGI"] = 2,
+        ["PAGI"] = 1,
         ["func"] = "RustyKnife()",
         ["targets"] = 1
     },
@@ -252,10 +257,10 @@ items_table = {
         ["Type"] = "Armour",
         ["Icon"] = "items/entourage_clotharmour.png",
         ["Desc"] = "Standard-issue clothes for scouts.",
-       ["Desc2"] = "+5 Dodge",
+       ["Desc2"] = "",
         ["PDEF"] = 5,
         ["PDFX"] = 0,
-        ["PDG"] = 5,
+        ["PDG"] = 0,
         ["PAGI"] = 0
     },
     ["SlimArmour"] = {
@@ -284,7 +289,7 @@ items_table = {
         ["Name"] = "Precision Armour",
         ["Type"] = "Armour",
         ["Icon"] = "items/entourage_precisionarmour.png",
-        ["Desc"] = "Unique set of protection that covers only vital body parts.",
+        ["Desc"] = "An unique set of protection that covers only vital body parts.",
        ["Desc2"] = "+8 Dodge, +1 CLE",
         ["PDEF"] = 3,
         ["PDFX"] = 14,
@@ -504,5 +509,45 @@ skillsbase = {
         ["cost"] = 25,
         ["targets"] = 11,
         ["cd"] = 2
+    },
+    ["s_zillionedge"] = {
+        ["Name"] = "Zillion Edge",
+        ["Description"] = "Deal very little to very high damage to one target.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 15,
+        ["targets"] = 1,
+        ["cd"] = 2
+    },
+    ["s_tknives"] = {
+        ["Name"] = "Throwing Knives",
+        ["Description"] = "Hit a random target 1-6 times, gain dodge chance for each hit.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 10,
+        ["targets"] = 10,
+        ["cd"] = 2
+    },
+    ["s_qethics"] = {
+        ["Name"] = "Questionable Ethics",
+        ["Description"] = "Heal yourself for a random amount of max HP.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 20,
+        ["targets"] = 11,
+        ["cd"] = 3
+    },
+    ["s_heartcut"] = {
+        ["Name"] = "Heartful Cut",
+        ["Description"] = "Strike a target for less damage but more crit efficiency.",
+        ["tier"] = 1,
+        ["min"] = 1,
+        ["max"] = 10,
+        ["cost"] = 15,
+        ["targets"] = 1,
+        ["cd"] = 3
     }
 }

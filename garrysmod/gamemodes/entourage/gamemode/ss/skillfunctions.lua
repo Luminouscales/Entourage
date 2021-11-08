@@ -33,10 +33,6 @@ end)
 -- Utility
 -- Function for dealing skill damage. Does not support damage decrease by number of targets.
 function s_Retract()
-    local i = 0
-    for k, v in pairs( turntargets ) do
-        i = i + 1
-    end
     for k, v in pairs( turntargets ) do 
         vis_int = vis_int + 0.25
         timer.Simple( vis_int, function()
@@ -53,6 +49,8 @@ function s_Retract()
         dmg_modifier = 1
         acc_modifier = 1
         flatdmg = 0
+        critbonus = 0
+        critdmg = 0
     end)
 end
 
@@ -203,20 +201,20 @@ function s_defmano()
 
     s_Retract()
 
-    entourage_AddBuff( mgbplayer, "defmano", 3, skill_lvl )
+    entourage_AddBuff( mgbplayer, "defmano", 1, skill_lvl )
     DoCooldown( mgbplayer, "defmano", 3 )
     SendSkillNote( "Defensive Manoeuvre" )
 end
 
 function s_firstaid()
-    -- Defensive Manoeuvre
+    -- First Aid
 
     entourage_AddUP( -15, 25 )
 
     local target = turntargets[1]
 
     timer.Simple( 0.5, function()
-        local heal = math.Round( 20 + 10 * skill_lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * skill_lvl ) ), 0 )
+        local heal = math.Round( 10 + 10 * skill_lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * skill_lvl ) ), 0 )
         entourage_AddHealth( target, heal )
     end)
 
@@ -426,6 +424,109 @@ function s_moderato()
     DoCooldown( mgbplayer, "moderato", 2 )
     SendSkillNote( "Moderato" )
 end
+
+function s_zillionedge()
+    entourage_AddUP( -15, 25 )
+
+    -- First, check whether the weapon type is appropriate - if not, deduct damage and accuracy. Define level variables.
+    local bonus1 = skill_lvl * 0.05
+    local bonus2 = math.random( -0.5 - bonus1, 0.5 + bonus1 )
+
+    if pltype == "Pierce" or "Multiple" then
+        dmg_modifier = 1 + bonus2
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.5 + bonus2
+        acc_modifier = 0.75
+    end
+    -- Deal damage and stuffs, leave it to the weapon functions.
+    s_Retract()
+
+    -- Cooldown, buffs, skillnote
+    DoCooldown( mgbplayer, "zillionedge", 2 )
+    SendSkillNote( "Zillion Edge" )
+end
+
+function s_tknives()
+    entourage_AddUP( -10, 25 )
+
+    local bonus1 = skill_lvl * 2
+    local bonus2 = skill_lvl * 0.03
+
+    if pltype == "Pierce" or "Multiple" then
+        dmg_modifier = 0.3 + bonus2
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.05 + bonus2
+        acc_modifier = 0.75
+    end
+    -- Deal damage and stuffs, leave it to the weapon functions.
+    hook.Add( "EntityTakeDamage", "tknives_oh", function( target, dmg )
+        local playa = dmg:GetAttacker()
+        if target:IsNPC() and playa == mgbplayer then
+            entourage_AddBuff( mgbplayer, "tknives", 1, skill_lvl, true )
+        end
+    end)
+    timer.Simple( 4, function()
+        hook.Remove( "EntityTakeDamage", "tknives_oh" )
+    end)
+
+    -- Roll random targets
+    local targets = math.random( 1, 6 )
+    local targetstbl = {}
+    for k, v in ipairs( battle_enemies ) do 
+        targetstbl[k] = v
+    end
+    turntargets = {}
+    for i = 1, targets, 1 do 
+        turntargets[i] = table.Random( targetstbl )
+    end
+    ----------------------
+    s_Retract()
+
+    -- Cooldown, buffs, skillnote
+    DoCooldown( mgbplayer, "tknives", 1 )
+    SendSkillNote( "Throwing Knives" )
+end
+
+function s_qethics()
+    -- Questionable Ethics
+
+    entourage_AddUP( -15, 25 )
+
+    local target = mgbplayer
+
+    timer.Simple( 0.5, function()
+        local heal1 = math.random( 0, target:GetMaxHealth()/100 * 25 + skill_lvl * 5 )
+        entourage_AddHealth( target, math.Round( heal1, 0 ) )
+    end)
+
+    DoCooldown( mgbplayer, "qethics", 3 )
+    SendSkillNote( "Questionable Ethics" )
+end
+
+function s_heartcut()
+    entourage_AddUP( -15, 25 )
+
+    local bonus1 = skill_lvl
+    local bonus2 = math.random( -0.5 - bonus1, 0.5 + bonus1 )
+
+    if pltype == "Pierce" or "Multiple" then
+        dmg_modifier = 0.75
+        acc_modifier = 1
+        critbonus = 25 + bonus1 * 5
+        critdmg = 1 + bonus1 * 0.05
+    else
+        dmg_modifier = 0.36
+        acc_modifier = 0.75
+    end
+    -- Deal damage and stuffs, leave it to the weapon functions.
+    s_Retract()
+
+    -- Cooldown, buffs, skillnote
+    DoCooldown( mgbplayer, "heartcut", 3 )
+    SendSkillNote( "Heartful Cut" )
+end
 -- Enemy-only functions
 
 function SlashAttack()
@@ -463,22 +564,22 @@ end
 
 function Bash()
     attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.8, 1.2 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 0.65 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.015 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 1.35 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.025 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 20
+    c_miss = 25
     stunbonus = 5
     CalcAttack()
 end
 
 function WideStagger()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.4, 0.65 )
-    attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 0.9 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.015 )
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 0.35, 0.55 )
+    attackdmg = (attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 0.85 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.02 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 10
+    c_miss = 15
     stunbonus = 20
     CalcAttack()
 end
@@ -544,12 +645,12 @@ function G_AllyCall()
 end
 
 function G_Stampede()
-    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 2, 3 )
-    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 1.25 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.02 )
+    attackdmg = enemies_table[ current_enemy:GetName() ].DMG * math.Rand( 2.5, 3.5 )
+    attackdmg = ( attackdmg - pl_stats_tbl[ attacktarget_id ].DEF_TRUE * 2.2 ) * ( 1 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.025 )
 
     c_type = DMG_CLUB
     c_type2 = "Blunt"
-    c_miss = 0
+    c_miss = 20
     stunbonus = 50
     CalcAttack()
 end
