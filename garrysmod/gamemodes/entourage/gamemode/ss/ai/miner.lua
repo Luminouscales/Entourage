@@ -1,11 +1,6 @@
 -- This is a script file for Frostlion Miner
 
-
 -- This is the most basic of stunning enemies; pick a random enemy, then hit them for Blunt. Try to stun.
-local skill_table = {
-    "BluntAttack()"
-}
-
 function FrostlionMinerAI()
     attacktarget = table.Random( allplayers )
     attacktarget_id = attacktarget:UserID()
@@ -14,9 +9,9 @@ function FrostlionMinerAI()
     current_enemy:ResetSequenceInfo()	
     current_enemy:SetNPCState( NPC_STATE_SCRIPT )
     current_enemy:ResetSequence( "ragdoll" ) -- Reset the animation
-    current_enemy:ResetSequence( current_enemy:GetNWString( "animstart" ) )
+    current_enemy:ResetSequence( "charge_start" )
     -- Unique attack sound.
-    current_enemy:EmitSound( enemies_table[current_enemy:GetName()].sound_att, 75, 100, 1, CHAN_VOICE )
+    current_enemy:EmitSound( "npc/antlion/attack_double3.wav", 75, 100, 1, CHAN_VOICE )
 
     SendSkillNote( "Blunt Attack" )
     

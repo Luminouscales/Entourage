@@ -3,10 +3,6 @@
 -- The prince appears alongside two miners and doesn't attack until they are dead.
 -- Once a miner stuns a target, the Prince attacks them for very high damage.
 
-sktbl_prince = {
-    "PlaceholderFunction()"
-}
-
 function PrinceAI()
     attacktarget = table.Random( allplayers )
     attacktarget_id = attacktarget:UserID()

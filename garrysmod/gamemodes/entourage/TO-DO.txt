@@ -26,3 +26,5 @@
 - add debug mode
 - implement passive skills
 - add stat offsets; fix vprecision
+- fix tknives
+- fix dfx penetration

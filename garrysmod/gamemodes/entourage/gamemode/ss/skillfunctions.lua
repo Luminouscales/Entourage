@@ -12,7 +12,7 @@ net.Receive( "player_makeskill", function( len, ply )
     skill_lvl = net.ReadInt( 32 )
 
     slash_dmg = net.ReadInt( 32 ) * 0.05 
-    slash_dfx = net.ReadInt( 32 ) * 0.03
+    slash_dfx = net.ReadInt( 32 )
     slash_acc = net.ReadInt( 32 ) * 0.05 
 
     local proceed = net.ReadBool()
@@ -24,7 +24,7 @@ net.Receive( "player_makeskill", function( len, ply )
 
     if proceed then
         hook.Call( "PlayerTurnEnd" )
-        timer.Simple( 2, function()
+        timer.Simple( 2.25, function()
             EnemyAttack()
         end)
     end
@@ -51,14 +51,15 @@ function s_Retract()
         flatdmg = 0
         critbonus = 0
         critdmg = 0
+
     end)
 end
 
 function DoCrit2a()
-	if critbonus_a == nil then
-		critbonus_a = 0
+	if critbonus == nil then
+		critbonus = 0
 	end
-	if math.random( 1, 100 ) <= enemies_table[ current_enemy:GetName() ].DMGC + critbonus_a then
+	if math.random( 1, 100 ) <= enemies_table[ current_enemy:GetName() ].DMGC + critbonus then
 		calc_info:SetDamage( calc_info:GetDamage() * 2.5 )
         DoCrit2()
 		PrintMessage( HUD_PRINTTALK, current_enemy:GetName() .." dealt critical damage!" )
@@ -229,11 +230,11 @@ function s_broadswing()
     entourage_AddUP( -10, 25 )
 
     if pltype == "Slash" then
-        dmg_modifier = 0.40 + skill_lvl * 0.05
-        acc_modifier = 1.1
+        dmg_modifier = 0.65 + skill_lvl * 0.05
+        acc_modifier = 1.25
     else
-        dmg_modifier = 0.1 + skill_lvl * 0.05
-        acc_modifier = 0.6
+        dmg_modifier = 0.30 + skill_lvl * 0.05
+        acc_modifier = 1
     end
 
     s_Retract()
@@ -248,12 +249,14 @@ function s_fragmentation()
     entourage_AddUP( -20, 25 )
 
     if pltype == "Slash" then
-        dmg_modifier = 0.6 + skill_lvl * 0.05
+        dmg_modifier = 0.85 + skill_lvl * 0.05
         acc_modifier = 0.85
     else
-        dmg_modifier = 0.3 + skill_lvl * 0.05
+        dmg_modifier = 0.4 + skill_lvl * 0.05
         acc_modifier = 0.55
     end
+
+    slash_dfx = slash_dfx + ( 10 + skill_lvl * 2 ) * 0.01
 
     s_Retract()
 
@@ -297,7 +300,7 @@ function s_moraleslash()
     hook.Add( "EntityTakeDamage", "moraleslash_oh", function( target, dmg )
         local playa = dmg:GetAttacker()
         if target:IsNPC() and playa == mgbplayer then
-            SetOffset( mgbplayer, "agi", 1 )
+            SetOffset( mgbplayer, "cle", 1 )
             entourage_AddHealth( playa, 5 * skill_lvl + playa:GetMaxHealth() * 0.05 )
             hook.Remove( "EntityTakeDamage", "moraleslash_oh" )
         end
@@ -351,25 +354,25 @@ end
 function s_performance()
     -- Performance
 
-    entourage_AddUP( -15, 25 )
+    entourage_AddUP( -10, 25 )
 
     local bonus1 = skill_lvl * 0.05
 
     if pltype == "Pierce" then
-        dmg_modifier = 0.55 + bonus1
+        dmg_modifier = 0.30 + bonus1
         acc_modifier = 1
     else
-        dmg_modifier = 0.25 + bonus1
+        dmg_modifier = 0.10 + bonus1
         acc_modifier = 0.5
     end
 
     s_Retract()
 
     for _, v in ipairs( player.GetAll() ) do
-        entourage_AddHealth( v, 5 + 5 * skill_lvl )
+        entourage_AddHealth( v, 5 + 5 * skill_lvl + v:GetMaxHealth()/95 )
     end
 
-    DoCooldown( mgbplayer, "performance", 2 )
+    DoCooldown( mgbplayer, "performance", 1 )
     SendSkillNote( "Performance" )
 end
 
@@ -378,9 +381,9 @@ function s_vprecision()
 
     local bonus1 = skill_lvl * 0.05 + 0.5
     local save = ( pl_stats_tbl[ mgbplayer:UserID() ].AGI_TRUE + pl_stats_tbl[ mgbplayer:UserID() ].FCS_TRUE ) * bonus1
-    local dude = mgplayer
+    local dude = mgbplayer
 
-    mgbplayer:SetNWInt( "flatdmg", mgplayer:GetNWInt( "flatdmg") + save )
+    mgbplayer:SetNWInt( "flatdmg", mgbplayer:GetNWInt( "flatdmg") + save )
 
     if pltype == "Slash" or "Multiple" then
         dmg_modifier = 1
@@ -390,8 +393,8 @@ function s_vprecision()
         acc_modifier = 0.75
     end
 
-    hook.Add( "EnemyTurnEnd", mgplayer:UserID() .."COCKA", function()
-        mgplayer:SetNWInt( mgbplayer:GetNWInt( "flatdmg" ) - save )
+    hook.Add( "EnemyTurnEnd", mgbplayer:UserID() .."COCKA", function()
+        mgbplayer:SetNWInt( mgbplayer:GetNWInt( "flatdmg" ) - save )
         hook.Remove( "EnemyTurnEnd", dude:UserID() .."COCKA" )
     end)
 
@@ -411,6 +414,9 @@ function s_dedications()
 
     DoCooldown( mgbplayer, "dedications", 3 )
     SendSkillNote( "Dedications" )
+    timer.Simple( 0.4, function()
+        SendSkillNote( "Party Defence and Damage is increased!" )
+    end)
 end
 
 function s_moderato()
@@ -423,6 +429,9 @@ function s_moderato()
 
     DoCooldown( mgbplayer, "moderato", 2 )
     SendSkillNote( "Moderato" )
+    timer.Simple( 0.4, function()
+        SendSkillNote( "Party Accuracy and Dodge is increased!" )
+    end)
 end
 
 function s_zillionedge()
@@ -485,7 +494,7 @@ function s_tknives()
     s_Retract()
 
     -- Cooldown, buffs, skillnote
-    DoCooldown( mgbplayer, "tknives", 1 )
+    -- DoCooldown( mgbplayer, "tknives", 1 )
     SendSkillNote( "Throwing Knives" )
 end
 
@@ -514,10 +523,10 @@ function s_heartcut()
     if pltype == "Pierce" or "Multiple" then
         dmg_modifier = 0.75
         acc_modifier = 1
-        critbonus = 25 + bonus1 * 5
-        critdmg = 1 + bonus1 * 0.05
+        critbonus = 15 + bonus1 * 5
+        critdmg = 1.10 + bonus1 * 0.05
     else
-        dmg_modifier = 0.36
+        dmg_modifier = 0.35
         acc_modifier = 0.75
     end
     -- Deal damage and stuffs, leave it to the weapon functions.
@@ -526,6 +535,45 @@ function s_heartcut()
     -- Cooldown, buffs, skillnote
     DoCooldown( mgbplayer, "heartcut", 3 )
     SendSkillNote( "Heartful Cut" )
+end
+
+function s_gouge()
+    -- Gouge
+
+    -- UP Cost
+    entourage_AddUP( -20, 25 )
+
+    -- First, check whether the weapon type is appropriate - if not, deduct damage and accuracy. Define level variables.
+    local bonus1 = skill_lvl * 0.05
+
+    if pltype == "Pierce" or "Multiple" then
+        dmg_modifier = 0.5 + bonus1
+        acc_modifier = 1
+    else
+        dmg_modifier = 0.5
+        acc_modifier = 0.75
+    end
+
+    mathilda = mathilda + 1
+    local mathilda2 = mathilda
+    hook.Add( "EntityTakeDamage", mathilda2 .."gouge_oh", function( target, dmg )
+        local playa = dmg:GetAttacker()
+        if target:IsNPC() and playa == mgbplayer then
+            SetOffset( mgbplayer, "ddg", 15 + skill_lvl * 3 )
+            hook.Remove( "EntityTakeDamage", mathilda2 .."gouge_oh" )
+        end
+    end)
+    timer.Simple( 1.25, function()
+        hook.Remove( "EntityTakeDamage", "gouge_oh" )
+    end)
+
+    -- Deal damage and stuffs, leave it to the weapon functions.
+    s_Retract()
+
+    -- Cooldown, buffs, skillnote
+    entourage_AddBuff( mgbplayer, "gouge", 3, skill_lvl )
+    DoCooldown( mgbplayer, "gouge", 3 )
+    SendSkillNote( "Gouge" )
 end
 -- Enemy-only functions
 
@@ -629,14 +677,14 @@ end
 function G_AllyCall()
     if enemy2 == nil then
         enemypos_placeholder = Vector( 60, -234, -982 )
-        SnowtlionScout()
+        SnowtlionKnight( 50 )
         enemy2 = necessity
         timer.Simple( 1.25, function()
             sendIDs()
         end)
     else
         enemypos_placeholder = Vector( -225, -234, -982 )
-        SnowtlionScout()
+        SnowtlionKnight( 50 )
         enemy3 = necessity
         timer.Simple( 1.25, function()
             sendIDs()

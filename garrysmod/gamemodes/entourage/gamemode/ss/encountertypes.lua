@@ -57,27 +57,23 @@ function AntUnborrow( delay )
     end)
 end
 
-function SnowtlionScout()
+function SnowtlionScout( martius )
     necessity = ents.Create( "npc_antlion" ) 
-        -- necessity:SetKeyValue( "spawnflags", SF_NPC_WAIT_FOR_SCRIPT )
 		necessity:SetPos( enemypos_placeholder )
 		necessity:SetAngles( Angle( 0, 90, 0 ) )
 		necessity:SetName( "Frostlion Scout" ) 
         necessity:SetNWString( "nameNW", "Frostlion Scout" ) 
-        --SetKeyValue( "startburrowed", 1 )
 		necessity:Spawn()
         necessity:SetSkin( 4 )
-        health = math.random( 29, 37 )
+        if martius then
+            health = martius
+        else
+            health = math.random( 29, 37 )
+        end
 		necessity:SetMaxHealth( health )
 		necessity:SetHealth( health )
         necessity:SetNWString( "nwhudname", "Frostlion Scout" )
-        necessity:SetNWFloat( "animend", 1.5 )
-        -- Define whether the enemy has an alternate end animation outside of "idle"
-        -- Set 0 for values that are unused.
-        necessity:SetNWString( "animend_a", 0 )
-        necessity:SetNWFloat( "animend_b", 0 )
-        ----------------------------------------------------------------------------
-        necessity:SetNWString( "animstart", "attack1" )
+        
         AntUnborrow(0)
         
 		lives = lives + 1
@@ -132,6 +128,29 @@ function SnowtlionMiner()
         necessity:SetNWFloat( "scaleNW", 1.15 )
         AntUnborrow(0)
 		
+		lives = lives + 1
+        battle_enemies[lives] = necessity
+end
+
+function SnowtlionKnight( martius )
+    necessity = ents.Create( "npc_antlion" ) 
+		necessity:SetPos( enemypos_placeholder )
+		necessity:SetAngles( Angle( 0, 90, 0 ) )
+		necessity:SetName( "Frostlion Knight" ) 
+        necessity:SetNWString( "nameNW", "Frostlion Knight" ) 
+		necessity:Spawn()
+        necessity:SetSkin( 4 )
+        if martius then
+            health = martius
+        else
+            health = math.random( 45, 60 )
+        end
+		necessity:SetMaxHealth( health )
+		necessity:SetHealth( health )
+        necessity:SetNWString( "nwhudname", "Frostlion Knight" )
+        necessity:SetNWString( "animstart", "attack1" )
+        AntUnborrow(0)
+        
 		lives = lives + 1
         battle_enemies[lives] = necessity
 end

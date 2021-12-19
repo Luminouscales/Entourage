@@ -173,6 +173,10 @@ function DoTBLFirstInit()
         ["s_heartcut"] = {
             ["Level"] = 0,
             ["equipped"] = 0
+        },
+        ["s_gouge"] = {
+            ["Level"] = 0,
+            ["equipped"] = 0
         }
     }
 

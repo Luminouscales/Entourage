@@ -312,7 +312,11 @@ end
 
 function uhhVariablesTest()
     net.WriteInt( plskills["s_slasher"].Level, 32)
-    net.WriteInt( plskills["s_slicer"].Level, 32)
+    local pog = 0
+    if items_table[ playerstats_a["currentweapon"] ].DFXPEN then
+        pog = items_table[ playerstats_a["currentweapon"] ].DFXPEN
+    end
+    net.WriteInt( plskills["s_slicer"].Level * 0.03 + pog * 0.01, 32) -- int for dfx pen
     net.WriteInt( plskills["s_dicer"].Level, 32)
 end
 

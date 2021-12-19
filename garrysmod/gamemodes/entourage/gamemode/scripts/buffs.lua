@@ -150,6 +150,30 @@ function entourage_AddBuff( target, buff, turns, lvl, stacking )
     end
 end
 
+-- Template
+function b_xyz()
+    local mathilda2 = mathilda
+    local target3 = target2
+    local lvl3 = lvl2
+    local targetid2 = targetid
+    local stackvar2 = stackvar
+
+    local bonus1 = lvl3 * 5
+
+    SetOffset( target3, "x", 1 )
+
+    if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
+        hook.Add( "EnemyTurnEnd", targetid2 .."_b_xyzhook".. mathilda2, function()
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 6 ] == nil then
+                    SetOffset( target3, "x", - ( 1 ) * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."_b_xyzhook".. mathilda2 )
+                end
+            end)
+        end)
+    end
+end
+
 function b_precstrike( a, b, c, d )
     local mathilda2 = mathilda
     local target3 = target2
@@ -161,10 +185,12 @@ function b_precstrike( a, b, c, d )
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid .."_b_precstrikehook".. mathilda2, function()
-            if buffs_tbl[ targetid ][ 1 ] == nil then
-                SetOffset( target2, "fcs", - ( 2 + lvl2 ) * stackvar2 )
-                hook.Remove( "EnemyTurnEnd", targetid .."_b_precstrikehook".. mathilda2 )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid ][ 1 ] == nil then
+                    SetOffset( target2, "fcs", - ( 2 + lvl2 ) * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid .."_b_precstrikehook".. mathilda2 )
+                end
+            end)
         end)
     end
 end
@@ -183,13 +209,14 @@ function b_defmano()
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid2 .."defmanohook".. mathilda2, function()
-            print( "Trying to remove offset..." )
-            if buffs_tbl[ targetid2 ][ 2 ] == nil then
-                SetOffset( target3, "def", - calc1 * stackvar2 )
-                SetOffset( target3, "dfx", - calc2 * stackvar2 )
-                hook.Remove( "EnemyTurnEnd", targetid2 .."defmanohook".. mathilda2 )
-                print( "Offset successfully removed." )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 2 ] == nil then
+                    SetOffset( target3, "def", - calc1 * stackvar2 )
+                    SetOffset( target3, "dfx", - calc2 * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."defmanohook".. mathilda2 )
+                    print( "Offset successfully removed." )
+                end
+            end)
         end)
     end
 end
@@ -205,10 +232,12 @@ function b_firstaid()
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid2 .."firstaidhook".. mathilda2, function()
-            if buffs_tbl[ targetid2 ][ 3 ] == 0 then
-                SetOffset( target3, "mgt", - lvl3 * stackvar2 )
-                hook.Remove( "EnemyTurnEnd", targetid2 .."firstaidhook" .. mathilda2 )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 3 ] == nil then
+                    SetOffset( target3, "mgt", - lvl3 * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."firstaidhook" .. mathilda2 )
+                end
+            end)
         end)
     end
 end
@@ -230,10 +259,13 @@ function b_acrobatics()
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid2 .."acrobaticshook".. mathilda2, function()
-            if buffs_tbl[ targetid2 ][ 4 ] == 0 then
-                SetOffset( target3, "ddg", - ( 45 + bonus1 ) * stackvar2 )
-                hook.Remove( "EnemyTurnEnd", targetid2 .."acrobaticshook".. mathilda2 )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 4 ] == nil then
+                    print(" yes")
+                    SetOffset( target3, "ddg", - ( 45 + bonus1 ) * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."acrobaticshook".. mathilda2 )
+                end
+            end)
         end)
     end
 end
@@ -254,11 +286,13 @@ function b_dedications()
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid2 .."_b_dedicationshook".. mathilda2, function()
-            if buffs_tbl[ targetid2 ][ 5 ] == 0 then
-                SetOffset( target3, "def", - ( 1 + bonus1 ) * stackvar2 )
-                SetOffset( target3, "flatdmg", - ( 1 + bonus1  * 2 ) * stackvar2 )
-                hook.Remove( "EnemyTurnEnd", targetid2 .."_b_dedicationshook".. mathilda2 )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 5 ] == nil then
+                    SetOffset( target3, "def", - ( 1 + bonus1 ) * stackvar2 )
+                    SetOffset( target3, "flatdmg", - ( 1 + bonus1  * 2 ) * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."_b_dedicationshook".. mathilda2 )
+                end
+            end)
         end)
     end
 end
@@ -277,11 +311,13 @@ function b_moderato()
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid2 .."_b_moderatohook".. mathilda2, function()
-            if buffs_tbl[ targetid2 ][ 6 ] == 0 then
-                SetOffset( target3, "acc", - ( 20 + bonus1 ) * stackvar2 )
-                SetOffset( target3, "ddg", - ( 20 + bonus1 ) * stackvar2 )
-                hook.Remove( "EnemyTurnEnd", targetid2 .."_b_moderatohook".. mathilda2 )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 6 ] == nil then
+                    SetOffset( target3, "acc", - ( 20 + bonus1 ) * stackvar2 )
+                    SetOffset( target3, "ddg", - ( 20 + bonus1 ) * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."_b_moderatohook".. mathilda2 )
+                end
+            end)
         end)
     end
 end
@@ -300,11 +336,35 @@ function b_tknives() -- young dragon prodigy student saviour turned cum slut and
     
     hook.Add( "EnemyTurnEnd", targetid2 .."_b_tkniveshook".. mathilda2, function()
         timer.Simple( 0.1, function()
-            if buffs_tbl[ targetid2 ][ 7 ] == nil then
-                SetOffset( target3, "ddg", - ( 8 + bonus1 ) )
-                hook.Remove( "EnemyTurnEnd", targetid2 .."_b_tkniveshook".. mathilda2 )
-            end
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 7 ] == nil then
+                    SetOffset( target3, "ddg", - ( 8 + bonus1 ) )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."_b_tkniveshook".. mathilda2 )
+                end
+            end)
         end)
     end)
- 
+end
+
+function b_gouge()
+    local mathilda2 = mathilda
+    local target3 = target2
+    local lvl3 = lvl2
+    local targetid2 = targetid
+    local stackvar2 = stackvar
+
+    local bonus1 = lvl3 * 5
+
+    SetOffset( target3, "x", 1 )
+
+    if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
+        hook.Add( "EnemyTurnEnd", targetid2 .."_b_gougehook".. mathilda2, function()
+            timer.Simple( 0.1, function()
+                if buffs_tbl[ targetid2 ][ 6 ] == nil then
+                    SetOffset( target3, "x", - ( 1 ) * stackvar2 )
+                    hook.Remove( "EnemyTurnEnd", targetid2 .."_b_gougehook".. mathilda2 )
+                end
+            end)
+        end)
+    end
 end

@@ -17,6 +17,7 @@ include( "ss/ai/miner.lua")
 include( "ss/ai/scout.lua")
 include( "ss/ai/skinner.lua")
 include( "ss/ai/prince.lua")
+include( "ss/ai/knight.lua")
 
 AddCSLuaFile( "cl/datacontrol_cl.lua" )
 
@@ -84,8 +85,7 @@ net.Receive( "savetable", function( len, ply )
 	pl_stats_tbl[ id ].VIT_TRUE = pl_stats_tbl[ id ].VIT
 	pl_stats_tbl[ id ].vint = vprecision
 	pl_stats_tbl[ id ].flatdmg_TRUE = pl_stats_tbl[ id ].flatdmg
-	-- pl_stats_tbl[ id ].DDG_OV = 0
-	-- pl_stats_tbl[ id ].ACC_OV = 0
+
 end)
 
 net.Receive( "maxhealth", function( len, ply )

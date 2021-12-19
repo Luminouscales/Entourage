@@ -174,7 +174,6 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 end)
 
 function Calculatum()
-	print(" DONE")
 	for _, v in ipairs( player.GetAll() ) do 
 		local id = v:UserID()
 		local defbonus = ( pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE ) * ( 0.5 * pl_stats_tbl[ id ].vint ) -- via precision
@@ -188,7 +187,12 @@ function Calculatum()
 
 
 		pl_stats_tbl[ id ].DDG_TRUE = pl_stats_tbl[ id ].DDG + v:GetNWInt( "offset_ddg" ) + pl_stats_tbl[ id ].AGI_TRUE
-		pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + v:GetNWInt( "offset_acc" ) + pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE * 5 --+ pl_stats_tbl[ id ].ACC_OV
+		pl_stats_tbl[ id ].ACC_TRUE = items_table[ pl_stats_tbl[id].currentweapon ].BaseAcc + v:GetNWInt( "offset_acc" ) + pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE * 5
+
+		if v:GetNWInt( "stunturns_a" ) > 0 then
+			v:SetNWInt( "stunturns_a", v:GetNWInt( "stunturns_a" ) - 1 )
+			print( v:GetNWInt( "stunturns_a" ) )
+		end
 	end
 end
 
@@ -310,7 +314,7 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 	allplayers = net.ReadTable()
 	wpn = net.ReadString()
     slash_dmg = net.ReadInt( 32 ) * 0.05 
-    slash_dfx = net.ReadInt( 32 ) * 0.03
+    slash_dfx = net.ReadInt( 32 )
     slash_acc = net.ReadInt( 32 ) * 0.05 
 	mgbplayer = ply
 	vis_int = 0
@@ -515,7 +519,7 @@ function EndGame()
 	-- Death is not a hunter unbeknownst to its prey
 	players_alive = false
 	if math.random( 1, 5 ) == 1 then
-		local feher = table.Random( {
+		feher = table.Random( {
 			"Eradicated",
 			"Obliterated",
 			"Don't give up!",
@@ -528,10 +532,10 @@ function EndGame()
 			"Kto wie, stary kolego Katz, czy nie najmądrzej postąpiłeś?",
 			"In honour of your will"
 		} )
-	elseif math.Random( 1, 100 ) == 1 then
-		local feher = "ggwp rep jgl"
+	elseif math.random( 1, 100 ) == 1 then
+		feher = "ggwp rep jgl"
 	else
-		local feher = "The party has been wiped"
+		feher = "The party has been wiped"
 	end
 	PrintMessage( HUD_PRINTTALK, feher .."..." )
 	net.Start( "endgame" )
