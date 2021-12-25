@@ -5,6 +5,16 @@ hp_int2 = 0
 skillnote_show = false
 tosia = "no"
 choices = 0 
+graybox = 0
+convboxshow = false
+convboxshow2 = false
+conv_tier = -1
+
+local iconhp = Material( "icon16/heart.png")
+local icondanger = Material( "icon16/exclamation.png")
+local icondead = Material( "icon16/cross.png")
+local iconstunned = Material( "icon16/asterisk_orange.png")
+local iconguarding = Material( "icon16/shield.png")
 
 
 net.Receive( "up_hudshow", function()
@@ -95,6 +105,7 @@ net.Receive( "encounter_intro", function()
 
     local difficulty = net.ReadInt( 32 )
     local delay = net.ReadInt( 32 )
+    local table = net.ReadTable()
 
 	surface.PlaySound( "shink.wav" )
 	surface.PlaySound( "shink.wav" )
@@ -126,6 +137,7 @@ net.Receive( "encounter_intro", function()
 
 	timer.Simple( 4 + delay, function()
 		BattleHud()
+        CreateHealthHud( table )
 	end)
 end)
 
@@ -205,6 +217,154 @@ function LevelUp()
     CheckEXP()
 end
 -------------------------
+
+net.Receive( "sendplconv", function()
+    local conv_tier2 = net.ReadInt( 32 )
+    local id = net.ReadInt( 32 )
+    local phrase = net.ReadString()
+
+    if conv_tier2 > conv_tier then
+
+        convboxshow2 = false
+        timer.Remove( "lx_conv_timer" )
+        lx_conv_text:SetText( "" )
+
+        lx_conv_debug( Entity( id ), phrase, 0.05 )
+        conv_tier = conv_tier2
+    end
+end)
+
+function lx_conv_debug( unit, string, delay )
+
+    if convboxshow2 == false then
+
+        -- Model & name management
+        lx_conv_avic:SetModel( unit:GetModel() )
+        if unit:IsPlayer() then
+            function lx_conv_avic.Entity:GetPlayerColor() return LocalPlayer():GetPlayerColor() end
+        else
+            function lx_conv_avic.Entity:GetColor() return color_white end
+        end
+        ---
+
+        lx_conv_frame:Show()
+
+        local var = 0 
+        if delay == nil then
+            local delay = 0.05
+        end
+
+        sus = SysTime()
+        convboxshow = true
+        convboxshow2 = true
+
+        timer.Create( "lx_conv_timer", delay, #string, function()
+            if convboxshow then
+                var = var + 1
+
+                lx_conv_text:SetText( "" )
+                lx_conv_text:InsertColorChange( 255, 255, 255, 255 )
+                lx_conv_text:AppendText( string.sub( string, 1, var ) )
+                print( lx_conv_text:GetWide() )
+                if var > 25 then
+                    lx_conv_text:CenterVertical( 0.525 )
+                else
+                    lx_conv_text:CenterVertical( 0.555 )
+                end
+                if string.byte( string, var, var ) ~= 32 then
+                    surface.PlaySound( "yuumi.wav" )
+                end
+            end
+
+        end)
+        timer.Simple( delay * #string + 2, function()
+            lx_conv_text:SetText( "" )
+            sus = SysTime()
+            convboxshow = false
+            timer.Simple( 0.75, function()
+                convboxshow2 = false
+                conv_tier = -1
+                lx_conv_frame:Hide()
+            end)
+        end)
+    end
+end
+
+function CreateHealthHud( table )
+    for k, v in pairs( table ) do
+        local bonus = k * 100 - 100
+        local face = vgui.Create( "DModelPanel" )
+		
+        face:SetSize( 60, 60 )
+            face:SetPos( 10, 225 + bonus )
+            face:SetMouseInputEnabled( false )
+            face:SetAnimated( false )
+        
+            function face:LayoutEntity( ent ) return end
+
+            face:SetModel( v:GetModel() )
+            local headpos = face.Entity:GetBonePosition(face.Entity:LookupBone("ValveBiped.Bip01_Head1"))
+            face:SetLookAt(headpos)
+            function face.Entity:GetPlayerColor() return v:GetPlayerColor() end
+            face:SetCamPos(headpos-Vector( -5, 13, 0 ) )
+        
+        hook.Add( "PostRenderVGUI", "yuumi_cl".. k, function()
+            local plhealth = v:Health()
+            local displayhealth = 0
+            local offset = 0
+
+            if plhealth > 0 then
+                displayhealth = plhealth / v:GetMaxHealth() + 0.01
+            end
+        
+            -- Health bar (form)
+            surface.SetDrawColor( Color( 50, 120, 60 ) )
+            surface.DrawRect( 65, 275 + bonus, 80, 10 )
+            -- ditto (fill)
+            surface.SetDrawColor( Color( 55, 230, 80 ) )
+            surface.DrawRect( 65, 275 + bonus, 80 * displayhealth, 10 )
+            -- Icons
+            surface.SetDrawColor( Color( 255, 255, 255 ) )
+            surface.SetMaterial( iconhp )
+            surface.DrawTexturedRect( 150, 275 + bonus, 10, 10 )
+            -- Name
+            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 19, 267 + bonus, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT )
+            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 19, 265 + bonus, color_white, TEXT_ALIGN_LEFT )
+        
+            if plhealth > 0 and plhealth <= v:GetMaxHealth() / 4 then
+                surface.SetMaterial( icondanger )
+                surface.DrawTexturedRect( 65, 260 + bonus, 10, 10 )
+                offset = offset + 15
+        
+                face:SetColor( Color( 255, 255, 255, 255 ) )
+            elseif plhealth <= 0 then
+                surface.SetDrawColor( Color( 100, 100, 100 ) )
+                surface.SetMaterial( icondead )
+                surface.DrawTexturedRect( 65, 260 + bonus, 10, 10 )
+                offset = offset + 15
+        
+                face:SetColor( Color( 255, 255, 255, 200 ) )
+            else
+                face:SetColor( Color( 255, 255, 255, 255 ) )
+            end
+
+            if v:GetNWInt( "stunturns" ) > 0 then
+                surface.SetMaterial( iconstunned )
+                surface.DrawTexturedRect( 65 + offset, 260 + bonus, 10, 10 )
+
+                offset = offset + 15
+            end
+            
+            if v:GetNWBool( "guarding" ) then
+                surface.SetMaterial( iconguarding )
+                surface.DrawTexturedRect( 65 + offset, 260 + bonus, 10, 10 )
+
+                offset = offset + 15
+            end
+
+        end)
+    end
+end
 
 function BattleHud()
 	bhud_frame:Show() -- this turns into clickframe then into a basic attack function
@@ -303,8 +463,9 @@ function BattleHud()
         hook.Add( "HUDPaint", "skillname_test", function()
             if skillnote_show then
                 local all_width = string.len( skillnote ) * 12.3 + 50
-                draw.RoundedBoxEx( 14, ScrW()/2 - all_width / 2, 250, all_width, 32, Color( 60, 60, 60, Lerp( ( SysTime() - show_x ) * 10, 0, 240 ) ), true, true, true, true )
-                draw.SimpleText( skillnote, "equipment_plname2", ScrW()/2, 266, Color( 255, 255, 255, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                -- draw.RoundedBoxEx( 14, ScrW()/2 - all_width / 2, 250, all_width + 15, 45, Color( 200, 0, 0, Lerp( ( SysTime() - show_x ) * 10, 0, 240 ) ), true, true, true, true )
+                draw.RoundedBoxEx( 8, ScrW()/2 - all_width / 2, 250, all_width, 32, Color( 0, 0, 0, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), true, true, true, true )
+                draw.SimpleText( skillnote, "equipment_plname2", ScrW()/2, 266, Color( skillcolor.r, skillcolor.g, skillcolor.b, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             end
         end)
 	end)
@@ -743,7 +904,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         -- Button to show skills frame
         local bhud_skills_button = vgui.Create( "DButton", bhud_frame )
             bhud_skills_button:SetSize( 150, 50 )
-            bhud_skills_button:SetPos( 0, 100 )
+            bhud_skills_button:SetPos( 0, 175 )
             bhud_skills_button.Paint = function( self, w, h )
                 draw.RoundedBoxEx( 6, 0, 0, w, h, Color( 50, 50, 50 ), false, true, false, true )
             end
@@ -1121,6 +1282,10 @@ end
 -- Skill note management
 net.Receive( "sendskillnote", function()
     skillnote = net.ReadString()
+    skillcolor = nil
+    skillcolor = net.ReadColor( false )
+    print( skillcolor )
+    print( IsColor( skillcolor ) )
     SkillNoteCL( skillnote )
 end)
 

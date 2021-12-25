@@ -18,6 +18,7 @@ util.AddNetworkString( "DISPLAY_PAIN" )
 util.AddNetworkString( "givemereverie" )
 util.AddNetworkString( "fuckmylife" )
 util.AddNetworkString( "endgame" )
+util.AddNetworkString( "sendplconv" )
 
 -- set variables
 lives = 0
@@ -33,8 +34,21 @@ up_open = true
 enemy_choices = 0
 players_alive = true
 enemy_alive = true
+fox_override = 0
 -------------------
 
+function SendDialogue( tier, ent, table, override )
+	net.Start( "sendplconv" )
+		net.WriteInt( tier, 32 )
+		net.WriteInt( ent:EntIndex(), 32 )
+		if override then
+			net.WriteString( table )
+		else
+			local pog = pl_conv_tbl[ ent:UserID() ][table]
+			net.WriteString( pog[ math.random( 1, #pog ) ] )
+		end
+	net.Broadcast()
+end
 -- UP stuff -------------------------------------------------------------------------
 
 -- UP function.
@@ -65,16 +79,23 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 	-- Make sure it doesn't somehow run when outside of battle.
 	if ss_inbattle then 
 		local dmg_ov = dmg:GetDamage()
+		local dmg_attacker = dmg:GetAttacker()
 		-- If a player dealt damage TO NPC
-		if dmg:GetAttacker():IsPlayer() and target:IsNPC() then
-			entourage_AddUP( math.Clamp( dmg:GetDamage() / target:GetMaxHealth() * 30, 1, 25 ), 25 )
+		if dmg_attacker:IsPlayer() and target:IsNPC() then
+			local portion = dmg_ov / target:GetMaxHealth()
+			entourage_AddUP( math.Clamp( portion * 30, 1, 25 ), 25 )
 			-- This function manages damage resistance for enemies like the Guardian. It sucks, I know, but it has to be done.
 			if target:GetClass() == "npc_antlionguard" then
 				-- MODS
 				dmg_ov = math.floor( dmg_ov * 0.75 )
 			end
 			---------------------------------------------------------
-			PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." dealt ".. dmg_ov .." ".. c_type2 .." damage to ".. target:GetName() .."!" )
+			PrintMessage( HUD_PRINTTALK, dmg_attacker:GetName() .." dealt ".. dmg_ov .." ".. c_type2 .." damage to ".. target:GetName() .."!" )
+
+			if math.random( 0, 100 ) + portion * 150 + fox_override >= 100 and dmg_ov < target:Health() then
+				SendDialogue( 0, dmg_attacker, "plconv_dmg" )
+			end
+
 			-- If fatal
 			if dmg_ov >= target:Health() and target:Health() > 0 then
 				-- Ugly, yes, but necessary. 
@@ -89,7 +110,7 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 				-- print( target:GetNWInt( "tbl_deaths" ) )
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
-				PrintMessage( HUD_PRINTTALK, dmg:GetAttacker():GetName() .." defeated ".. target:GetName() .."!" )
+				PrintMessage( HUD_PRINTTALK, dmg_attacker:GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				lives = lives - 1
 
@@ -130,6 +151,12 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 				dmg:SetDamage( math.Clamp( dmg:GetDamage(), 0, target:Health() - 1 ) )
 				pl_stats_tbl[ id ].endurevar = math.Clamp( endurevar2 - 1, 0, 100 )
 				PrintMessage( HUD_PRINTTALK, target:GetName() .." endured a fatal blow!" )
+
+				SendDialogue( 0, target, "plconv_endure" )
+			elseif dmg_ov >= target:GetMaxHealth() * 0.5 then
+				SendDialogue( 0, target, "plconv_hit_h" )
+			elseif math.random( 1, 4 ) == 1 then
+				SendDialogue( 0, target, "plconv_hit_n" )
 			end
 		end
 	end
@@ -171,6 +198,8 @@ hook.Add( "PlayerDeath", "playerdeath_hook", function( victim, inflictor, attack
 			EndGame()
 		end)	
 	end
+
+	SendDialogue( 1, victim, "plconv_die" )
 end)
 
 function Calculatum()
@@ -245,6 +274,11 @@ function EncounterInit( delay )
 	net.Start( "encounter_intro" ) -- Send the go-ahead to the clients
 		net.WriteInt( stakes, 32 ) -- 1 for generic 2 for boss
 		net.WriteInt( delay, 32 )
+		local table = {}
+		for k, v in ipairs( player.GetAll() ) do
+			table[k] = v
+		end
+		net.WriteTable( table )
 	net.Broadcast()
 
 	hook.Remove( "Tick", "encounter_hook" )
@@ -269,15 +303,15 @@ end
 
 function EncounterRun1()
 	doom = color_white
-			stakes = 1
-			-- this is where everything ubiquitous happens
-			EncounterInit( 0 )
-			-----------------------
-	
-			timer.Simple( 3, function()
-				EncounterAntlion( zone1_1 )
-				BattleSetup() 
-			end)
+	stakes = 1
+	-- this is where everything ubiquitous happens
+	EncounterInit( 0 )
+	-----------------------
+
+	timer.Simple( 3, function()
+		EncounterAntlion( zone1_1 )
+		BattleSetup() 
+	end)
 end
 
 function BattleSetup() -- BATTLE STARTS HERE
@@ -365,9 +399,15 @@ net.Receive( "player_brace", function( len, ply )
 	local braceidentifier = "bracerhook_".. ply:AccountID()
 	SetOffset( ply, "def", 3 + pl_stats_tbl[ ply:UserID() ].LVL3 ) 
 	SetOffset( ply, "dfx", 25 )
+
+	ply:SetNWBool( "guarding", true )
+
 	hook.Add( "EnemyTurnEnd", braceidentifier, function()
 		SetOffset( ply, "def", ( 3 + pl_stats_tbl[ ply:UserID() ].LVL3 ) * -1 ) 
 		SetOffset( ply, "dfx", -25 )
+
+		ply:SetNWBool( "guarding", false )
+
 		hook.Remove( "EnemyTurnEnd", braceidentifier )
 	end)
 	timer.Simple( 2, function() 
@@ -558,9 +598,15 @@ net.Receive( "player_removestunturns", function( len, ply )
 end)
 
 -- This manages attack names that you see on the screen
-function SendSkillNote( skillnote )
+function SendSkillNote( skillnote, color )
+	print( color )
+	print( IsColor( color ) )
 	net.Start( "sendskillnote" )
 		net.WriteString( skillnote )
+		if IsColor( color ) == false then
+			color = Color( 255, 255, 255 )
+		end
+		net.WriteColor( color, false )
 	net.Broadcast()
 end
 

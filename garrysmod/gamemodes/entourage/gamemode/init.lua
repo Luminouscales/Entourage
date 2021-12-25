@@ -62,6 +62,7 @@ function GM:PlayerDeathSound() return true end -- i am a filthy thief!
 function GM:PlayerDeathThink( ply )	return false end
 
 pl_stats_tbl = {}
+pl_conv_tbl = {}
 
 -- Receivers
 
@@ -86,6 +87,8 @@ net.Receive( "savetable", function( len, ply )
 	pl_stats_tbl[ id ].vint = vprecision
 	pl_stats_tbl[ id ].flatdmg_TRUE = pl_stats_tbl[ id ].flatdmg
 
+	local tableconv = net.ReadTable()
+	pl_conv_tbl[ id ] = tableconv
 end)
 
 net.Receive( "maxhealth", function( len, ply )

@@ -21,6 +21,8 @@ function SendStats()
 	net.Start( "savetable" )
 		net.WriteTable( playerstats_a )
         net.WriteInt( plskills_a["s_vprecision"].equipped, 32 )
+        -- Dialogue tables
+        net.WriteTable( plconv2 )
 	net.SendToServer()
 end
 
@@ -180,6 +182,53 @@ function DoTBLFirstInit()
         }
     }
 
+    plconvbase = 
+    {   ["plconv_dmg"] = {
+            "Begone!",
+            "Out of my sight!",
+            "Fall before me!",
+            "Out of my way!",
+            "You're nothing!",
+            "Is that all you've got!?"
+        },
+        ["plconv_hit_n"] = {
+            "Tch.",
+            "Heh.",
+            "Try harder.",
+            "Is that all you've got?",
+            "Barely."
+        },
+        ["plconv_hit_h"] = {
+            "Try harder!",
+            "This is nothing!",
+            "Ahaha!",
+            "Ha! Good one!",
+            "I've had worse!"
+        },
+        ["plconv_endure"] = {
+            "I shall stand!",
+            "I won't falter!",
+            "For glory!",
+            "No!",
+            "You can't break me!",
+            "Not yet!",
+            "I never die!"
+        },
+        ["plconv_die"] = {
+            "With... honour...",
+            "I never... die...",
+            "I... never...",
+            "Tell them I...",
+            "Only I get to..."
+        },
+        ["plconv_dodge"] = {
+            "Ha.",
+            "There.",
+            "Easy.",
+            "I read you.",
+            "Ha; focus."
+        } 
+    }
 end
 
 hook.Add( "InitPostEntity", "datacontrolinit", function()
@@ -203,6 +252,9 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskillsbase )
         plskills = table.Copy( plskillsbase )
         plskills_a = table.Copy( plskills )
+        local plconvbase2 = util.TableToJSON( plconvbase, true )
+        file.Write( "entourage/game/".. gameid .."/".. playerid .."/dialogue.txt", plconvbase2 )
+        plconv2 = plconvbase
     else -- if the save isn't new, compile data to tables
         local playerstats2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/stats.txt", "DATA" ) 
         playerstats = util.JSONToTable( playerstats2 )
@@ -213,6 +265,8 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         plskills2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", "DATA" )
         plskills = util.JSONToTable( plskills2 )
         plskills_a = table.Copy( plskills )
+        local plconv = file.Read( "entourage/game/".. gameid .."/".. playerid .."/dialogue.txt", "DATA" )
+        plconv2 = util.JSONToTable( plconv )
     end
     --------------------------------------------------------------------------------------------------
 

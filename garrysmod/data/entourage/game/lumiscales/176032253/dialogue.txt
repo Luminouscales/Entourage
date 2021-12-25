@@ -1,0 +1,47 @@
+{
+	"plconv_endure": [
+		"I shall stand!",
+		"I won't falter!",
+		"For glory!",
+		"No!",
+		"You can't break me!",
+		"Not yet!"
+	],
+	"plconv_hit_h": [
+		"Try harder!",
+		"This is nothing!",
+		"Ahaha!",
+		"Ha! Good one!",
+		"I've had worse!"
+	],
+	"plconv_dodge": [
+		"Ha.",
+		"There.",
+		"Easy.",
+		"I read you.",
+		"Ha; focus.",
+		"Pay attention!"
+	],
+	"plconv_hit_n": [
+		"Tch.",
+		"Heh.",
+		"Try harder.",
+		"Is that all you've got?",
+		"Barely."
+	],
+	"plconv_die": [
+		"With… honour…",
+		"I never… die…",
+		"… never…",
+		"Tell them I…",
+		"Only I get to…"
+	],
+	"plconv_dmg": [
+		"Begone!",
+		"Out of my sight!",
+		"Fall before me!",
+		"Out of my way!",
+		"You're nothing!",
+		"Is that all you've got!?"
+	]
+}

@@ -118,7 +118,7 @@ function Guardian_AllyCall()
 end
 
 function BattleCry()
-    SendSkillNote( "Battle Cry" )
+    SendSkillNote( "Battle Cry", Color( 255, 0, 0 ) )
 
     enemy1:ResetSequence( "ragdoll" )
     enemy1:ResetSequence( "roar" )
@@ -135,7 +135,7 @@ function BattleCry()
 end
 
 function Stampede()
-    SendSkillNote( "Stampede" )
+    SendSkillNote( "Stampede", Color( 255, 0, 0 ) )
 
     enemy1:ResetSequence( "ragdoll" )
     enemy1:ResetSequence( "charge_startfast" )
