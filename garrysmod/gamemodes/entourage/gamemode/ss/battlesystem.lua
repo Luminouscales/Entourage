@@ -95,7 +95,6 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			if math.random( 0, 100 ) + portion * 150 + fox_override >= 100 and dmg_ov < target:Health() then
 				SendDialogue( 0, dmg_attacker, "plconv_dmg" )
 			end
-
 			-- If fatal
 			if dmg_ov >= target:Health() and target:Health() > 0 then
 				-- Ugly, yes, but necessary. 

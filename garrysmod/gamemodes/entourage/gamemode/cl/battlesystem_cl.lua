@@ -296,7 +296,7 @@ function CreateHealthHud( table )
         local face = vgui.Create( "DModelPanel" )
 		
         face:SetSize( 60, 60 )
-            face:SetPos( 10, 225 + bonus )
+            face:SetPos( 0, 225 + bonus )
             face:SetMouseInputEnabled( false )
             face:SetAnimated( false )
         
@@ -319,28 +319,28 @@ function CreateHealthHud( table )
         
             -- Health bar (form)
             surface.SetDrawColor( Color( 50, 120, 60 ) )
-            surface.DrawRect( 65, 275 + bonus, 80, 10 )
+            surface.DrawRect( 55, 275 + bonus, 80, 10 )
             -- ditto (fill)
             surface.SetDrawColor( Color( 55, 230, 80 ) )
-            surface.DrawRect( 65, 275 + bonus, 80 * displayhealth, 10 )
+            surface.DrawRect( 55, 275 + bonus, 80 * displayhealth, 10 )
             -- Icons
             surface.SetDrawColor( Color( 255, 255, 255 ) )
             surface.SetMaterial( iconhp )
-            surface.DrawTexturedRect( 150, 275 + bonus, 10, 10 )
+            surface.DrawTexturedRect( 140, 275 + bonus, 10, 10 )
             -- Name
-            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 19, 267 + bonus, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT )
-            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 19, 265 + bonus, color_white, TEXT_ALIGN_LEFT )
+            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 9, 267 + bonus, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT )
+            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 9, 265 + bonus, color_white, TEXT_ALIGN_LEFT )
         
             if plhealth > 0 and plhealth <= v:GetMaxHealth() / 4 then
                 surface.SetMaterial( icondanger )
-                surface.DrawTexturedRect( 65, 260 + bonus, 10, 10 )
+                surface.DrawTexturedRect( 55, 260 + bonus, 10, 10 )
                 offset = offset + 15
         
                 face:SetColor( Color( 255, 255, 255, 255 ) )
             elseif plhealth <= 0 then
                 surface.SetDrawColor( Color( 100, 100, 100 ) )
                 surface.SetMaterial( icondead )
-                surface.DrawTexturedRect( 65, 260 + bonus, 10, 10 )
+                surface.DrawTexturedRect( 55, 260 + bonus, 10, 10 )
                 offset = offset + 15
         
                 face:SetColor( Color( 255, 255, 255, 200 ) )
@@ -350,14 +350,14 @@ function CreateHealthHud( table )
 
             if v:GetNWInt( "stunturns" ) > 0 then
                 surface.SetMaterial( iconstunned )
-                surface.DrawTexturedRect( 65 + offset, 260 + bonus, 10, 10 )
+                surface.DrawTexturedRect( 55 + offset, 260 + bonus, 10, 10 )
 
                 offset = offset + 15
             end
             
             if v:GetNWBool( "guarding" ) then
                 surface.SetMaterial( iconguarding )
-                surface.DrawTexturedRect( 65 + offset, 260 + bonus, 10, 10 )
+                surface.DrawTexturedRect( 55 + offset, 260 + bonus, 10, 10 )
 
                 offset = offset + 15
             end
@@ -464,7 +464,7 @@ function BattleHud()
             if skillnote_show then
                 local all_width = string.len( skillnote ) * 12.3 + 50
                 -- draw.RoundedBoxEx( 14, ScrW()/2 - all_width / 2, 250, all_width + 15, 45, Color( 200, 0, 0, Lerp( ( SysTime() - show_x ) * 10, 0, 240 ) ), true, true, true, true )
-                draw.RoundedBoxEx( 8, ScrW()/2 - all_width / 2, 250, all_width, 32, Color( 0, 0, 0, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), true, true, true, true )
+                draw.RoundedBoxEx( 8, ScrW()/2 - all_width / 2, 250, all_width, 32, Color( 35, 35, 35, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), true, true, true, true )
                 draw.SimpleText( skillnote, "equipment_plname2", ScrW()/2, 266, Color( skillcolor.r, skillcolor.g, skillcolor.b, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             end
         end)
@@ -937,6 +937,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                             end
                         end
                     end
+                    local vishunei = 0
                     for k, v in pairs( plskills ) do
                         -- If skill has at least one point or is from a trinket
                         if v.equipped == 1 or v.equipped == -1 then
@@ -997,9 +998,10 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                                 end
                         end
                     end
+                    bhud_skills_frame:SetSize( bhud_skills_button:GetWide() + integer * 25 , bhud_skills_button:GetTall() )
                 end
             bhud_skills_tip = vgui.Create( "DFrame", bhud_frame )
-                bhud_skills_tip:SetPos( 150, 150 )
+                bhud_skills_tip:SetPos( 150, 225 )
                 bhud_skills_tip:SetSize( 500, 200 )
                 bhud_skills_tip:SetTitle( "" )
                 bhud_skills_tip:ShowCloseButton( false )
@@ -1047,8 +1049,6 @@ end)
 net.Receive( "sendbufftbl", function()
     local isplayer = net.ReadBool()
     ovbufftbl = net.ReadTable()
-
-    
 
     entdesc = vgui.Create( "DFrame", bhud_frame )
     entdesc:MakePopup()

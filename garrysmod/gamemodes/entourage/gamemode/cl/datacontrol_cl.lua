@@ -226,7 +226,7 @@ function DoTBLFirstInit()
             "There.",
             "Easy.",
             "I read you.",
-            "Ha; focus."
+            "Ha; focus!"
         } 
     }
 end

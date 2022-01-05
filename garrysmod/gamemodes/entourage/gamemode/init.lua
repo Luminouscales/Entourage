@@ -151,5 +151,19 @@ hook.Add( "PlayerInitialSpawn", "startvar", function()
 
 end)
 
+function GM:PlayerLoadout( ply )
+	ply:Give( "weapon_crowbar" )
+
+	return true
+end
+
+hook.Add( "PlayerSpawn", "transrights", function( ply )
+	timer.Simple( 2, function()
+		ply:SetRunSpeed( 300 )
+		ply:SetWalkSpeed( 200 )
+	end)
+end)
+
+
 -- Variable for managing uniqueness.
 mathilda = 0

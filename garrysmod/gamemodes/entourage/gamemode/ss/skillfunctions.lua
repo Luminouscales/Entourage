@@ -671,7 +671,7 @@ function CalcAttack()
         else
             attacktarget:EmitSound( "mgb_miss3.mp3", 150, 100, 1, CHAN_BODY )
         end
-        if attacktarget:IsPlayer() and math.random( 1, 10 ) + attackdmg / attacktarget:GetMaxHealth() <= 10 then
+        if attacktarget:IsPlayer() and math.random( 1, 10 ) + attackdmg / attacktarget:Health() * 10 >= 10 then
             SendDialogue( 0, attacktarget, "plconv_dodge" )
         end
     end

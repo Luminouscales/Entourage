@@ -19,7 +19,7 @@
 		"There.",
 		"Easy.",
 		"I read you.",
-		"Ha; focus.",
+		"Ha; focus!",
 		"Pay attention!"
 	],
 	"plconv_hit_n": [
@@ -30,11 +30,11 @@
 		"Barely."
 	],
 	"plconv_die": [
-		"With… honour…",
-		"I never… die…",
-		"… never…",
-		"Tell them I…",
-		"Only I get to…"
+		"With honour...",
+		"I never die...",
+		"I... never...",
+		"Tell them I...",
+		"Only I get to..."
 	],
 	"plconv_dmg": [
 		"Begone!",
