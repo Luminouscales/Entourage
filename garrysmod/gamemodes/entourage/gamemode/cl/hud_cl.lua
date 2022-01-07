@@ -54,7 +54,8 @@ hook.Add( "InitPostEntity", "initglobal", function()
 		["CHudHealth"] = true,
 		["CHudBattery"] = true,
 		["CHudAmmo"] = true,
-		["CHudSecondaryAmmo"] = true
+		["CHudSecondaryAmmo"] = true,
+		["CHudWeaponSelection"] = true
 	}
 
 	hook.Add( "HUDShouldDraw", "HideHUD", function( name )

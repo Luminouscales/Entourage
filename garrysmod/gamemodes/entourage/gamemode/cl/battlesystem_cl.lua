@@ -56,6 +56,7 @@ net.Receive( "DISPLAY_PAIN", function()
             local hitent_pos = hitent:GetPos():ToScreen()
             draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 120, 255, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
         end)
+        surface.PlaySound( "items/smallmedkit1.wav" )
     else
         hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
             if IsValid( hitent ) then
@@ -277,11 +278,11 @@ function lx_conv_debug( unit, string, delay )
             end
 
         end)
-        timer.Simple( delay * #string + 2, function()
+        timer.Create( "lx_conv_deleter", delay * #string + 2, 1, function()
             lx_conv_text:SetText( "" )
             sus = SysTime()
             convboxshow = false
-            timer.Simple( 0.75, function()
+            timer.Create( "lx_conv_deleter2", 0.9, 1, function()
                 convboxshow2 = false
                 conv_tier = -1
                 lx_conv_frame:Hide()
@@ -369,7 +370,6 @@ end
 function BattleHud()
 	bhud_frame:Show() -- this turns into clickframe then into a basic attack function
     bhud_frame3:Show()
-	bhud_attbbasic:Hide() -- precached
 
 	timer.Simple(2, function()
         local down = Vector( 0, 0, 0 )
@@ -506,6 +506,7 @@ function SkillPlayer()
         net.WriteInt( skill_lvl, 32 )
         uhhVariablesTest()
         net.WriteBool( choicesb )
+        net.WriteBool( endcustom )
 	net.SendToServer()
 end
 
@@ -515,7 +516,6 @@ net.Receive( "player_doturn", function()
     actions_lbl:SetText( playerstats_a.actionvar - choices )
     if LocalPlayer():GetNWInt( "stunturns" ) == 0 then
         bhud_frame:Show()
-        bhud_attbbasic:Hide()
     else
         net.Start( "player_removestunturns" )
         net.SendToServer()
@@ -698,6 +698,10 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
                         net.SendToServer()
                     end
                 end
+            elseif keycode == 107 then
+                DefineDMG()
+                clickframe_Init()
+                clickframe:OnMousePressed( 107 )
             end
         end
 
@@ -736,37 +740,29 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             bhud_attb:SetSize( 255, 110 )
             bhud_attb:SetImage( "hud/button_attack.png" )
             bhud_attb.DoClick = function()
-                bhud_attbbasic:ToggleVisible()
+                bhud_frame2:Show()
+                bhud_slash:Hide()
+                bhud_pierce:Hide()
+                bhud_blunt:Hide()
+                -- This function can be optimized but this needs to be ran three times or else multi-type weapons will not function correctly. Ich weiss.
+                if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG1 ) then
+                    bhud_slash:Show()
+                end
+                if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG3 ) then
+                    bhud_pierce:Show()
+                end
+                if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG4 ) then
+                    bhud_blunt:Show()
+                end
             end
-
-        bhud_attbbasic = vgui.Create( "DImageButton", bhud_frame )
-            bhud_attbbasic:SetPos( ScrW()/2 -127, 840 )
-            bhud_attbbasic:SetSize( 255, 110 )
-            bhud_attbbasic:SetImage( "hud/button_attack_basic.png" )
-        bhud_attbbasic.DoClick = function()
-            bhud_frame2:Show()
-            bhud_slash:Hide()
-            bhud_pierce:Hide()
-            bhud_blunt:Hide()
-            -- This function can be optimized but this needs to be ran three times or else multi-type weapons will not function correctly. Ich weiss.
-            if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG1 ) then
-                bhud_slash:Show()
-            end
-            if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG3 ) then
-                bhud_pierce:Show()
-            end
-            if isnumber( items_table[ playerstats_a["currentweapon"] ].DMG4 ) then
-                bhud_blunt:Show()
-            end
-        end
 
         -- Basic Attack damage type buttons.
         bhud_types_form = vgui.Create( "DImage", bhud_frame2 )
-            bhud_types_form:SetPos( ScrW()/2 - 355, 725 )
+            bhud_types_form:SetPos( ScrW()/2 - 355, 835 )
             bhud_types_form:SetSize( 775, 118 )
             bhud_types_form:SetImage( "hud/base3.png" )
         bhud_slash = vgui.Create( "DImageButton", bhud_frame2 )
-            bhud_slash:SetPos( ScrW()/2 - 95, 729 )
+            bhud_slash:SetPos( ScrW()/2 - 95, 839 )
             bhud_slash:SetSize( 253, 110 )
             bhud_slash:SetImage( "hud/slash1.png" )
         bhud_slash.DoClick = function()
@@ -777,7 +773,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             clickframe:Show()
         end
         bhud_pierce = vgui.Create( "DImageButton", bhud_frame2 )
-            bhud_pierce:SetPos( ScrW()/2 - 293, 729 )
+            bhud_pierce:SetPos( ScrW()/2 - 293, 839 )
             bhud_pierce:SetSize( 253, 110 )
             bhud_pierce:SetImage( "hud/pierce1.png" )
         bhud_pierce.DoClick = function()
@@ -788,7 +784,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             clickframe:Show()
         end
         bhud_blunt = vgui.Create( "DImageButton", bhud_frame2 )
-            bhud_blunt:SetPos( ScrW()/2 + 103, 729)
+            bhud_blunt:SetPos( ScrW()/2 + 103, 839)
             bhud_blunt:SetSize( 253, 110 )
             bhud_blunt:SetImage( "hud/blunt1.png" )
         bhud_blunt.DoClick = function()
@@ -1262,6 +1258,7 @@ function clickframeskill_Init()
     cl_s_int = 0
     cl_s_targets = skillsbase[ skill_id ].targets
     cl_s_targets_tbl = {}
+    endcustom = cl_s_targets > 1
 end
 
 function clickframe_Init()
@@ -1274,7 +1271,7 @@ function SkillNoteCL( skillnote2 )
     skillnote = skillnote2
     skillnote_show = true
     show_x = SysTime()
-    timer.Simple( 1.75, function()
+    timer.Create( "hideskillnote", 1.75, 1, function()
         skillnote_show = false
     end)
 end

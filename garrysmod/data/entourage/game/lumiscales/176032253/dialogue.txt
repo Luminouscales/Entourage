@@ -5,7 +5,8 @@
 		"For glory!",
 		"No!",
 		"You can't break me!",
-		"Not yet!"
+		"Not yet!",
+		"I never die!"
 	],
 	"plconv_hit_h": [
 		"Try harder!",
@@ -19,8 +20,7 @@
 		"There.",
 		"Easy.",
 		"I read you.",
-		"Ha; focus!",
-		"Pay attention!"
+		"Ha; focus!"
 	],
 	"plconv_hit_n": [
 		"Tch.",
@@ -30,8 +30,8 @@
 		"Barely."
 	],
 	"plconv_die": [
-		"With honour...",
-		"I never die...",
+		"With... honour...",
+		"I never... die...",
 		"I... never...",
 		"Tell them I...",
 		"Only I get to..."

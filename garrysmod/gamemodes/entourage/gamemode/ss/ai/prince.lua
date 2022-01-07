@@ -17,10 +17,10 @@ function PrinceAI()
         break end
     end
 
-    -- sloppy, but im tired. vishunei...
+    -- sloppy, but im tired.
     if attacktarget:GetNWInt( "stunturns" ) > 0 then
         Prince_Eviscerate()
-    elseif IsValid(enemy2) == false or IsValid(enemy3) == false then -- If at least one Miner is dead, start attacking
+    elseif IsValid(enemy2) == false or IsValid(enemy3) == false or enemy1:Health() < 100 then -- If at least one Miner is dead, start attacking
         Prince_Basic()
     else -- otherwise, wait.
         Prince_Wait()
@@ -53,11 +53,11 @@ function Prince_Wait()
     SendSkillNote( "Evade" )
 
     -- Add some dodge
-    enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG + 50
+    enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG + 75
 
     hook.Add( "PlayerTurnEnd", "p_evade_remover", function()
         timer.Simple( 3, function()
-            enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG - 50
+            enemies_table[ "Frostlion Prince" ].DDG = enemies_table[ "Frostlion Prince" ].DDG - 75
             hook.Remove( "PlayerTurnEnd", "p_evade_remover" )
         end)
     end)

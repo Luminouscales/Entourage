@@ -245,3 +245,10 @@ function draw.Circle( x, y, radius, seg, override )
 
 	surface.DrawPoly( cir )
 end
+
+function GM:AddDeathNotice() end
+function GM:DrawDeathNotice() end
+function GM:SpawnMenuEnabled() return false end
+timer.Simple( 3, function()
+	CreateContextMenu()	
+end)

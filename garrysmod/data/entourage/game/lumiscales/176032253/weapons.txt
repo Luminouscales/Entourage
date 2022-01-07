@@ -3,7 +3,7 @@
 		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "SalvagedBlade"
+		"Item": "RustyKnife"
 	},
 	{
 		"Item": "EmptySlot"

@@ -3,7 +3,7 @@
 		"Item": "ClothArmour"
 	},
 	{
-		"Item": "PaddedArmour"
+		"Item": "EmptySlot2"
 	},
 	{
 		"Item": "EmptySlot2"

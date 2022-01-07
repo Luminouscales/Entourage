@@ -118,7 +118,7 @@ function Guardian_AllyCall()
 end
 
 function BattleCry()
-    SendSkillNote( "Battle Cry", Color( 255, 0, 0 ) )
+    SendSkillNote( "Battle Cry", Color( 255, 5, 5 ) )
 
     enemy1:ResetSequence( "ragdoll" )
     enemy1:ResetSequence( "roar" )
@@ -135,7 +135,7 @@ function BattleCry()
 end
 
 function Stampede()
-    SendSkillNote( "Stampede", Color( 255, 0, 0 ) )
+    SendSkillNote( "Stampede", Color( 255, 5, 5 ) )
 
     enemy1:ResetSequence( "ragdoll" )
     enemy1:ResetSequence( "charge_startfast" )
@@ -198,10 +198,16 @@ function GuardianPain()
     if IsValid( turntarget ) then
         local feher = turntarget
         feher:ResetSequence( "ragdoll" )
-        feher:ResetSequence( "pain" )
+        if engine.TickCount() % 2 == 0 then
+            feher:ResetSequence( "pain" )
+        else
+            feher:ResetSequence( "physhit_rl" )
+        end
 
-        timer.Simple( 1, function()
-            feher:ResetSequence( table.Random( antlion_idle ) )
+        timer.Create( "guardianpain", 1, 1, function()
+            if IsValid( feher ) then
+                feher:ResetSequence( table.Random( antlion_idle ) )
+            end
         end)
     end
 end

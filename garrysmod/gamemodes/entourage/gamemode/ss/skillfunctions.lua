@@ -15,19 +15,20 @@ net.Receive( "player_makeskill", function( len, ply )
     slash_dfx = net.ReadInt( 32 )
     slash_acc = net.ReadInt( 32 ) * 0.05 
 
-    local proceed = net.ReadBool()
+    proceed = net.ReadBool()
+    --endcustom = net.ReadBool()
 
 	mgbplayer = ply
     vis_int = 0
 
     RunString( skill_id .."()" )
 
-    if proceed then
-        hook.Call( "PlayerTurnEnd" )
-        timer.Simple( 2.25, function()
-            EnemyAttack()
-        end)
-    end
+    -- if proceed then
+    --     hook.Call( "PlayerTurnEnd" )
+    --     timer.Simple( 2, function()
+    --         EnemyAttack()
+    --     end)
+    -- end
 end)
 
 -- Utility
@@ -43,6 +44,12 @@ function s_Retract()
 
                 RunString( items_table[ wpn ].func )
             end
+            if k == #turntargets and proceed then
+                timer.Simple( 1, function()
+                    hook.Call( "PlayerTurnEnd" )
+                    EnemyAttack()
+                end)
+            end
         end)
     end
     timer.Simple( 1.25, function()
@@ -51,7 +58,6 @@ function s_Retract()
         flatdmg = 0
         critbonus = 0
         critdmg = 0
-
     end)
 end
 
@@ -77,7 +83,7 @@ function DoStun()
     if stunbonus == nil then
 		stunbonus = 0
     end
-	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus + stunbonus_a - pl_stats_tbl[ attacktarget_id ].VIT_TRUE * 2 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 40 then 
+	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus + stunbonus_a - pl_stats_tbl[ attacktarget_id ].VIT_TRUE * 2 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 50 then 
 		attacktarget:SetNWInt( "stunturns", attacktarget:GetNWInt( "stunturns" ) + 1 )
 		attacktarget:SetNWInt( "stunturns_a", attacktarget:GetNWInt( "stunturns" ) + 1 )
         if attacktarget:GetNWInt( "stunturns" ) > 1 then
@@ -241,6 +247,10 @@ function s_broadswing()
 
     DoCooldown( mgbplayer, "broadswing", 2 )
     SendSkillNote( "Broad Swing" )
+
+    -- timer.Simple( 2, function()
+    --     EnemyAttack()
+    -- end)
 end
 
 function s_fragmentation()
@@ -262,6 +272,10 @@ function s_fragmentation()
 
     DoCooldown( mgbplayer, "fragmentation", 4 )
     SendSkillNote( "Fragmentation" )
+
+    -- timer.Simple( 2, function()
+    --     EnemyAttack()
+    -- end)
 end
 
 function s_medicsupplies()
@@ -269,12 +283,18 @@ function s_medicsupplies()
 
     entourage_AddUP( -20, 25 )
 
-    local target = turntargets[1]
-
-    timer.Simple( 0.5, function()
-        local heal = math.Round( 40 + 10 * skill_lvl, 0 )
-        entourage_AddHealth( target, heal )
-    end)
+    local heal = math.Round( 40 + 10 * skill_lvl, 0 )
+    for i = 1, #turntargets, 1 do
+        if heal > 0 then
+            entourage_AddHealth( turntargets[i], heal )
+            heal = math.Clamp( heal, 0, heal - ( turntargets[i]:GetMaxHealth() - turntargets[i]:Health() ) )
+        end
+        -- if i == #turntargets or heal <= 0 then
+        --     timer.Simple( 2, function()
+        --         EnemyAttack()
+        --     end)
+        -- end
+    end
 
     DoCooldown( mgbplayer, "medicsupplies", 4 )
     SendSkillNote( "Medical Supplies" )
@@ -489,6 +509,11 @@ function s_tknives()
     turntargets = {}
     for i = 1, targets, 1 do 
         turntargets[i] = table.Random( targetstbl )
+        -- if i == targets then
+        --     timer.Simple( 1, function()
+        --         EnemyAttack()
+        --     end)
+        -- end
     end
     ----------------------
     s_Retract()

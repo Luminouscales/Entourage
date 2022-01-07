@@ -153,14 +153,15 @@ end)
 
 function GM:PlayerLoadout( ply )
 	ply:Give( "weapon_crowbar" )
-
 	return true
 end
 
 hook.Add( "PlayerSpawn", "transrights", function( ply )
 	timer.Simple( 2, function()
-		ply:SetRunSpeed( 300 )
+		ply:SetRunSpeed( 250 )
 		ply:SetWalkSpeed( 200 )
+		ply:SetCanZoom( false )
+		ply:CrosshairDisable()
 	end)
 end)
 

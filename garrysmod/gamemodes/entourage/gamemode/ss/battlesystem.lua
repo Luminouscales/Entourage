@@ -8,7 +8,7 @@ util.AddNetworkString( "enemysend" )
 util.AddNetworkString( "player_brace" )
 util.AddNetworkString( "player_wait" )
 util.AddNetworkString( "player_removestunturns" )
-util.AddNetworkString( "player_biststunned" )
+--util.AddNetworkString( "player_biststunned" )
 util.AddNetworkString( "descmodel_cl1" ) 
 util.AddNetworkString( "descmodel_cl2" )
 util.AddNetworkString( "net_enemy_senddata" )
@@ -164,7 +164,10 @@ end)
 -- Health add function
 function entourage_AddHealth( hptarget, hp )
 	local hp2 = math.Round( math.Clamp( hp, 0, hptarget:GetMaxHealth() - hptarget:Health() ), 0 )
-	hptarget:SetHealth( hptarget:Health() + hp2 )
+	if hp2 > 0 then
+		hptarget:SetHealth( hptarget:Health() + hp2 )
+		hptarget:EmitSound( "items/smallmedkit1.wav", 150, 100, 1, CHAN_BODY )
+	end
 
 	net.Start( "DISPLAY_PAIN" )
 		net.WriteEntity( hptarget )
@@ -360,30 +363,29 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 			i = i + 1
 		end
 		for k, v in pairs( turntargets ) do 
-				vis_int = vis_int + 0.25
-				timer.Simple( vis_int, function()
-					if IsValid(v) and v:Health() > 0 then
-						turntarget = v
-						turntargetsave = v:GetName()
-						dmg_modifier = dmg_modifier / i
+			vis_int = vis_int + 0.25
+			timer.Simple( vis_int, function()
+				if IsValid(v) and v:Health() > 0 then
+					turntarget = v
+					turntargetsave = v:GetName()
+					dmg_modifier = dmg_modifier / i
 
-						RunString( items_table[ wpn ].func )
-						dmg_modifier = 1
-					end
-				end)
+					RunString( items_table[ wpn ].func )
+					dmg_modifier = 1
+				end
+				if k == #turntargets and proceed then
+					hook.Call( "PlayerTurnEnd" )
+					dmg_modifier = 1
+					timer.Simple( 1, function() 
+						EnemyAttack()
+					end)
+				end
+			end)
 		end
 	end)
 
 	local note = c_type2 .." Attack"
 	SendSkillNote( note )
-
-	if proceed then 
-		hook.Call( "PlayerTurnEnd" )
-		timer.Simple( 2, function() 
-			EnemyAttack()
-			dmg_modifier = 1
-		end)
-	end
 end)
 
 function SetOffset( ply, stat, amount )
