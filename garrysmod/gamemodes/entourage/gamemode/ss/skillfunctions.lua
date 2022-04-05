@@ -660,7 +660,7 @@ end
 function CalcAttack()
     if math.random( 1, 100 ) > pl_stats_tbl[ attacktarget_id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS + c_miss then
 
-        attackdmg = attackdmg + attackdmg * attacktarget:GetNWInt( "dmgresistance" )
+        -- attackdmg = attackdmg + attackdmg * attacktarget:GetNWInt( "dmgresistance" )
         attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
         calc_info = DamageInfo()

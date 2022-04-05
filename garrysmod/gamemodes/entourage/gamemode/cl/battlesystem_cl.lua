@@ -16,6 +16,8 @@ local icondead = Material( "icon16/cross.png")
 local iconstunned = Material( "icon16/asterisk_orange.png")
 local iconguarding = Material( "icon16/shield.png")
 
+local healsprite = Material( "sprites/entspr_heal.png", "alphatest" )
+
 
 net.Receive( "up_hudshow", function()
     -- I'm going to kiss myself on the lips.
@@ -40,6 +42,22 @@ net.Receive( "up_hudshow", function()
     end)
 end)
 
+function DoHealSprite( x, y, char )
+	local start = SysTime()
+	local name = "paintsprites".. engine.TickCount() + 1
+	hook.Add( "HUDPaint", name, function()
+		cam.Start3D()
+			render.SetMaterial( healsprite ) 
+			local fraction = Lerp( ( SysTime() - start ) * 0.75, 0, 1 )
+			size = 25 * ( 1 - fraction * 0.9 )
+			render.DrawSprite( LocalPlayer():GetPos() + Vector( x, y, 75 * fraction ), size, size, color_white )
+		cam.End3D()
+	end)
+	timer.Simple( 1.3, function()
+		hook.Remove( "HUDPaint", name )
+	end)
+end
+
 net.Receive( "DISPLAY_PAIN", function()
     local hitent = net.ReadEntity()
     local hitint = net.ReadInt( 32 )
@@ -49,14 +67,19 @@ net.Receive( "DISPLAY_PAIN", function()
     hp_int2 = hp_int2 + 1
     local hp_int = hp_int2
 
-    --local brave_ness = 255
-
     if isheal then
         hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
             local hitent_pos = hitent:GetPos():ToScreen()
             draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 120, 255, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
         end)
         surface.PlaySound( "items/smallmedkit1.wav" )
+        -- Healing effect
+        DoHealSprite( math.random( -10, 10 ), math.random( -10, 10 ), hitent )
+        for i = 1, math.random( 1, 3 ), 1 do
+            timer.Simple( math.Rand( 0.3, 0.75 ), function()
+                DoHealSprite( math.random( -10, 10 ), math.random( -10, 10 ), hitent )
+            end)
+        end
     else
         hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
             if IsValid( hitent ) then

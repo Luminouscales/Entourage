@@ -273,6 +273,23 @@ items_table = {
         ["func"] = "SalvagedBlade()",
         ["targets"] = 1
     },
+    ["DriftwoodTarge"] = {
+        ["Name"] = "Driftwood Targe",
+        ["Type"] = "Weapon",
+        ["Icon"] = "items/entourage_dtarge.png",
+        ["DMG1"] = 2,
+        ["DMG2"] = 6,
+        ["dmgtype"] = "Blunt",
+        ["BaseAcc"] = 100,
+        ["Desc"] = "Wooden targe; kinda good for protection and stunning enemies.",
+       ["Desc2"] = "-3 Celerity",
+        ["Desc3"] = "+100% MGT, +75% FCS",
+        ["PDEF"] = 0,
+        ["PSDL"] = 0,
+        ["PAGI"] = -3,
+        ["func"] = "DriftwoodTarge()",
+        ["targets"] = 1
+    },
     ["ClothArmour"] = {
         ["Name"] = "Cloth Armour",
         ["Type"] = "Armour",

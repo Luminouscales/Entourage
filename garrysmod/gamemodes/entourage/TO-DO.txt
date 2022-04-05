@@ -19,7 +19,6 @@
 - Big level up exp lvl up screen glitch
 - dmgresistance?
 - switch def and dfx
-- singleplayer game warning
 - add start screen (stilbruch)
 - fix overview for large enemies
 - make overview prettier

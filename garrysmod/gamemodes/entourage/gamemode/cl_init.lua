@@ -248,7 +248,7 @@ end
 
 function GM:AddDeathNotice() end
 function GM:DrawDeathNotice() end
-function GM:SpawnMenuEnabled() return false end
+function GM:SpawnMenuEnabled() return true end
 timer.Simple( 3, function()
 	CreateContextMenu()	
 end)

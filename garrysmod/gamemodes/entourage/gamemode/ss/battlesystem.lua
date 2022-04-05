@@ -456,9 +456,9 @@ function EndBattle()
 		end)
 
 		-- Reset resistances
-		for k, v in ipairs( player.GetAll() ) do
-			v:SetNWInt( "dmgresistance", 0 )
-		end
+		-- for k, v in ipairs( player.GetAll() ) do
+		-- 	v:SetNWInt( "dmgresistance", 0 )
+		-- end
 	end)
 end
 

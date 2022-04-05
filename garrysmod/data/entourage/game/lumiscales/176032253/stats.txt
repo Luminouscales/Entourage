@@ -21,8 +21,8 @@
 	"TA": 0.0,
 	"LVL2": 100.0,
 	"LVL3": 1.0,
-	"SLASH_POINTS": 20.0,
 	"HP1": 100.0,
+	"SLASH_POINTS": 20.0,
 	"currentarmour": "ClothArmour",
 	"flatdmg": 0.0
 }
