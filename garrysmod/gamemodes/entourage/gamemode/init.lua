@@ -1,6 +1,8 @@
 -- https://cdn.discordapp.com/attachments/471302316734283776/866657425557815306/IMG_20210718_111636.jpg
+
 include( "shared.lua" )
 AddCSLuaFile( "shared.lua" )
+include( "ss/scripts/trinkets_ss.lua" )
 AddCSLuaFile( "cl_init.lua" )
 
 include( "ss/weaponfunctions.lua" )
@@ -11,6 +13,7 @@ include( "ss/skillfunctions.lua" )
 include( "ss/tablicas.lua" )
 include( "scripts/buffs.lua" )
 --include( "ss/hitsounds.lua" ) -- it's broken. Stick to the base addon for now.
+
 -- ai
 include( "ss/ai/guardian.lua")
 include( "ss/ai/miner.lua")
@@ -19,7 +22,12 @@ include( "ss/ai/skinner.lua")
 include( "ss/ai/prince.lua")
 include( "ss/ai/knight.lua")
 
+-- Clientside
+AddCSLuaFile("cl/scripts/trinkets.lua")
+
 AddCSLuaFile( "cl/datacontrol_cl.lua" )
+
+AddCSLuaFile( "cl/fonts.lua" )
 
 AddCSLuaFile( "cl/menu/cl_menu_overview.lua" )
 AddCSLuaFile( "cl/menu/cl_menu_skillsscreen.lua" )
@@ -31,7 +39,9 @@ AddCSLuaFile( "cl/menu/cl_menu_weaponsframe.lua" )
 
 AddCSLuaFile( "cl/encountersystem_cl.lua" )
 AddCSLuaFile( "cl/hud_cl.lua" )
+	AddCSLuaFile( "cl/convbox_cl.lua" )
 AddCSLuaFile( "cl/battlesystem_cl.lua" )
+AddCSLuaFile( "cl/music.lua" )
 
 
 ------------------------------
@@ -153,6 +163,10 @@ end)
 
 function GM:PlayerLoadout( ply )
 	ply:Give( "weapon_crowbar" )
+	if GetConVar( "entourage_editmode" ):GetBool() then
+		ply:Give( "gmod_tool" )
+		ply:Give( "weapon_physgun" )
+	end
 	return true
 end
 

@@ -16,7 +16,7 @@ function DoCrit()
 	turntarget:EmitSound( "mgb_crit1.mp3", 150, 100, 1, CHAN_BODY )
 end
 
--- Stun for player
+-- Stun AGAINST player
 function DoStun2( bonus )
 	if math.random( 1, 100 ) <= wpndmg3 / thp * ( 65 + bonus ) + pl_stats_tbl[ mgbplayer:UserID() ].MGT_TRUE then 
 		turntarget:SetNWInt( "stunturns", turntarget:GetNWInt( "stunturns" ) + 1 )

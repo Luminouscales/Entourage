@@ -1,6 +1,10 @@
 include( "shared.lua" )
 
+include("cl/scripts/trinkets.lua")
 include( "cl/datacontrol_cl.lua" )
+
+include( "cl/fonts.lua" )
+include( "cl/music.lua" )
 
 include( "cl/menu/cl_menu_overview.lua" )
 include( "cl/menu/cl_menu_skillsscreen.lua" )
@@ -12,25 +16,13 @@ include( "cl/menu/cl_menu_weaponsframe.lua" )
 
 include( "cl/encountersystem_cl.lua" )
 include( "cl/hud_cl.lua" )
+	include( "cl/convbox_cl.lua" )
 include( "cl/battlesystem_cl.lua" )
 
--- Running without this timer breaks the script. Can't remember why. 
-timer.Simple( 0.9, function()
-	
-	skills_frame:Close()
-	skills_frame_slash:Close()
-	skills_frame_pierce:Close()
-	skills_frame_blunt:Close()
-
-	-- These have to be parented again because the code for some reason refuses to do so by itself.
-	-- Probably has something to do with the timer above, even though that doesn't make any sense either.
-	skills_frame:SetParent( equipframe )
-	skills_frame_slash:SetParent( equipframe )
-	skills_frame_pierce:SetParent( equipframe )
-	skills_frame_blunt:SetParent( equipframe )
-	--------------------------------------------
-	equipframe:Close()
-end)
+---
+a = TEXT_ALIGN_CENTER
+b = TEXT_ALIGN_LEFT
+---
 
 function PlaceholderFunction()
 	print( "Debug message. Report this message to the developer." )
@@ -49,23 +41,9 @@ function DoDescs( frame )
 	if IsValid( sk_name ) then
 		sk_name:Remove()
 		sk_desc1:Remove()
-		starlight:Remove()
 	end
 
-	if IsValid( aimed_skill2 ) then
-		skpic:SetImage( skpic_a )
-		skpic2:SetImage( skpic2_a )
-	end
-
-	starlight = vgui.Create( "DFrame", frame )
-		starlight:SetPos( 1356, 0 )
-		starlight:SetSize( 384, 400 )
-		starlight:ShowCloseButton( false )
-		starlight.Paint = function( self, w, h )
-		end
-
-	sk_name = vgui.Create( "DLabel", starlight )
-		--sk_name:SetFont( "equipment_plname3" )
+	sk_name = vgui.Create( "DLabel", frame )
 		sk_name:SetColor( color_white )
 		sk_name:SetExpensiveShadow( 2, color_black )
 		sk_name:Hide()
@@ -76,154 +54,30 @@ function DoDescs( frame )
 		function sk_desc1:PerformLayout()
 			self:SetFontInternal( "equipment_plname2" )
 		end
+
+	if IsValid( aimed_skill2 ) then
+		skpic:SetImage( skpic_a )
+		skpic2:SetImage( skpic2_a )
+	end
+
 end
 
---Fonts
-surface.CreateFont( "equipment_big", {
-	font = "Tajawal", 
-	extended = false,
-	size = 150,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = true,
-	additive = false,
-	outline = false,
-})
+-- Running without this timer breaks the script. Can't remember why. 
+timer.Simple( 0.9, function()
+	
+	skills_frame:ToggleVisible()
+	skills_frame_slash:ToggleVisible() 
+	skills_frame_pierce:ToggleVisible()
+	skills_frame_blunt:ToggleVisible()
 
-surface.CreateFont( "equipment_plname3", {
-	font = "Tajawal", 
-	extended = false,
-	size = 60,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-})
-
-surface.CreateFont( "equipment_plname5", {
-	font = "Tajawal", 
-	extended = false,
-	size = 80,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-})
-
-surface.CreateFont( "equipment_plname", {
-	font = "Tajawal", 
-	extended = false,
-	size = 50,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = true,
-	additive = false,
-	outline = false,
-})
-
-surface.CreateFont( "equipment_plname2", {
-	font = "Tajawal", 
-	extended = false,
-	size = 40,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-})
-
-surface.CreateFont( "equipment_plname4", {
-	font = "Tajawal", 
-	extended = false,
-	size = 35,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-})
-
-surface.CreateFont( "danger_font", {
-	font = "Tajawal", 
-	extended = false,
-	size = 25,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-})
-surface.CreateFont( "encounter_font", {
-	font = "Tajawal", 
-	extended = false,
-	size = 125,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-})
-
-net.Receive( "playersave", function()
-	PlayerstatsSave()
+	-- These have to be parented again because the code for some reason refuses to do so by itself.
+	-- Probably has something to do with the timer above, even though that doesn't make any sense either.
+	skills_frame:SetParent( equipframe )
+	skills_frame_slash:SetParent( equipframe )
+	skills_frame_pierce:SetParent( equipframe )
+	skills_frame_blunt:SetParent( equipframe )
+	--------------------------------------------
+	equipframe:ToggleVisible()
 end)
 
 function draw.Circle( x, y, radius, seg, override )
@@ -245,10 +99,3 @@ function draw.Circle( x, y, radius, seg, override )
 
 	surface.DrawPoly( cir )
 end
-
-function GM:AddDeathNotice() end
-function GM:DrawDeathNotice() end
-function GM:SpawnMenuEnabled() return true end
-timer.Simple( 3, function()
-	CreateContextMenu()	
-end)

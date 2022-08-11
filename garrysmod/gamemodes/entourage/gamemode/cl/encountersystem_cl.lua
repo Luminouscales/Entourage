@@ -4,13 +4,13 @@ inbattle = false
 function EncounterNormalText1()
 	local start = SysTime()
 	hook.Add( "HUDPaint", "enc_n_t1", function()
-		draw.SimpleTextOutlined( difficulty_text, "encounter_font", Lerp( ( SysTime() - start ) / 2, -75, ScrW()+400), ScrH()/2, Color( 255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 5, Color(0, 0, 0, 255) )
+		draw.SimpleTextOutlined( difficulty_text, "encounter_font", Lerp( ( SysTime() - start ) / 2, -75, ScrW()+400 ), ScrH()/2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 5, color_black )
 	end)
 	inbattle = true
 
-	if SysTime() - start > 2 then
-		start = SysTime()
-	end
+	-- if SysTime() - start > 2 then
+	-- 	start = SysTime()
+	-- end
 end
 
 net.Receive( "encounter_var", function()

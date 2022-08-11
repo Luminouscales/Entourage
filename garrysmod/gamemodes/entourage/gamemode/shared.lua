@@ -373,6 +373,31 @@ items_table = {
         ["PAGI"] = 0,
         ["func"] = "KillerSword()",
         ["targets"] = 1
+    },
+    ["EmptySlot3"] = {
+        ["Name"] = "None",
+        ["Icon"] = "items/entourage_emptyslot.png",
+        ["Desc"] = "A burning memory in your mind stands missing.",
+       ["Desc2"] = ""
+    },
+    ["Skrunkly"] = {
+        ["Name"] = "The Skrunkly",
+        ["Icon"] = "items/entourage_skrunkly.png",
+        ["Desc"] = "Aww! The Skrunkly empowers your defiance.",
+       ["Desc2"] = "+30 Health"
+    },
+    ["IronIngot"] = {
+        ["Name"] = "Jin's Ingot",
+        ["Icon"] = "items/entourage_ironingot.png",
+        ["Desc"] = "An ingot of iron, silver and white gold; the grass and soil of any proper blacksmith.",
+       ["Desc2"] = "+20% stun resistance.",
+       ["early"] = true
+    },
+    ["MonsterFang"] = {
+        ["Name"] = "Monster Fang",
+        ["Icon"] = "items/entourage_monsterfang.png",
+        ["Desc"] = "Slay the wicked beast at last with rage for your fallen comrades.",
+       ["Desc2"] = "+3 flat damage.",
     }
 }
 skillsbase = {

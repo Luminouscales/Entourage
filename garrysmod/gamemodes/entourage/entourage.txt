@@ -15,6 +15,18 @@
 			"help" "The ID that is used to differentiate different playthroughs from one another. Important. Set one that's unique."
 			"type" "Text"
 			"default" "1"
+			"singleplayer"
+		
+		}
+
+		2
+		{
+			"name" "entourage_editmode"
+			"text" "Enable Edit mode"
+			"help" "Grants the usage of the Spawnmenu."
+			"type" "CheckBox"
+			"default" "0"
+			"singleplayer"
 		
 		}
 

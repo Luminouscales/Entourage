@@ -1,0 +1,56 @@
+[
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "Skrunkly"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	},
+	{
+		"Item": "EmptySlot3"
+	}
+]

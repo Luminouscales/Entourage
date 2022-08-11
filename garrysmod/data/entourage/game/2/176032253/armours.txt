@@ -1,0 +1,56 @@
+[
+	{
+		"Item": "ClothArmour"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	},
+	{
+		"Item": "EmptySlot2"
+	}
+]

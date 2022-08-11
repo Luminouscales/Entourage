@@ -1034,8 +1034,6 @@ hook.Add( "InitPostEntity", "fuck_slash", function()
                 if plskills_a[define_col].equipped ~= 2 then
                     plskills_a[define_col].equipped = 1
                 end
-                -- sk_name:Remove()
-                -- sk_desc1:Remove()
                 DoDescs( skills_frame_slash )
                 aimed_skill2.DoClick()
                 madechanges = true

@@ -1,5 +1,9 @@
 local integer = 0
 
+net.Receive( "playersave", function()
+	PlayerstatsSave()
+end)
+
 function PlayerstatsSave()
     if integer > 0 then
         LocalPlayer():PrintMessage( HUD_PRINTTALK, "Game saved successfully to ID: ".. gameid )
@@ -15,6 +19,7 @@ function PlayerstatsSave()
     plskills_a = table.Copy( plskills )
     local plskills3 = util.TableToJSON( plskills, true )
     file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskills3 )
+
 end
 
 function SendStats()
@@ -43,6 +48,7 @@ function DoTBLFirstInit()
         ["TA"] = 0.0,
         ["AGI"] = 0,
         ["currentarmour"] = "ClothArmour",
+        ["currenttrinket"] = "EmptySlot3",
         ["SDL"] = 0.0,
         ["LVL2"] = 100.0,
         ["LVL3"] = 1.0,
@@ -79,6 +85,14 @@ function DoTBLFirstInit()
     end
 
     armoursbase2 = util.TableToJSON( armoursbase, true )
+
+    trinketsbase = {
+    }
+    for i = 1, 18, 1 do
+        trinketsbase[i] = { ["Item"] = "EmptySlot3" }
+    end
+
+    trinketsbase2 = util.TableToJSON( trinketsbase, true )
     ----------------------------------------------------
 
     
@@ -226,7 +240,7 @@ function DoTBLFirstInit()
             "There.",
             "Easy.",
             "I read you.",
-            "Ha; focus!"
+            "Ha, focus!"
         } 
     }
 end
@@ -249,6 +263,8 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         plweapons = weaponsbase
         file.Write( "entourage/game/".. gameid .."/".. playerid .."/armours.txt", armoursbase2 )
         plarmours = armoursbase
+        file.Write( "entourage/game/".. gameid .."/".. playerid .."/trinkets.txt", trinketsbase2 )
+        pltrinkets = trinketsbase
         file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskillsbase )
         plskills = table.Copy( plskillsbase )
         plskills_a = table.Copy( plskills )
@@ -262,6 +278,9 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         plweapons = util.JSONToTable( plweapons2 )
         local plarmours2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/armours.txt", "DATA" )
         plarmours = util.JSONToTable( plarmours2 )
+        local pltrinkets2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/trinkets.txt", "DATA" )
+        pltrinkets = util.JSONToTable( pltrinkets2 )
+
         plskills2 = file.Read( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", "DATA" )
         plskills = util.JSONToTable( plskills2 )
         plskills_a = table.Copy( plskills )
@@ -275,7 +294,14 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
         net.WriteDouble( playerstats["HP2"] )
     net.SendToServer()
 
+    
     PlayerstatsSave()
+
+    -- Some trinkets have to be re-activated on save load.
+    if items_table[ playerstats_a["currenttrinket"] ]["early"] then
+        RunString( "eph_".. playerstats_a["currenttrinket"] .."(true)" )
+    end
+    
     
     if playerstats[ "MGT" ] > ( playerstats[ "FCS" ] + playerstats[ "VIT" ] + playerstats[ "AGI" ] + playerstats[ "SDL" ] ) / 4 then
         tag = "Gladiator"

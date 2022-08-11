@@ -12,8 +12,7 @@ function DefineText()
         sk_name:SetFont( "equipment_plname3" )
     end
     sk_name:SizeToContents()
-    sk_name:SetPos( 0, 270 )
-    sk_name:CenterHorizontal()
+    sk_name:SetPos( 1355 + ( ( 385 - sk_name:GetWide() ) / 2 ), 270 )
     sk_name:Show()
 end
 
@@ -23,6 +22,8 @@ function FuckMyLife()
     sk_desc1:Show()
     skupgrade:Show()
 end
+
+
 
 hook.Add( "InitPostEntity", "skillscreeninit", function()
     

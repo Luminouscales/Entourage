@@ -25,20 +25,61 @@ net.Receive( "up_hudshow", function()
     local up_int = up_int2
     local up_start = SysTime()
     local up_value = net.ReadInt( 32 )
+    local stringer = "-"
+    local color = Color( 255, 65, 65, 400 )
     -- If value negative
     if up_value < 0 then
-        hook.Add( "HUDPaint", "up_hudshow_hook".. up_int, function() 
-            draw.SimpleTextOutlined("-".. up_value, "equipment_plname2", 280, Lerp( ( SysTime() - up_start ) * 0.5, ScrH() + 10, ScrH() - 300 ), Color( 255, 65, 65, Lerp( ( SysTime() - up_start ) * 0.5, 500, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - up_start ) * 0.5, 500, 0 ) ) )
-        end)
+        stringer = "-"
+        colorer = Color( 255, 65, 65, 400 )
     -- If value positive 
     elseif up_value > 0 then 
-        hook.Add( "HUDPaint", "up_hudshow_hook".. up_int, function() 
-            draw.SimpleTextOutlined("+".. up_value, "equipment_plname2", 280, Lerp( ( SysTime() - up_start ) * 0.5, ScrH() + 10, ScrH() - 300 ), Color( 120, 255, 65, Lerp( ( SysTime() - up_start ) * 0.5, 500, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - up_start ) * 0.5, 500, 0 ) ) )
-        end)
-    -- Don't run if you're somehow trying to add 0 UP.
+        stringer = "+"
+        colorer = Color(120, 255, 65, 400)
     end
+    if up_value ~= 0 then
+        hook.Add( "HUDPaint", "up_hudshow_hook".. up_int, function() 
+            local lerper = Lerp( ( SysTime() - up_start ) * 0.5, 0, 1 )
+            draw.SimpleTextOutlined(stringer.. up_value, "equipment_plname2", 150, ScrH() + ( 10 - 310 * lerper ), Color( colorer.r, colorer.g, colorer.b, 400 - 400 * lerper ), a, a, 1, Color( 0, 0, 0, 400 - 400 * lerper ) )
+        end)
+    end
+
     timer.Simple( 3, function()
         hook.Remove( "HUDPaint", "up_hudshow_hook".. up_int )
+    end)
+end)
+
+net.Receive( "DISPLAY_PAIN", function()
+    local hitent = net.ReadEntity()
+    local hitint = net.ReadInt( 32 )
+    local isheal = net.ReadBool()
+
+    local hp_start = SysTime()
+    hp_int2 = hp_int2 + 1
+    local hp_int = hp_int2
+
+    if isheal then
+        hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
+            local hitent_pos = hitent:GetPos():ToScreen()
+            draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 120, 255, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), a, a, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
+        end)
+        surface.PlaySound( "items/smallmedkit1.wav" )
+        -- Healing effect
+        DoHealSprite( math.random( -10, 10 ), math.random( -10, 10 ), hitent )
+        for i = 1, math.random( 1, 3 ), 1 do
+            timer.Simple( math.Rand( 0.3, 0.75 ), function()
+                DoHealSprite( math.random( -10, 10 ), math.random( -10, 10 ), hitent )
+            end)
+        end
+    else
+        hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
+            if IsValid( hitent ) then
+                local hitent_pos = hitent:GetPos():ToScreen()
+                draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 255, 65, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), a, a, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
+            end
+        end)
+    end
+    timer.Simple( 3, function()
+        hook.Remove( "HUDPaint", "hp_hudshow_hook".. hp_int )
     end)
 end)
 
@@ -56,65 +97,6 @@ function DoHealSprite( x, y, char )
 	timer.Simple( 1.3, function()
 		hook.Remove( "HUDPaint", name )
 	end)
-end
-
-net.Receive( "DISPLAY_PAIN", function()
-    local hitent = net.ReadEntity()
-    local hitint = net.ReadInt( 32 )
-    local isheal = net.ReadBool()
-
-    local hp_start = SysTime()
-    hp_int2 = hp_int2 + 1
-    local hp_int = hp_int2
-
-    if isheal then
-        hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
-            local hitent_pos = hitent:GetPos():ToScreen()
-            draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 120, 255, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
-        end)
-        surface.PlaySound( "items/smallmedkit1.wav" )
-        -- Healing effect
-        DoHealSprite( math.random( -10, 10 ), math.random( -10, 10 ), hitent )
-        for i = 1, math.random( 1, 3 ), 1 do
-            timer.Simple( math.Rand( 0.3, 0.75 ), function()
-                DoHealSprite( math.random( -10, 10 ), math.random( -10, 10 ), hitent )
-            end)
-        end
-    else
-        hook.Add( "HUDPaint", "hp_hudshow_hook".. hp_int, function() 
-            if IsValid( hitent ) then
-                local hitent_pos = hitent:GetPos():ToScreen()
-                draw.SimpleTextOutlined( hitint, "equipment_plname4", hitent_pos.x, hitent_pos.y, Color( 255, 65, 65, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0, Lerp( ( SysTime() - hp_start ) * 0.4, 255, 0 ) ) )
-            end
-        end)
-    end
-    timer.Simple( 3, function()
-        hook.Remove( "HUDPaint", "hp_hudshow_hook".. hp_int )
-    end)
-end)
-
--- Music function
-function test()
-    sound.PlayFile( "sound/cer2.mp3", "noblock noplay mono", function( a, b, c )
-        a:EnableLooping( true )
-        a:SetVolume( 2 )
-        a:Play()
-        channel = a
-        -- garbage collection? who the fuck coded this?
-    end)
-end
-
-function entourage_FadeOut( chan )
-    local a = SysTime()
-    local c = chan:GetFileName().."fadeout"
-    local d = chan:GetVolume()
-    hook.Add( "Think", c, function()
-        local b = Lerp( ( SysTime() - a ) / 3, d, 0 )
-        chan:SetVolume( b )
-        if b == 0 then
-            hook.Remove( "Think", c )
-        end
-    end)
 end
 
 net.Receive( "enemysend", function()
@@ -258,62 +240,6 @@ net.Receive( "sendplconv", function()
     end
 end)
 
-function lx_conv_debug( unit, string, delay )
-
-    if convboxshow2 == false then
-
-        -- Model & name management
-        lx_conv_avic:SetModel( unit:GetModel() )
-        if unit:IsPlayer() then
-            function lx_conv_avic.Entity:GetPlayerColor() return LocalPlayer():GetPlayerColor() end
-        else
-            function lx_conv_avic.Entity:GetColor() return color_white end
-        end
-        ---
-
-        lx_conv_frame:Show()
-
-        local var = 0 
-        if delay == nil then
-            local delay = 0.05
-        end
-
-        sus = SysTime()
-        convboxshow = true
-        convboxshow2 = true
-
-        timer.Create( "lx_conv_timer", delay, #string, function()
-            if convboxshow then
-                var = var + 1
-
-                lx_conv_text:SetText( "" )
-                lx_conv_text:InsertColorChange( 255, 255, 255, 255 )
-                lx_conv_text:AppendText( string.sub( string, 1, var ) )
-                print( lx_conv_text:GetWide() )
-                if var > 25 then
-                    lx_conv_text:CenterVertical( 0.525 )
-                else
-                    lx_conv_text:CenterVertical( 0.555 )
-                end
-                if string.byte( string, var, var ) ~= 32 then
-                    surface.PlaySound( "yuumi.wav" )
-                end
-            end
-
-        end)
-        timer.Create( "lx_conv_deleter", delay * #string + 2, 1, function()
-            lx_conv_text:SetText( "" )
-            sus = SysTime()
-            convboxshow = false
-            timer.Create( "lx_conv_deleter2", 0.9, 1, function()
-                convboxshow2 = false
-                conv_tier = -1
-                lx_conv_frame:Hide()
-            end)
-        end)
-    end
-end
-
 function CreateHealthHud( table )
     for k, v in pairs( table ) do
         local bonus = k * 100 - 100
@@ -352,8 +278,8 @@ function CreateHealthHud( table )
             surface.SetMaterial( iconhp )
             surface.DrawTexturedRect( 140, 275 + bonus, 10, 10 )
             -- Name
-            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 9, 267 + bonus, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT )
-            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 9, 265 + bonus, color_white, TEXT_ALIGN_LEFT )
+            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 9, 267 + bonus, Color( 0, 0, 0 ), b )
+            draw.DrawText( string.Left( v:Name(), 12 ), "danger_font", 9, 265 + bonus, color_white, b )
         
             if plhealth > 0 and plhealth <= v:GetMaxHealth() / 4 then
                 surface.SetMaterial( icondanger )
@@ -433,8 +359,8 @@ function BattleHud()
 
             if inbattle then
                 -- Player text
-			    draw.SimpleTextOutlined( math.Clamp( LocalPlayer():Health(), 0, 1000 ) .."/".. LocalPlayer():GetMaxHealth(), "danger_font", playerpoint2n.x, playerpoint2n.y + 30, Color( 120, 255, 65 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0 ) )
-                draw.SimpleTextOutlined( LocalPlayer():Name(), "danger_font", playerpoint2.x, playerpoint2.y + 12, Color( 120, 255, 65 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0 ) )
+			    draw.SimpleTextOutlined( math.Clamp( LocalPlayer():Health(), 0, 1000 ) .."/".. LocalPlayer():GetMaxHealth(), "danger_font", playerpoint2n.x, playerpoint2n.y + 30, Color( 120, 255, 65 ), a, a, 1, Color( 0, 0, 0 ) )
+                draw.SimpleTextOutlined( LocalPlayer():Name(), "danger_font", playerpoint2.x, playerpoint2.y + 12, Color( 120, 255, 65 ), a, a, 1, Color( 0, 0, 0 ) )
                 ---------------------------------
 
                 -- UP Circle, base
@@ -463,23 +389,23 @@ function BattleHud()
                 draw.Circle( 150, ScrH() - 150, 100, 200, up_smooth )
 
                 -- UP Circle, text. Must be after everything else.
-                draw.SimpleText( "Utility Points", "equipment_plname2", 150, ScrH() - 165, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-                draw.SimpleText( cl_Levitus:GetNWInt( "team_UP" ) .."/100", "equipment_plname2", 150, ScrH() - 130, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( "Utility Points", "equipment_plname2", 150, ScrH() - 165, color_white, a, a )
+                draw.SimpleText( cl_Levitus:GetNWInt( "team_UP" ) .."/100", "equipment_plname2", 150, ScrH() - 130, color_white, a, a )
                 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
             end
 
 			if IsValid( enemy1 ) and inbattle then
-				draw.SimpleTextOutlined( math.Clamp( enemy1:Health(), 0, 1000 ) .."/".. enemy1:GetMaxHealth(), "danger_font", enemy1pointn.x, enemy1pointn.y + 48, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
-                draw.SimpleTextOutlined( enemy1:GetNWString( "nwhudname" ), "danger_font", enemy1point.x, enemy1point.y + 30, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
+				draw.SimpleTextOutlined( math.Clamp( enemy1:Health(), 0, 1000 ) .."/".. enemy1:GetMaxHealth(), "danger_font", enemy1pointn.x, enemy1pointn.y + 48, Color( 255, 0, 0 ), a, a, 0.5, Color( 0, 0, 0 ) )
+                draw.SimpleTextOutlined( enemy1:GetNWString( "nwhudname" ), "danger_font", enemy1point.x, enemy1point.y + 30, Color( 255, 0, 0 ), a, a, 0.5, Color( 0, 0, 0 ) )
 			end
 			if IsValid( enemy2 ) and inbattle then
-				draw.SimpleTextOutlined( math.Clamp( enemy2:Health(), 0, 1000 ) .."/".. enemy2:GetMaxHealth(), "danger_font", enemy2pointn.x, enemy2pointn.y + 38, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
-                draw.SimpleTextOutlined( enemy2:GetNWString( "nwhudname" ), "danger_font", enemy2point.x, enemy2point.y + 20, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
+				draw.SimpleTextOutlined( math.Clamp( enemy2:Health(), 0, 1000 ) .."/".. enemy2:GetMaxHealth(), "danger_font", enemy2pointn.x, enemy2pointn.y + 38, Color( 255, 0, 0 ), a, a, 0.5, Color( 0, 0, 0 ) )
+                draw.SimpleTextOutlined( enemy2:GetNWString( "nwhudname" ), "danger_font", enemy2point.x, enemy2point.y + 20, Color( 255, 0, 0 ), a, a, 0.5, Color( 0, 0, 0 ) )
 			end
 			if IsValid( enemy3 ) and inbattle then
-				draw.SimpleTextOutlined( math.Clamp( enemy3:Health(), 0, 1000 ) .."/".. enemy3:GetMaxHealth(), "danger_font", enemy3pointn.x, enemy3pointn.y + 42, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
-                draw.SimpleTextOutlined( enemy3:GetNWString( "nwhudname" ), "danger_font", enemy3point.x, enemy3point.y + 25, Color( 255, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 0.5, Color( 0, 0, 0 ) )
+				draw.SimpleTextOutlined( math.Clamp( enemy3:Health(), 0, 1000 ) .."/".. enemy3:GetMaxHealth(), "danger_font", enemy3pointn.x, enemy3pointn.y + 42, Color( 255, 0, 0 ), a, a, 0.5, Color( 0, 0, 0 ) )
+                draw.SimpleTextOutlined( enemy3:GetNWString( "nwhudname" ), "danger_font", enemy3point.x, enemy3point.y + 25, Color( 255, 0, 0 ), a, a, 0.5, Color( 0, 0, 0 ) )
 			end
 		end)
 
@@ -488,7 +414,7 @@ function BattleHud()
                 local all_width = string.len( skillnote ) * 12.3 + 50
                 -- draw.RoundedBoxEx( 14, ScrW()/2 - all_width / 2, 250, all_width + 15, 45, Color( 200, 0, 0, Lerp( ( SysTime() - show_x ) * 10, 0, 240 ) ), true, true, true, true )
                 draw.RoundedBoxEx( 8, ScrW()/2 - all_width / 2, 250, all_width, 32, Color( 35, 35, 35, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), true, true, true, true )
-                draw.SimpleText( skillnote, "equipment_plname2", ScrW()/2, 266, Color( skillcolor.r, skillcolor.g, skillcolor.b, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( skillnote, "equipment_plname2", ScrW()/2, 266, Color( skillcolor.r, skillcolor.g, skillcolor.b, Lerp( ( SysTime() - show_x ) * 10, 0, 255 ) ), a, a )
             end
         end)
 	end)
@@ -1058,9 +984,6 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
         bhud_frame3:SetDeleteOnClose( false )
         bhud_frame3:Close()			
         -- End of battle hud.
-
-        -------------------------------------------------------------------------------------
-        -- Right-click Enemy description.
     end)
 end)
 

@@ -83,6 +83,7 @@ function DoStun()
     if stunbonus == nil then
 		stunbonus = 0
     end
+    hook.Call( "battlePreStun", nil, attacktarget )
 	if math.random( 1, 100 ) <= attackdmg / attacktarget:GetMaxHealth() * 70 + stunbonus + stunbonus_a - pl_stats_tbl[ attacktarget_id ].VIT_TRUE * 2 - pl_stats_tbl[ attacktarget_id ].DFX_TRUE * 0.5 - attacktarget:GetNWInt( "stunturns_a" ) * 50 then 
 		attacktarget:SetNWInt( "stunturns", attacktarget:GetNWInt( "stunturns" ) + 1 )
 		attacktarget:SetNWInt( "stunturns_a", attacktarget:GetNWInt( "stunturns" ) + 1 )
