@@ -363,16 +363,13 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 	-- basic attack multi-target damage management and calculation
 	timer.Simple( 0.5, function()
 		local i = 0
-		for k, v in pairs( turntargets ) do
-			i = i + 1
-		end
 		for k, v in pairs( turntargets ) do 
 			vis_int = vis_int + 0.25
 			timer.Simple( vis_int, function()
 				if IsValid(v) and v:Health() > 0 then
 					turntarget = v
 					turntargetsave = v:GetName()
-					dmg_modifier = dmg_modifier / i
+					dmg_modifier = dmg_modifier / #turntargets
 
 					RunString( items_table[ wpn ].func )
 					dmg_modifier = 1

@@ -114,6 +114,7 @@ net.Receive( "encounter_intro", function()
     local table = net.ReadTable()
 
     dropitemtable = {}
+    dropitemtable2 = {}
 
 	surface.PlaySound( "shink.wav" )
 	surface.PlaySound( "shink.wav" )
@@ -451,7 +452,6 @@ end)
 net.Receive( "encounter_outro", function() -- everyone is dead, back to the overworld
     playerstats_a["LVL1"] = playerstats_a["LVL1"] + exp_real
     CheckEXP()
-    exp_real = 0
     inbattle = false
     choices = 0
         actions_lbl:SetText( playerstats_a.actionvar )
@@ -463,6 +463,8 @@ net.Receive( "encounter_outro", function() -- everyone is dead, back to the over
 		pleqic:ToggleVisible()
 		DangerHUD()
         UpdateResultsText()
+        exp_real = 0
+        dropitemtable2 = {}
         results_frame:Show()
         -- Cleanup after battle
             just_leveledup = false
@@ -492,7 +494,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             clickframe:SetWorldClicker( true )
         clickframe.Paint = function( self, w, h )
         end
-        -- basic attacks don't support 10 targetting yet
+        -- basic attacks don't support 10 targeting yet
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
                 LookPos()

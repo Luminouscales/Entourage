@@ -164,7 +164,7 @@ function EncounterAntlion( zone ) -- Function for spawning antlions.
 
 	
     timer.Simple( 0.5, function()
-        if math.random( 1, 2 ) == 2 then -- 50% chance, right antlion
+        if math.random( 1, 1 ) == 1 then -- 50% chance, right antlion
             enemypos_placeholder = Vector( 60, -234, -982 )
             RunString( table.Random( zone ) )
             enemy2 = necessity

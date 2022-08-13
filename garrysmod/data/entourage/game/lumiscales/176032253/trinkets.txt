@@ -1,15 +1,15 @@
 [
 	{
-		"Item": "Kajzerka"
+		"Item": "EmptySlot3"
 	},
 	{
-		"Item": "Kajzerka"
+		"Item": "EmptySlot3"
 	},
 	{
-		"Item": "Kajzerka"
+		"Item": "EmptySlot3"
 	},
 	{
-		"Item": "Kajzerka"
+		"Item": "EmptySlot3"
 	},
 	{
 		"Item": "EmptySlot3"
