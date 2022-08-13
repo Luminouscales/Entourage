@@ -3,54 +3,54 @@
 		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "KillerSword"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	},
 	{
-		"Item": "EmptySlot"
+		"Item": "OldCrowbar"
 	}
 ]

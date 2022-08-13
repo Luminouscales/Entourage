@@ -34,7 +34,6 @@ function FrostlionScoutAI()
     end)
 end
 
-
 -- Stun animation. Used for all antlions
 
 function AntlionStun()
@@ -48,3 +47,19 @@ function AntlionStun()
         end
     end)
 end
+
+droptable_frostlionscout = {
+    [1] = { "Kajzerka",
+        5,
+        3
+    },
+    [2] = { "OldCrowbar",
+        15,
+        1
+    },
+    [3] = { "SlimArmour",
+        10,
+        2
+}
+}
+enemies_table["Frostlion Scout"]["droptable"] = droptable_frostlionscout -- :3

@@ -2,10 +2,10 @@ function eph_EmptySlot3(equip)
     -- Did you know? Programming while high is a little difficult. The afterglow suits it fine, though, I think.
 end
 
-function eph_Skrunkly( equip )
+function eph_Kajzerka( equip )
     if equip then
-        playerstats_a["currenttrinket"] = "Skrunkly"
-        playerstats["currenttrinket"] = "Skrunkly"
+        playerstats_a["currenttrinket"] = "Kajzerka"
+        playerstats["currenttrinket"] = "Kajzerka"
 
         playerstats_a["HP1"] = playerstats_a["HP1"] + 30
         playerstats["HP1"] = playerstats_a["HP1"]

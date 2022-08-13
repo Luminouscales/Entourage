@@ -12,7 +12,8 @@ include( "ss/encountertypes.lua" )
 include( "ss/skillfunctions.lua" )
 include( "ss/tablicas.lua" )
 include( "scripts/buffs.lua" )
---include( "ss/hitsounds.lua" ) -- it's broken. Stick to the base addon for now.
+include( "scripts/scripts.lua" )
+--include( "ss/hitsounds.lua" ) -- it's broken. Stick to the base addon for now
 
 -- ai
 include( "ss/ai/guardian.lua")
@@ -41,6 +42,7 @@ AddCSLuaFile( "cl/encountersystem_cl.lua" )
 AddCSLuaFile( "cl/hud_cl.lua" )
 	AddCSLuaFile( "cl/convbox_cl.lua" )
 AddCSLuaFile( "cl/battlesystem_cl.lua" )
+AddCSLuaFile( "cl/menu/resultsframe.lua" )
 AddCSLuaFile( "cl/music.lua" )
 
 
@@ -82,7 +84,7 @@ net.Receive( "savetable", function( len, ply )
 	local id = ply:UserID()
 
 	if pl_stats_tbl[id] ~= nil then
-		table.remove( pls_stats_tbl, id)
+		table.remove( pl_stats_tbl, id)
 	end
 	pl_stats_tbl[ id ] = tableph
 	-- calculate some stats prematurely

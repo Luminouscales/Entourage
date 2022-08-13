@@ -32,3 +32,19 @@ function FrostlionMinerAI()
         EnemyAttack()
     end)
 end
+
+droptable_frostlionminer = {
+    [1] = { "IronIngot",
+        5,
+        3
+    },
+    [2] = { "WoodenClub",
+        15,
+        1
+    },
+    [3] = { "PaddedArmour",
+        10,
+        2
+}
+}
+enemies_table["Frostlion Miner"]["droptable"] = droptable_frostlionminer

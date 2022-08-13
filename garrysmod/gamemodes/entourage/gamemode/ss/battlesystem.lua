@@ -106,14 +106,16 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 					enemy3 = nil
 				end
 				-----------------
-				-- print( target:GetNWInt( "tbl_deaths" ) )
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg_attacker:GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				lives = lives - 1
 
-				-- c_type2 = nil
+				local droptable = enemies_table[ target:GetName() ]["droptable"]
+				if droptable then
+					droptableRNG( droptable )
+				end
 
 				-- Send EXP
 				local timer_delay = 0 -- change if necessary
@@ -206,7 +208,7 @@ end)
 
 function Calculatum()
 	for _, v in ipairs( player.GetAll() ) do 
-		local id = v:UserID()
+		id = v:UserID()
 		local defbonus = ( pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE ) * ( 0.5 * pl_stats_tbl[ id ].vint ) -- via precision
 		pl_stats_tbl[ id ].FCS_TRUE = pl_stats_tbl[ id ].FCS + v:GetNWInt( "offset_fcs" )
 		pl_stats_tbl[ id ].MGT_TRUE = pl_stats_tbl[ id ].MGT + v:GetNWInt( "offset_mgt" )
@@ -224,6 +226,8 @@ function Calculatum()
 			v:SetNWInt( "stunturns_a", v:GetNWInt( "stunturns_a" ) - 1 )
 			print( v:GetNWInt( "stunturns_a" ) )
 		end
+
+		hook.Call( "PostCalculatum" )
 	end
 end
 
@@ -444,6 +448,11 @@ function EndBattle()
 		lives = 0
 		deaths = 0
 		ss_inbattle = false
+		dmg_modifier = 1
+		acc_modifier = 1
+		critbonus = 0
+		critdmg = 0
+		Levitus:SetNWInt( "team_UP", 0 )
 		EncounterReset()
 		EncounterReset2() -- reset encounter mechanic
 
@@ -454,11 +463,6 @@ function EndBattle()
 				v:SetAngles( v:GetNWAngle( "anglenw" ) )
 			end
 		end)
-
-		-- Reset resistances
-		-- for k, v in ipairs( player.GetAll() ) do
-		-- 	v:SetNWInt( "dmgresistance", 0 )
-		-- end
 	end)
 end
 
@@ -584,7 +588,7 @@ function EndGame()
 end
 
 function EncounterReset()
-	encounter_rate = math.random( 150, 150 )
+	encounter_rate = math.random( 9999, 9999 )
 	net.Start( "encounter_var" )
 		net.WriteInt( encounter_rate, 32)
 	net.Broadcast()

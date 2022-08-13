@@ -23,7 +23,7 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_dedications": {
+	"s_heartcut": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
@@ -47,19 +47,7 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_acrobatics": {
-		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_medicsupplies": {
-		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_heartcut": {
-		"Level": 0.0,
-		"equipped": 0.0
-	},
-	"s_broadswing": {
+	"s_fragmentation": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
@@ -67,15 +55,27 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
+	"s_dedications": {
+		"Level": 0.0,
+		"equipped": 0.0
+	},
 	"s_vprecision": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_slicer": {
+	"s_acrobatics": {
+		"Level": 0.0,
+		"equipped": 0.0
+	},
+	"s_broadswing": {
+		"Level": 0.0,
+		"equipped": 0.0
+	},
+	"s_dicer": {
 		"Level": 0.0,
 		"equipped": 2.0
 	},
-	"s_dicer": {
+	"s_slicer": {
 		"Level": 0.0,
 		"equipped": 2.0
 	},
@@ -87,7 +87,7 @@
 		"Level": 0.0,
 		"equipped": 0.0
 	},
-	"s_fragmentation": {
+	"s_medicsupplies": {
 		"Level": 0.0,
 		"equipped": 0.0
 	},

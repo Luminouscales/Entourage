@@ -27,3 +27,19 @@ function FrostlionSkinnerAI()
         EnemyAttack()
     end)
 end
+
+droptable_frostlionskinner = {
+    [1] = { "RustyKnife",
+        15,
+        1
+    },
+    [2] = { "MonsterFang",
+        5,
+        3
+    },
+    [3] = { "PrecisionArmour",
+        10,
+        2
+    }
+}
+enemies_table["Frostlion Skinner"]["droptable"] = droptable_frostlionskinner -- :3
