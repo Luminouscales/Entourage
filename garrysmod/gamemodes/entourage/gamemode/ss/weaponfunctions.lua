@@ -3,20 +3,6 @@ acc_modifier = 1
 critbonus = 0
 critdmg = 0
 
-util.AddNetworkString( "weapon_effect" )
-
--- net for removing innate weapon effects
-net.Receive( "weapon_effect", function( len, ply )
-	kitty_duda = ply
-	local wpname = net.ReadString()
-	kitty_equip = net.ReadBool()
-
-	RunString( wpname .."Equip(kitty_equip, kitty_duda:UserID())" )
-
-	kitty_duda = nil
-	kitty_equip = nil
-end)
-
 -- This is for running stuff related to crits.
 function DoCrit()
 	-- Since critting gives you 10 UP if you dealt damage:
@@ -30,9 +16,9 @@ function DoCrit()
 	turntarget:EmitSound( "mgb_crit1.mp3", 150, 100, 1, CHAN_BODY )
 end
 
--- Stun AGAINST enemy
-function DoStun2( bonus, thp )
-	if math.random( 1, 100 ) <= wpndmg3 / thp * ( 65 + bonus + pl_stats_tbl[ mgbplayer:UserID() ].MGT_TRUE ) then 
+-- Stun AGAINST player
+function DoStun2( bonus )
+	if math.random( 1, 100 ) <= wpndmg3 / thp * ( 65 + bonus ) + pl_stats_tbl[ mgbplayer:UserID() ].MGT_TRUE then 
 		turntarget:SetNWInt( "stunturns", turntarget:GetNWInt( "stunturns" ) + 1 )
 		PrintMessage( HUD_PRINTTALK, turntargetsave .." is stunned for ".. turntarget:GetNWInt( "stunturns" ) .." turn(s)..." )
 		if enemies_table[ turntargetsave ].StunAnim ~= nil then
@@ -69,8 +55,8 @@ function Fists()
 	thp = turntarget:Health()
 	if math.random( 1, 100 ) <= ( pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE * acc_modifier ) - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ mgbplayer:UserID() ].VIT_TRUE + math.random( wpndmg1, wpndmg2 ) * ( pl_stats_tbl[ mgbplayer:UserID() ].MGT_TRUE * 0.75 ) ) * dmg_modifier
-		DoStun2( 5, turntarget:Health() )
 		DoDamage()
+		DoStun2( 5 )
 	else
 		DoDodge()
 	end
@@ -105,8 +91,8 @@ function WoodenClub()
 	thp = turntarget:Health()
 	if math.random( 1, 100 ) <= pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then 
 		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ mgbplayer:UserID() ].MGT_TRUE * 0.15 + math.random( wpndmg1, wpndmg2 ) * ( pl_stats_tbl[ mgbplayer:UserID() ].VIT_TRUE * 0.1 ) ) * dmg_modifier
-		DoStun2( 0, turntarget:Health() )
 		DoDamage()
+		DoStun2( 0 )
 	else
 		DoDodge()
 	end
@@ -139,8 +125,8 @@ function RopeSpear() -- use pltype2 to derive proper attack from damage type
 		thp = turntarget:Health()
 		if math.random( 1, 100 ) <= pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then 
 			wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) ) * dmg_modifier
-			DoStun2( 0, turntarget:Health() )
 			DoDamage()
+			DoStun2( 0 )
 		else
 			DoDodge()
 		end
@@ -162,25 +148,5 @@ function SalvagedBlade()
 		DoDamage()
 	else
 		DoDodge()
-	end
-end
-
-function DriftwoodTarge()
-	if math.random( 1, 100 ) <= pl_stats_tbl[ mgbplayer:UserID() ].ACC_TRUE * acc_modifier - enemies_table[ turntargetsave ].DDG then 
-		wpndmg3 = ( math.random( wpndmg1, wpndmg2 ) + pl_stats_tbl[ mgbplayer:UserID() ].VIT_TRUE ) * ( 1 + pl_stats_tbl[ mgbplayer:UserID() ].MGT_TRUE * 0.1) * dmg_modifier
-		DoStun2( 15, turntarget:Health() )
-		DoDamage()
-	else
-		DoDodge()
-	end
-end
-
-function DriftwoodTargeEquip( equip, plid )
-	if equip then
-		hook.Add( "PostCalculatum", "effect_driftwoodtarge".. plid, function()
-			pl_stats_tbl[ id ].DEF_TRUE = pl_stats_tbl[ id ].DEF_TRUE + 7
-		end)
-	else
-		hook.Remove( "PostCalculatum", "effect_driftwoodtarge".. plid )
 	end
 end

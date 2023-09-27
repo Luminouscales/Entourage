@@ -42,5 +42,5 @@ function DefaultDMG() -- Guardian AI
 	else
 		wpndmg3 = ( wpndmg3 - enemies_table[ turntargetsave ].DEF * 0.75 ) * ( 1 - enemies_table[ turntargetsave ].DFX * 0.01 )
 	end
-	wpndmg3 = math.Round( math.Clamp( wpndmg3, 1, 999 ), 0 )
+	wpndmg3 = math.Round( math.Clamp( wpndmg3 * 1.25, 1, 999 ), 0 ) -- multiply because of guardian's damage res
 end

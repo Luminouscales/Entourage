@@ -18,7 +18,6 @@ include( "cl/encountersystem_cl.lua" )
 include( "cl/hud_cl.lua" )
 	include( "cl/convbox_cl.lua" )
 include( "cl/battlesystem_cl.lua" )
-	include( "cl/menu/resultsframe.lua" )	
 
 ---
 a = TEXT_ALIGN_CENTER

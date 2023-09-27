@@ -162,8 +162,9 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 			weapon_button.DoClick = function()
 				mainframe:ToggleVisible()
 				weapons_frame:Show()
-					RefreshWeaponGrid()
 				rt_armour()
+				image_check1:SetPos( ScrW()+100, ScrH()+100 )
+				image_check2:SetPos( ScrW()+100, ScrH()+100 )
 			end
 
 		local stats_button = vgui.Create( "DImageButton", mainframe )
@@ -201,6 +202,20 @@ hook.Add( "InitPostEntity", "clmenuinit", function()
 		end
 	---------------------------
 	-- This belongs in weaponsframe but is parented here so I'll just leave it with its father.
+	image_check1 = vgui.Create( "DImage", equipframe)
+		image_check1:SetSize( 100, 100 )
+		image_check1:SetPos( ScrW()+100, ScrH()+100 )
+		image_check1:SetImage( "entourage_checkedslot.png" )
+
+	image_check2 = vgui.Create( "DImage", equipframe)
+		image_check2:SetSize( 100, 100 )
+		image_check2:SetPos( ScrW()+100, ScrH()+100 )
+		image_check2:SetImage( "entourage_checkedslot.png" )
+
+	image_check3 = vgui.Create( "DImage", equipframe)
+		image_check3:SetSize( 100, 100 )
+		image_check3:SetPos( ScrW()+100, ScrH()+100 )
+		image_check3:SetImage( "entourage_checkedslot.png" )
 	---------------------------
 	-- This creates stat upgrade buttons.
 	overview_cross_mgt = vgui.Create( "DImageButton", mainframe )

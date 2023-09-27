@@ -41,14 +41,14 @@ function UpdateResultsText()
         resultsframe_exp:AppendText( "You just leveled up! You are now level ".. playerstats_a["LVL3"] .."\n")
         resultsframe_exp:AppendText( "You now have ".. playerstats_a["LVL_POINTS"] .." upgrade points.\n" )
     end
-    if dropitemtable2[1] then -- if there are items
+    if dropitemtable[1] then -- if there are items
         resultsframe_exp:InsertColorChange( 255, 255, 255, 255 )
         resultsframe_exp:AppendText( "Items found:")
 
-        for k, v in ipairs( dropitemtable2 ) do
+        for k, v in ipairs( dropitemtable ) do
             resultsframe_exp:InsertColorChange( 235, 255, 40, 255 )
             resultsframe_exp:AppendText( " ".. items_table[v[1]]["Name"] )
-            if k ~= #dropitemtable2 then
+            if k ~= #dropitemtable then
                 resultsframe_exp:InsertColorChange( 255, 255, 255, 255 )
                 resultsframe_exp:AppendText( "," )
             end
@@ -65,7 +65,6 @@ net.Receive( "dropitem", function()
     local position = #dropitemtable + 1
 
     dropitemtable[ position ] = { name, type }
-    dropitemtable2[ #dropitemtable2 + 1 ] = { name, type }
 
     if type == 1 then -- if weapon
         table = plweapons
@@ -83,14 +82,11 @@ net.Receive( "dropitem", function()
     for k, v in ipairs(table) do
         if v["Item"] == empty then
             v["Item"] = name
-            Fuckk( position ) -- table.remove doesn't work in net functions. Why? Beats me.
-        return end
+            table.remove( dropitemtable, position )
+        end
     end
-end)
 
-function Fuckk( position )
-    table.remove( dropitemtable, position )
-end
+end)
 
 -- Full inventory screen
 noinventory_frame = vgui.Create( "DFrame" )
@@ -155,7 +151,6 @@ function WeaponGrid_noinventory()
         end
     end
     for k, v in pairs( typetable ) do
-        PrintTable( typetable )
         local weaponbutton = vgui.Create( "DImageButton", noinventory_frame ) 
             weaponbutton:SetImage( items_table[ v["Item"] ].Icon )
             weaponbutton:SetSize( 100, 100 )

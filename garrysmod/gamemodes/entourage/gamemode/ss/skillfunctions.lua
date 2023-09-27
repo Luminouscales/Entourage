@@ -45,6 +45,12 @@ function s_Retract()
                 RunString( items_table[ wpn ].func )
             end
             if k == #turntargets and proceed then
+                dmg_modifier = 1
+                acc_modifier = 1
+                flatdmg = 0
+                critbonus = 0
+                critdmg = 0
+
                 timer.Simple( 1, function()
                     hook.Call( "PlayerTurnEnd" )
                     EnemyAttack()
@@ -52,13 +58,6 @@ function s_Retract()
             end
         end)
     end
-    timer.Simple( 1.25, function()
-        dmg_modifier = 1
-        acc_modifier = 1
-        flatdmg = 0
-        critbonus = 0
-        critdmg = 0
-    end)
 end
 
 function DoCrit2a()
@@ -224,6 +223,9 @@ function s_firstaid()
     timer.Simple( 0.5, function()
         local heal = math.Round( 10 + 10 * skill_lvl + target:GetMaxHealth() / ( 100 - ( 2 + 3 * skill_lvl ) ), 0 )
         entourage_AddHealth( target, heal )
+        timer.Simple( 1.5, function()
+            EnemyAttack()
+        end)
     end)
 
     entourage_AddBuff( mgbplayer, "firstaid", 3, skill_lvl )
@@ -295,6 +297,12 @@ function s_medicsupplies()
         --         EnemyAttack()
         --     end)
         -- end
+    end
+
+    if proceed then 
+        timer.Simple( 1.5, function()
+            EnemyAttack()
+        end)
     end
 
     DoCooldown( mgbplayer, "medicsupplies", 4 )
@@ -432,7 +440,11 @@ function s_dedications()
         local id = v:UserID()
         entourage_AddBuff( v, "dedications", 3, skill_lvl )
     end
-
+    if proceed then 
+        timer.Simple( 2, function()
+            EnemyAttack()
+        end)
+    end
     DoCooldown( mgbplayer, "dedications", 3 )
     SendSkillNote( "Dedications" )
     timer.Simple( 0.4, function()
@@ -447,6 +459,9 @@ function s_moderato()
         local id = v:UserID()
         entourage_AddBuff( v, "moderato", 2, skill_lvl )
     end
+    timer.Simple( 2, function()
+        EnemyAttack()
+    end)
 
     DoCooldown( mgbplayer, "moderato", 2 )
     SendSkillNote( "Moderato" )
@@ -483,13 +498,10 @@ function s_tknives()
     local bonus1 = skill_lvl * 2
     local bonus2 = skill_lvl * 0.03
 
-    if pltype == "Pierce" or "Multiple" then
-        dmg_modifier = 0.3 + bonus2
-        acc_modifier = 1
-    else
-        dmg_modifier = 0.05 + bonus2
-        acc_modifier = 0.75
-    end
+
+    dmg_modifier = 0.3 + bonus2
+    acc_modifier = 1
+
     -- Deal damage and stuffs, leave it to the weapon functions.
     hook.Add( "EntityTakeDamage", "tknives_oh", function( target, dmg )
         local playa = dmg:GetAttacker()
@@ -510,17 +522,12 @@ function s_tknives()
     turntargets = {}
     for i = 1, targets, 1 do 
         turntargets[i] = table.Random( targetstbl )
-        -- if i == targets then
-        --     timer.Simple( 1, function()
-        --         EnemyAttack()
-        --     end)
-        -- end
     end
     ----------------------
     s_Retract()
 
     -- Cooldown, buffs, skillnote
-    -- DoCooldown( mgbplayer, "tknives", 1 )
+    DoCooldown( mgbplayer, "tknives", 1 )
     SendSkillNote( "Throwing Knives" )
 end
 
@@ -534,6 +541,11 @@ function s_qethics()
     timer.Simple( 0.5, function()
         local heal1 = math.random( 0, target:GetMaxHealth()/100 * 25 + skill_lvl * 5 )
         entourage_AddHealth( target, math.Round( heal1, 0 ) )
+        if proceed then 
+            timer.Simple( 1.5, function()
+                EnemyAttack()
+            end)
+        end
     end)
 
     DoCooldown( mgbplayer, "qethics", 3 )
@@ -585,19 +597,20 @@ function s_gouge()
     hook.Add( "EntityTakeDamage", mathilda2 .."gouge_oh", function( target, dmg )
         local playa = dmg:GetAttacker()
         if target:IsNPC() and playa == mgbplayer then
-            SetOffset( mgbplayer, "ddg", 15 + skill_lvl * 3 )
+            SetOffset( target, "ddg", 15 + skill_lvl * 3 )
             hook.Remove( "EntityTakeDamage", mathilda2 .."gouge_oh" )
         end
-    end)
-    timer.Simple( 1.25, function()
-        hook.Remove( "EntityTakeDamage", "gouge_oh" )
     end)
 
     -- Deal damage and stuffs, leave it to the weapon functions.
     s_Retract()
 
+    timer.Simple( 1.25, function()
+        hook.Remove( "EntityTakeDamage", "gouge_oh" )
+    end)
+
     -- Cooldown, buffs, skillnote
-    entourage_AddBuff( mgbplayer, "gouge", 3, skill_lvl )
+    entourage_AddBuff( mgbplayer, "gouge", 2, skill_lvl )
     DoCooldown( mgbplayer, "gouge", 3 )
     SendSkillNote( "Gouge" )
 end
@@ -659,9 +672,9 @@ function WideStagger()
 end
 
 function CalcAttack()
-    if math.random( 1, 100 ) > pl_stats_tbl[ attacktarget_id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS + c_miss then
-
-        -- attackdmg = attackdmg + attackdmg * attacktarget:GetNWInt( "dmgresistance" )
+    local odds = pl_stats_tbl[ attacktarget_id ].DDG_TRUE + enemies_table[ current_enemy:GetName() ].MISS + c_miss
+    print( "Odds to hit: ".. 100 - odds .."%")
+    if math.random( 1, 100 ) > odds then
         attackdmg = math.Round( math.Clamp( attackdmg, 1, 9999 ), 0 )
 
         calc_info = DamageInfo()

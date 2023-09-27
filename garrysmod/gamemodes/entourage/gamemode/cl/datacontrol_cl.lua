@@ -5,8 +5,6 @@ net.Receive( "playersave", function()
 end)
 
 function PlayerstatsSave()
-    local datapath = "entourage/game/".. gameid .."/".. playerid .."/"
-
     if integer > 0 then
         LocalPlayer():PrintMessage( HUD_PRINTTALK, "Game saved successfully to ID: ".. gameid )
 	    playerstats["HP1"] = LocalPlayer():Health()
@@ -16,21 +14,12 @@ function PlayerstatsSave()
     playerstats_a = table.Copy( playerstats )
     playerstats_b = table.Copy( playerstats_a )
 	local playerstats2 = util.TableToJSON( playerstats, true )
-	file.Write( datapath .."stats.txt", playerstats2)
+	file.Write( "entourage/game/".. gameid .."/".. playerid .."/stats.txt", playerstats2)
 
     plskills_a = table.Copy( plskills )
     local plskills3 = util.TableToJSON( plskills, true )
-    file.Write( datapath .."skills.txt", plskills3 )
+    file.Write( "entourage/game/".. gameid .."/".. playerid .."/skills.txt", plskills3 )
 
-    -- Items
-    local plweapons3 = util.TableToJSON( plweapons, true )
-    file.Write( datapath .."weapons.txt", plweapons3 )
-
-    local plarmours3 = util.TableToJSON( plarmours, true )
-    file.Write( datapath .."armours.txt", plarmours3 )
-
-    local pltrinkets3 = util.TableToJSON( pltrinkets, true )
-    file.Write( datapath .."trinkets.txt", pltrinkets3 )
 end
 
 function SendStats()
@@ -311,13 +300,6 @@ hook.Add( "InitPostEntity", "datacontrolinit", function()
     -- Some trinkets have to be re-activated on save load.
     if items_table[ playerstats_a["currenttrinket"] ]["early"] then
         RunString( "eph_".. playerstats_a["currenttrinket"] .."(true)" )
-    end
-
-    if items_table[ playerstats_a["currentweapon"] ].early == 1 then
-        net.Start( "weapon_effect" )
-            net.WriteString( playerstats_a["currentweapon"] )
-            net.WriteBool( true )
-        net.SendToServer()
     end
     
     

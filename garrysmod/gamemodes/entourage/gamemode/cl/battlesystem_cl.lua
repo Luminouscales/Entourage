@@ -113,9 +113,6 @@ net.Receive( "encounter_intro", function()
     local delay = net.ReadInt( 32 )
     local table = net.ReadTable()
 
-    dropitemtable = {}
-    dropitemtable2 = {}
-
 	surface.PlaySound( "shink.wav" )
 	surface.PlaySound( "shink.wav" )
 
@@ -136,7 +133,7 @@ net.Receive( "encounter_intro", function()
 
 	hook.Remove("HUDPaint", "dangerbar") -- visual
 	pleqic:ToggleVisible()
-	equipframe:Hide()
+	equipframe:Close()
 
 	net.Start("getmycordsyoufuckingcunt")
 		net.WriteVector( LocalPlayer():GetPos() ) 
@@ -160,6 +157,43 @@ net.Receive( "net_enemy_senddata", function()
     exp_real = exp_real + math.Clamp( math.Round( exp_int + ( exp_int * ( math.Clamp( lvl_int - playerstats_a["LVL3"], -15, 15 ) ) / 3 ), 0 ), 0, 100000 )
 end)
 
+-- This is the frame for results after battle.
+function ResultsFrame()
+    local results_frame = vgui.Create( "DFrame" )
+        results_frame:SetSize( 600, 800 )
+        results_frame:Center()
+        results_frame:SetDraggable( false )
+        results_frame:SetTitle( "" )
+        results_frame:ShowCloseButton( false )
+        results_frame.Paint = function( self, w, h )
+            draw.RoundedBox( 8, 0, 0, w, h, Color( 110, 110, 115, 240 ) )
+            draw.RoundedBoxEx( 6, 0, 0, w, 25, plcol, true, true, false, false )
+            draw.SimpleText( "Results!", "equipment_plname4", w/2, 10, color_white, a, a )
+        end
+        local closebutton = vgui.Create( "DImageButton", results_frame )
+		closebutton:SetImage( "icon16/cross.png" )
+		closebutton:SetSize( 20, 20 )
+		closebutton:SetPos( 5, 5 )
+		closebutton.DoClick = function()
+			results_frame:Close()
+		end
+        resultsframe_exp = vgui.Create( "RichText", results_frame )
+            resultsframe_exp:SetVerticalScrollbarEnabled( false )
+		    resultsframe_exp:SetSize( 600, 800 )
+		    resultsframe_exp:SetPos( 10, 35 )
+		    resultsframe_exp:InsertColorChange( 255, 255, 255, 255 )
+            resultsframe_exp:AppendText( "Experience Gained: ".. tostring( exp_real ) .."\n" )
+            resultsframe_exp:AppendText( "Current level: ".. playerstats_a["LVL3"] .." - ".. playerstats_a["LVL1"] .."/".. playerstats_a["LVL2"] .." experience\n" )
+            if just_leveledup == true then
+                resultsframe_exp:InsertColorChange( 235, 255, 40, 255 )
+                resultsframe_exp:AppendText( "You just leveled up! You are now level ".. playerstats_a["LVL3"] .."\n")
+                resultsframe_exp:AppendText( "You now have ".. playerstats_a["LVL_POINTS"] .." upgrade points." )
+            end
+            function resultsframe_exp:PerformLayout()
+                self:SetFontInternal( "equipment_plname2" )
+            end
+        
+end
 --------------------------------------
 function CheckEXP()
     if playerstats_a["LVL1"] >= playerstats_a["LVL2"] then
@@ -206,24 +240,12 @@ net.Receive( "sendplconv", function()
     end
 end)
 
-function RemoveHealthHud()
-    if gayshit then
-        for k, v in ipairs( gayshit ) do
-            gayshit[k]:Remove()
-            hook.Remove( "PostRenderVGUI", "yuumi_cl".. k )
-        end
-    end
-end
-
 function CreateHealthHud( table )
-    
-    RemoveHealthHud()
-    
-    gayshit = {}
     for k, v in pairs( table ) do
         local bonus = k * 100 - 100
         local face = vgui.Create( "DModelPanel" )
-            face:SetSize( 60, 60 )
+		
+        face:SetSize( 60, 60 )
             face:SetPos( 0, 225 + bonus )
             face:SetMouseInputEnabled( false )
             face:SetAnimated( false )
@@ -235,7 +257,6 @@ function CreateHealthHud( table )
             face:SetLookAt(headpos)
             function face.Entity:GetPlayerColor() return v:GetPlayerColor() end
             face:SetCamPos(headpos-Vector( -5, 13, 0 ) )
-            gayshit[k] = face
         
         hook.Add( "PostRenderVGUI", "yuumi_cl".. k, function()
             local plhealth = v:Health()
@@ -290,6 +311,7 @@ function CreateHealthHud( table )
 
                 offset = offset + 15
             end
+
         end)
     end
 end
@@ -452,20 +474,15 @@ end)
 net.Receive( "encounter_outro", function() -- everyone is dead, back to the overworld
     playerstats_a["LVL1"] = playerstats_a["LVL1"] + exp_real
     CheckEXP()
+    exp_real = 0
     inbattle = false
-    choices = 0
-        actions_lbl:SetText( playerstats_a.actionvar )
 	bhud_frame:Close()
 	bhud_frame3:Close()
-    RemoveHealthHud()
 	timer.Simple(2, function()
 		hook.Remove( "HUDPaint", "battlehudpaint" )
 		pleqic:ToggleVisible()
 		DangerHUD()
-        UpdateResultsText()
-        exp_real = 0
-        dropitemtable2 = {}
-        results_frame:Show()
+        ResultsFrame()
         -- Cleanup after battle
             just_leveledup = false
         ---------------------------
@@ -494,7 +511,7 @@ hook.Add( "InitPostEntity", "clickframe_init", function()
             clickframe:SetWorldClicker( true )
         clickframe.Paint = function( self, w, h )
         end
-        -- basic attacks don't support 10 targeting yet
+        -- basic attacks don't support 10 targetting yet
         function clickframe:OnMousePressed( keycode )
             if keycode == 107 then
                 LookPos()
@@ -1187,7 +1204,7 @@ function clickframeskill_Init()
     cl_s_int = 0
     cl_s_targets = skillsbase[ skill_id ].targets
     cl_s_targets_tbl = {}
-    endcustom = cl_s_targets > 1
+    -- endcustom = cl_s_targets > 1
 end
 
 function clickframe_Init()

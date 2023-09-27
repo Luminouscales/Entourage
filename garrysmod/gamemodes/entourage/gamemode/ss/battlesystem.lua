@@ -78,6 +78,7 @@ end
 hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 	-- Make sure it doesn't somehow run when outside of battle.
 	if ss_inbattle then 
+		print( "health: ".. target:Health() ) -- health is still unchanged
 		local dmg_ov = dmg:GetDamage()
 		local dmg_attacker = dmg:GetAttacker()
 		-- If a player dealt damage TO NPC
@@ -85,9 +86,12 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 			local portion = dmg_ov / target:GetMaxHealth()
 			entourage_AddUP( math.Clamp( portion * 30, 1, 25 ), 25 )
 			-- This function manages damage resistance for enemies like the Guardian. It sucks, I know, but it has to be done.
+			-- After two years I'm not sure why this is necessary. The Guardian has some innate hard-coded damage resistance?
+			-- Things break without this so I'll keep it in but multiply the damage by a quarter in enemyai.lua
 			if target:GetClass() == "npc_antlionguard" then
 				-- MODS
 				dmg_ov = math.floor( dmg_ov * 0.75 )
+				print( "dmg_ov: ".. dmg_ov )
 			end
 			---------------------------------------------------------
 			PrintMessage( HUD_PRINTTALK, dmg_attacker:GetName() .." dealt ".. dmg_ov .." ".. c_type2 .." damage to ".. target:GetName() .."!" )
@@ -106,16 +110,14 @@ hook.Add( "EntityTakeDamage", "UP_detect_hook", function( target, dmg )
 					enemy3 = nil
 				end
 				-----------------
+				-- print( target:GetNWInt( "tbl_deaths" ) )
 				table.remove( battle_enemies, target:GetNWInt( "tbl_deaths" ) )
 				actions = actions - 1
 				PrintMessage( HUD_PRINTTALK, dmg_attacker:GetName() .." defeated ".. target:GetName() .."!" )
 				deaths = deaths + 1
 				lives = lives - 1
 
-				local droptable = enemies_table[ target:GetName() ]["droptable"]
-				if droptable then
-					droptableRNG( droptable )
-				end
+				-- c_type2 = nil
 
 				-- Send EXP
 				local timer_delay = 0 -- change if necessary
@@ -208,7 +210,7 @@ end)
 
 function Calculatum()
 	for _, v in ipairs( player.GetAll() ) do 
-		id = v:UserID()
+		local id = v:UserID()
 		local defbonus = ( pl_stats_tbl[ id ].AGI_TRUE + pl_stats_tbl[ id ].FCS_TRUE ) * ( 0.5 * pl_stats_tbl[ id ].vint ) -- via precision
 		pl_stats_tbl[ id ].FCS_TRUE = pl_stats_tbl[ id ].FCS + v:GetNWInt( "offset_fcs" )
 		pl_stats_tbl[ id ].MGT_TRUE = pl_stats_tbl[ id ].MGT + v:GetNWInt( "offset_mgt" )
@@ -226,8 +228,6 @@ function Calculatum()
 			v:SetNWInt( "stunturns_a", v:GetNWInt( "stunturns_a" ) - 1 )
 			print( v:GetNWInt( "stunturns_a" ) )
 		end
-
-		hook.Call( "PostCalculatum" )
 	end
 end
 
@@ -363,13 +363,16 @@ net.Receive( "player_makeattack", function( len, ply ) -- player input
 	-- basic attack multi-target damage management and calculation
 	timer.Simple( 0.5, function()
 		local i = 0
+		for k, v in pairs( turntargets ) do
+			i = i + 1
+		end
 		for k, v in pairs( turntargets ) do 
 			vis_int = vis_int + 0.25
 			timer.Simple( vis_int, function()
 				if IsValid(v) and v:Health() > 0 then
 					turntarget = v
 					turntargetsave = v:GetName()
-					dmg_modifier = dmg_modifier / #turntargets
+					dmg_modifier = dmg_modifier / i
 
 					RunString( items_table[ wpn ].func )
 					dmg_modifier = 1
@@ -412,7 +415,7 @@ net.Receive( "player_brace", function( len, ply )
 
 		hook.Remove( "EnemyTurnEnd", braceidentifier )
 	end)
-	timer.Simple( 2, function() 
+	timer.Simple( 1.5, function() 
 		EnemyAttack()
 	end)
 	PrintMessage( HUD_PRINTTALK, mgbplayer:GetName() .." are bracing themselves for the attack..." )
@@ -445,11 +448,6 @@ function EndBattle()
 		lives = 0
 		deaths = 0
 		ss_inbattle = false
-		dmg_modifier = 1
-		acc_modifier = 1
-		critbonus = 0
-		critdmg = 0
-		Levitus:SetNWInt( "team_UP", 0 )
 		EncounterReset()
 		EncounterReset2() -- reset encounter mechanic
 
@@ -460,6 +458,11 @@ function EndBattle()
 				v:SetAngles( v:GetNWAngle( "anglenw" ) )
 			end
 		end)
+
+		-- Reset resistances
+		-- for k, v in ipairs( player.GetAll() ) do
+		-- 	v:SetNWInt( "dmgresistance", 0 )
+		-- end
 	end)
 end
 
@@ -585,7 +588,7 @@ function EndGame()
 end
 
 function EncounterReset()
-	encounter_rate = math.random( 9999, 9999 )
+	encounter_rate = math.random( 150, 150 )
 	net.Start( "encounter_var" )
 		net.WriteInt( encounter_rate, 32)
 	net.Broadcast()

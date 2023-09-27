@@ -330,15 +330,14 @@ function b_tknives() -- young dragon prodigy student saviour turned cum slut and
 
     mathilda = mathilda + 1
     local mathilda2 = mathilda + 1
-    local bonus1 = lvl3 * 2
 
-    SetOffset( target3, "ddg", 7 + bonus1 )
+    SetOffset( target3, "ddg", 5 + lvl3 )
     
     hook.Add( "EnemyTurnEnd", targetid2 .."_b_tkniveshook".. mathilda2, function()
         timer.Simple( 0.1, function()
             timer.Simple( 0.1, function()
                 if buffs_tbl[ targetid2 ][ 7 ] == nil then
-                    SetOffset( target3, "ddg", - ( 8 + bonus1 ) )
+                    SetOffset( target3, "ddg", - ( 5 + lvl3 ) )
                     hook.Remove( "EnemyTurnEnd", targetid2 .."_b_tkniveshook".. mathilda2 )
                 end
             end)
@@ -353,15 +352,15 @@ function b_gouge()
     local targetid2 = targetid
     local stackvar2 = stackvar
 
-    local bonus1 = lvl3 * 5
+    local bonus1 = 15 + lvl3 * 3
 
-    SetOffset( target3, "x", 1 )
+    SetOffset( target3, "ddg", bonus1 )
 
     if stackvar2 and stackvar2 == 1 or stackvar2 == nil then
         hook.Add( "EnemyTurnEnd", targetid2 .."_b_gougehook".. mathilda2, function()
             timer.Simple( 0.1, function()
-                if buffs_tbl[ targetid2 ][ 6 ] == nil then
-                    SetOffset( target3, "x", - ( 1 ) * stackvar2 )
+                if buffs_tbl[ targetid2 ][ 8 ] == nil then
+                    SetOffset( target3, "ddg", - ( bonus1 ) * stackvar2 )
                     hook.Remove( "EnemyTurnEnd", targetid2 .."_b_gougehook".. mathilda2 )
                 end
             end)
